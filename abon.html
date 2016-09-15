@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Albatros</title>
+
+    <!-- env:prod --#>
+        <link rel="stylesheet" href="css/style.min.css">
+    <!-- env:prod:end -->
+
+    <!-- env:dev -->
+        <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+    <!-- env:dev:end -->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="logos">
+            <div class="lines line1">Федеральное государственное бюджетное образовательное учреждение высшего образования</div>
+            <div class="lines line2">Сибирский Государственный университет физической культуры и спорта</div>
+            <div class="row">
+                <div class="col-md-2 logo1"><img src="img/sibgufk.png" alt=""></div>
+                <div class="col-md-8 title"><h2>Спортивно-оздоровительный комплекс</h2><h1>альбатрос</h1></div>
+                <div class="col-md-2 logo2"><img src="img/albatross.png" alt=""></div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="tarif">
+            Стоимость пополнения абонемента
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td>Сумма</td>
+                        <td>стоимость минуты</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>до 300 руб.</td>
+                        <td>3 руб./мин.</td>
+                    </tr>
+                    <tr>
+                        <td>от 301 до 1250 руб.</td>
+                        <td>2,5 руб./мин.</td>
+                    </tr>
+                    <tr>
+                        <td>более 1250 руб.</td>
+                        <td>2 руб./мин.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container">
+        <div class="accept">
+            <h3>Принято</h3>
+            <div class="amount">2000</div> 
+            <h3>руб</h3>
+        </div>
+    </div>
+    <div class="container">
+        <a href="index.html" class="btn btn-primary back">назад</a>
+    </div>
+    <!-- env:prod --#>
+        <script src='js/script.min.js'></script>
+    <!-- env:prod:end -->
+
+    <!-- env:dev -->
+        <script src="bower_components/jquery/dist/jquery.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <!-- env:dev:end -->
+</body>
+</html>

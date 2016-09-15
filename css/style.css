@@ -1,0 +1,165 @@
+body {
+	font-family: arial;
+	background-color: #f2f1f9;
+}
+
+.container-fluid {
+	padding: 0;
+}
+
+.container-fluid .row{
+	margin: 0;
+}
+
+.logos {
+	color: #fff;
+	text-align: center;
+	text-transform: uppercase;
+	border-bottom: 2px solid #3c44b6;
+	padding-bottom: 15px;
+	margin: 0;
+}
+
+.logos .lines {
+	padding: 10px 0;
+}
+
+.logos .line1 {
+	background-color: #3c44b6;
+	font-size: 15px;
+}
+
+.logos .line2 {
+	background-color: #262c78;
+	font-size: 20px;
+	padding: 10px 0;
+	font-weight: 700;
+}
+
+.logos img {
+	width: 100px;
+	margin: 15px;
+	position: relative;
+	top: 5px;
+}
+
+.logos .title {
+	color: #262c78;
+}
+
+.logos .title  h1 {
+	color: #262c78;
+	font-size: 50px;
+	font-weight: 600;
+}
+
+.logos .title  h2 {
+	color: #3c44b6;
+	font-size: 30px;
+}
+
+.type {
+	padding: 20px;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.type h1 {
+	color: #262c78;
+	font-size: 33px;
+	font-weight: 600;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.tarif {
+	font-size: 30px;
+	padding: 10px 0 0 0;
+	text-align: center;
+}
+
+.tarif table {
+	margin: 10px auto 0;
+	width: 600px;
+	font-size: 18px;
+}
+
+.tarif table thead{
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.tarif table td{
+	padding: 3px !important;
+}
+
+.accept {
+	text-align: center;
+	text-transform: uppercase;
+	font-size: 40px;
+	font-weight: 200;
+	width: 350px;
+	border: 3px solid #262c78; 
+	border-radius: 5px;
+	margin: 40px auto;
+	/*padding-bottom: 10px;*/
+	color: #262c78;
+}
+
+.accept .amount {
+	font-size: 120px;
+	font-weight: 900;
+	padding: -5px 0;
+}
+
+.accept h3 {
+	font-size: 40px;
+	padding: 0;
+	margin: 5px;	
+}
+
+.balance h1{
+	color: #262c78;
+	font-size: 33px;
+	font-weight: 600;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.balance table {
+	margin: 30px auto 160px;
+	width: 600px;
+	font-size: 30px;
+	text-align: center;
+}
+
+.balance table thead{
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+a.btn {
+	width: 520px;
+	height: 115px;
+	text-align: center;
+	line-height:108px;
+	display: block;
+	margin: 20px auto;
+	background-color: #c6c6dd;
+	border: 0;
+	color: #3c44b6;
+	font-size: 40px;
+	text-transform: uppercase;
+}
+
+a.btn.back {
+	width: 20%;
+	height: 60px;
+	line-height: 49px;
+	margin: 15px auto;
+}
+
+a.btn.balance {
+	width: 600px;
+	margin: 0 auto;
+}
