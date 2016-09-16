@@ -1,6 +1,12 @@
+$background: #f2f1f9;
+$firstFirmBack: #3c44b6;
+$secondFirmBack: #262c78;
+$firmFrontColor: #fff;
+$buttonColor: #c6c6dd;
+
 body {
 	font-family: arial;
-	background-color: #f2f1f9;
+	background-color: $background;
 }
 
 .container-fluid {
@@ -12,10 +18,10 @@ body {
 }
 
 .logos {
-	color: #fff;
+	color: $firmFrontColor;
 	text-align: center;
 	text-transform: uppercase;
-	border-bottom: 2px solid #3c44b6;
+	border-bottom: 2px solid $firstFirmBack;
 	padding-bottom: 15px;
 	margin: 0;
 }
@@ -25,12 +31,12 @@ body {
 }
 
 .logos .line1 {
-	background-color: #3c44b6;
+	background-color: $firstFirmBack;
 	font-size: 15px;
 }
 
 .logos .line2 {
-	background-color: #262c78;
+	background-color: $secondFirmBack;
 	font-size: 20px;
 	padding: 10px 0;
 	font-weight: 700;
@@ -44,17 +50,17 @@ body {
 }
 
 .logos .title {
-	color: #262c78;
+	color: $secondFirmBack;
 }
 
 .logos .title  h1 {
-	color: #262c78;
+	color: $secondFirmBack;
 	font-size: 50px;
 	font-weight: 600;
 }
 
 .logos .title  h2 {
-	color: #3c44b6;
+	color: $firstFirmBack;
 	font-size: 30px;
 }
 
@@ -65,7 +71,7 @@ body {
 }
 
 .type h1 {
-	color: #262c78;
+	color: $secondFirmBack;
 	font-size: 33px;
 	font-weight: 600;
 	text-align: center;
@@ -99,11 +105,11 @@ body {
 	font-size: 40px;
 	font-weight: 200;
 	width: 350px;
-	border: 3px solid #262c78; 
+	border: 3px solid $secondFirmBack; 
 	border-radius: 5px;
 	margin: 40px auto;
 	/*padding-bottom: 10px;*/
-	color: #262c78;
+	color: $secondFirmBack;
 }
 
 .accept .amount {
@@ -119,7 +125,7 @@ body {
 }
 
 .balance h1{
-	color: #262c78;
+	color: $secondFirmBack;
 	font-size: 33px;
 	font-weight: 600;
 	text-align: center;
@@ -145,9 +151,9 @@ a.btn {
 	line-height:108px;
 	display: block;
 	margin: 20px auto;
-	background-color: #c6c6dd;
+	background-color: $buttonColor;
 	border: 0;
-	color: #3c44b6;
+	color: $firstFirmBack;
 	font-size: 40px;
 	text-transform: uppercase;
 }

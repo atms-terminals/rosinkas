@@ -3,5 +3,11 @@
 bower_components/**
 node_modules/**
 
+# релиз файлы
 release/**
 tmp/**
+
+# sass файлы
+.sass-cache/**
+style-sass.css
+/css/*.map

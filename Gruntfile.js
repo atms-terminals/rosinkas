@@ -9,12 +9,10 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         concurrent: {
-            css: ['newer:cssmin'],
-            html: ['newer:dev_prod_switch'],
-            js: ['newer:jshint', 'concat', 'removelogging', 'uglify'],
-            fullcss: ['cssmin'],
-            fullhtml: ['dev_prod_switch'],
-            fulljs: ['jshint', 'concat', 'removelogging', 'uglify']
+            stream1: ['jshint', 'copy', 'sass', 'dev_prod_switch'],
+            stream2: ['concat', 'cssmin'],
+            stream3: ['removelogging'],
+            stream4: ['uglify']
         },
         jshint: {
             options: {
@@ -91,6 +89,16 @@ module.exports = function(grunt) {
                 dest: 'release/js/script.min.js'
             }
         },
+        sass: {
+            dist: {
+                options: {
+                    style: 'compressed'
+                },
+                files: {
+                    'css/style-sass.css': 'css/style.scss',
+                }
+            }
+        },
         cssmin: {
             dist: {
                 options: {
@@ -99,24 +107,20 @@ module.exports = function(grunt) {
                 files: {
                     'release/css/style.min.css' : [
                         'bower_components/bootstrap/dist/css/bootstrap.css',
-                        'css/*',
+                        'css/*.css',
                     ]
                 }
             }
         },
         watch: {
+            sass: {
+                files: 'css/*.scss',
+                tasks: ['newer:sass'],
+            },
             js: {
-                files: ['js/*'],
-                tasks: ['jshint', 'concat', 'removelogging', 'uglify', 'dev_prod_switch'],
-            },
-            css: {
-                files: 'css/*',
-                tasks: ['cssmin'],
-            },
-            html: {
-                files: ['*.php', '*.html'],
-                tasks: ['dev_prod_switch'],
-            },
+                files: 'js/*.js',
+                tasks: ['newer:jshint']
+            }
         },
         dev_prod_switch: {
             options: {
@@ -147,7 +151,6 @@ module.exports = function(grunt) {
     });
 
     // регистрируем задачи
-    grunt.registerTask('default', ['concurrent:js', 'concurrent:css']);
-    grunt.registerTask('dev', ['concurrent:js', 'concurrent:css']);
-    grunt.registerTask('prod', ['bower_concat', 'copy', 'concurrent:fulljs', 'concurrent:fullhtml', 'concurrent:fullcss']);
+    grunt.registerTask('default', ['watch']);
+    grunt.registerTask('prod', ['bower_concat', 'concurrent:stream1', 'concurrent:stream2', 'concurrent:stream3', 'concurrent:stream4']);
 };
