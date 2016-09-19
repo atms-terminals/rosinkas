@@ -43,7 +43,7 @@ module.exports = function(grunt) {
             }
         },
         bower_concat: {
-            all: {
+            build: {
                 dest: {
                     'js': 'tmp/bower.js',
                     'css': 'tmp/bower.css'
@@ -61,14 +61,14 @@ module.exports = function(grunt) {
                 stripBanners: true,
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n',
             },
-            my_target: {
+            build: {
                 files: {
                     'tmp/script.js': ['tmp/bower.js', 'js/*.js'],
                 },
             }
         },
         removelogging: {
-            dist: {
+            build: {
                 files: {
                     'tmp/script.min.js': 'tmp/script.js',
                 },
@@ -93,7 +93,7 @@ module.exports = function(grunt) {
             }
         },
         sass: {
-            dist: {
+            build: {
                 options: {
                     style: 'expanded'
                 },
@@ -103,7 +103,7 @@ module.exports = function(grunt) {
             }
         },
         cssmin: {
-            dist: {
+            build: {
                 options: {
                     banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n'
                 },
@@ -134,7 +134,7 @@ module.exports = function(grunt) {
                 env_block_dev: 'env:dev',
                 env_block_prod: 'env:prod'
             },
-            dynamic_mappings: {
+            build: {
                 files: [{
                     expand: true,
                     cwd: '',
@@ -144,7 +144,7 @@ module.exports = function(grunt) {
             }
         },
         copy: {
-            main: {
+            build: {
                 files: [
                 {expand: true, flatten: true, src: ['img/*'], dest: 'release/img/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['bower_components/bootstrap/fonts/*'], dest: 'release/fonts/', filter: 'isFile'},
