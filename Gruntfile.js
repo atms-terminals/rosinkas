@@ -9,10 +9,10 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         concurrent: {
-            stream1: ['jshint', 'copy', 'sass', 'dev_prod_switch'],
-            stream2: ['concat', 'cssmin'],
-            stream3: ['removelogging'],
-            stream4: ['uglify']
+            stream1: ['jshint', 'copy', 'bower_concat'],
+            stream2: ['concat', 'dev_prod_switch'],
+            stream3: ['removelogging', 'sass'],
+            stream4: ['uglify', 'cssmin']
         },
         jshint: {
             options: {
@@ -61,19 +61,18 @@ module.exports = function(grunt) {
                 stripBanners: true,
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n',
             },
-            dist: {
-                src: [
-                    'tmp/bower.js',
-                    'js/*',
-                ],
-                dest: 'tmp/build.js'
-            },
+            my_target: {
+                files: {
+                    'tmp/script.js': ['tmp/bower.js', 'js/*.js'],
+                },
+            }
         },
         removelogging: {
             dist: {
-                src: 'tmp/build.js',
-                dest: 'tmp/build.clean.js',
- 
+                files: {
+                    'tmp/script.min.js': 'tmp/script.js',
+                },
+
                 options: {
                     // see below for options. this is optional. 
                 }
@@ -85,14 +84,18 @@ module.exports = function(grunt) {
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n',
             },
             build: {
-                src: 'tmp/build.clean.js',
-                dest: 'release/js/script.min.js'
+                files: [{
+                    expand: true,
+                    cwd: 'tmp',
+                    src: '*.min.js',
+                    dest: 'release/js'
+                }]
             }
         },
         sass: {
             dist: {
                 options: {
-                    style: 'compressed'
+                    style: 'expanded'
                 },
                 files: {
                     'css/style-sass.css': 'css/style.scss',
