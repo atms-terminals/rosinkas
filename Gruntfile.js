@@ -150,10 +150,14 @@ module.exports = function(grunt) {
                 {expand: true, flatten: true, src: ['bower_components/bootstrap/fonts/*'], dest: 'release/fonts/', filter: 'isFile'},
                 ]
             },
-        }
+        },
+        clean: {
+            build: ['tmp/'],
+            release: ['release/']
+        },
     });
 
     // регистрируем задачи
     grunt.registerTask('default', ['watch']);
-    grunt.registerTask('prod', ['bower_concat', 'concurrent:stream1', 'concurrent:stream2', 'concurrent:stream3', 'concurrent:stream4']);
+    grunt.registerTask('prod', ['clean', 'bower_concat', 'concurrent:stream1', 'concurrent:stream2', 'concurrent:stream3', 'concurrent:stream4']);
 };
