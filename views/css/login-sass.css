@@ -1,0 +1,30 @@
+body {
+  background: url(../img/back3.jpg);
+  background-size: cover;
+  font-family: arial;
+}
+
+.form-signin {
+  margin: 50px auto 0;
+  max-width: 300px;
+  background-color: #d28f60;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-signin .btn-primary {
+  background-color: #c67339;
+  border-color: #9f5c2d;
+}
+
+.form-signin .btn-primary:hover {
+  background-color: #9f5c2d;
+  border-color: #774522;
+}
+
+.form-control:focus {
+  border-color: #d28f60;
+}
+
+/*# sourceMappingURL=login-sass.css.map */

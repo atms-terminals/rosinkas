@@ -1,8 +1,13 @@
 {
-  "name": "promo",
+  "name": "Albatros",
   "version": "1.0.0",
   "description": "",
   "main": "Gruntfile.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:123ss33/queue.albatros.git"
+  },
+  "description": "Платежные терминалы для бассейна 'Альбатрос'",
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-bower-concat": "^1.0.0",

@@ -39,7 +39,7 @@ module.exports = function(grunt) {
                 'unused': true
             },
             '<%== pkg.name %>': {
-                src: ['js/**/*.js']
+                src: ['views/js/**/*.js']
             }
         },
         bower_concat: {
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
                     'css': 'tmp/bower.css'
                 },
                 dependencies: {
-                    'bootstrap': 'jquery'
+                    'bootstrap': 'jquery',
                 },
                 bowerOptions: {
                     relative: false
@@ -63,14 +63,14 @@ module.exports = function(grunt) {
             },
             build: {
                 files: {
-                    'tmp/script.js': ['tmp/bower.js', 'js/*.js'],
+                    'tmp/index.js': ['tmp/bower.js', 'views/js/index.js'],
                 },
             }
         },
         removelogging: {
             build: {
                 files: {
-                    'tmp/script.min.js': 'tmp/script.js',
+                    'tmp/index.min.js': 'tmp/index.js',
                 },
 
                 options: {
@@ -88,7 +88,7 @@ module.exports = function(grunt) {
                     expand: true,
                     cwd: 'tmp',
                     src: '*.min.js',
-                    dest: 'release/js'
+                    dest: 'release/views/js'
                 }]
             }
         },
@@ -98,7 +98,8 @@ module.exports = function(grunt) {
                     style: 'expanded'
                 },
                 files: {
-                    'css/style-sass.css': 'css/style.scss',
+                    'views/css/style-sass.css': 'views/css/style.scss',
+                    'views/css/login-sass.css': 'views/css/login.scss',
                 }
             }
         },
@@ -108,20 +109,28 @@ module.exports = function(grunt) {
                     banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n'
                 },
                 files: {
-                    'release/css/style.min.css' : [
+                    'release/views/css/login.min.css' : [
                         'bower_components/bootstrap/dist/css/bootstrap.css',
-                        'css/*.css',
+                        'views/css/login*.css',
+                    ],
+                    'release/views/css/style.min.css' : [
+                        'bower_components/bootstrap/dist/css/bootstrap.css',
+                        'views/css/style*.css',
                     ]
                 }
             }
         },
         watch: {
             sass: {
-                files: 'css/*.scss',
+                files: ['views/css/*.scss', '!views/css/_*.scss'],
                 tasks: ['newer:sass'],
             },
+            sass2: {
+                files: 'views/css/_*.scss',
+                tasks: ['sass'],
+            },
             js: {
-                files: 'js/*.js',
+                files: 'views/js/*.js',
                 tasks: ['newer:jshint']
             }
         },
@@ -135,25 +144,41 @@ module.exports = function(grunt) {
                 env_block_prod: 'env:prod'
             },
             build: {
-                files: [{
-                    expand: true,
-                    cwd: '',
-                    src: ['*.html', '*.php'],
-                    dest: 'release/'
-                }]
+                files: [
+                    {
+                        expand: true,
+                        cwd: '',
+                        src: ['*.html', '*.php'],
+                        dest: 'release/'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'views/',
+                        src: ['*.html', '*.php'],
+                        dest: 'release/views/'
+                    },
+                ]
             }
         },
         copy: {
             build: {
                 files: [
-                {expand: true, flatten: true, src: ['img/*'], dest: 'release/img/', filter: 'isFile'},
+                {expand: true, flatten: true, src: ['views/img/*'], dest: 'release/views/img/', filter: 'isFile'},
+                {expand: true, flatten: true, src: ['views/include/*'], dest: 'release/views/include/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['bower_components/bootstrap/fonts/*'], dest: 'release/fonts/', filter: 'isFile'},
+                {expand: true, flatten: true, src: ['components/*'], dest: 'release/components/', filter: 'isFile'},
+                {expand: true, flatten: true, src: ['controllers/*'], dest: 'release/controllers/', filter: 'isFile'},
+                {expand: true, flatten: true, src: ['config/*'], dest: 'release/config/', filter: 'isFile'},
+                {expand: true, flatten: true, src: ['models/*'], dest: 'release/models/', filter: 'isFile'},
+                {expand: true, flatten: true, src: ['controllers/'], dest: 'release/controllers/', filter: 'isFile'},
+                {expand: true, flatten: true, src: ['.htaccess'], dest: 'release/', filter: 'isFile'},
                 ]
             },
         },
         clean: {
             build: ['tmp/'],
-            release: ['release/']
+            release: ['release/'],
+            css: ['views/css/*.map', 'views/css/*.css']
         },
     });
 

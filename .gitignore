@@ -11,3 +11,5 @@ tmp/**
 .sass-cache/**
 style-sass.css
 /css/*.map
+distrib/**
+old/**
