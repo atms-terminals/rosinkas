@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <link rel="shortcut icon" href='img/favicon.ico' type="image/x-icon" />
-    <title>ServiceDesc</title>
+    <title>Terminal</title>
 
     <!-- env:prod --#>
         <link rel="stylesheet" href="views/css/style.min.css?<?= filemtime("views/css/style.min.css")?>">
@@ -36,7 +36,6 @@
     <!-- env:dev -->
         <script src="../bower_components/jquery/dist/jquery.js"></script>
         <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="../bower_components/leaflet/dist/leaflet.js"></script>
         <script src='views/js/index.js?<?= filemtime("views/js/index.js")?>'></script>
     <!-- env:dev:end -->
 </body>

@@ -7,24 +7,24 @@ body {
 .form-signin {
   margin: 50px auto 0;
   max-width: 300px;
-  background-color: #d28f60;
+  background-color: #37889a;
   padding: 30px;
   border-radius: 5px;
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-signin .btn-primary {
-  background-color: #c67339;
-  border-color: #9f5c2d;
+  background-color: #2a6774;
+  border-color: #1c464f;
 }
 
 .form-signin .btn-primary:hover {
-  background-color: #9f5c2d;
-  border-color: #774522;
+  background-color: #1c464f;
+  border-color: #0f2529;
 }
 
 .form-control:focus {
-  border-color: #d28f60;
+  border-color: #37889a;
 }
 
 /*# sourceMappingURL=login-sass.css.map */
