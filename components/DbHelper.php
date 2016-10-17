@@ -15,10 +15,6 @@ class DbHelper
      * Создание соединения mySql
      * @return int дескриптор соединения
      */
-
-    /**
-     * Установка соединения с БД
-     */
     private static function getConnection()
     {
         if (self::$connection == null) {

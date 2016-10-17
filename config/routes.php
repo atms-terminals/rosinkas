@@ -1,5 +1,6 @@
 <?php
 return array(
-    '(index.php)' => 'index/index',
-    '(main)' => 'index/index',
+    '.*?/(terminal.php)' => 'terminal/index',
+    '.*?/(admin.php)' => 'admin/index',
+    '.*?/ajax/move' => 'ajax/move',
 );

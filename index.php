@@ -1,6 +1,7 @@
 <?php
 use components\Router as router;
 use components\User as user;
+use components\Url as url;
 
 // FRONT CONTROLLER
 
@@ -17,6 +18,7 @@ define('ROOT', __DIR__);
 require_once(ROOT.'/components/Router.php');
 require_once(ROOT.'/components/DbHelper.php');
 require_once(ROOT.'/components/User.php');
+require_once(ROOT.'/components/Url.php');
 
 try {
     // создаем пользователя

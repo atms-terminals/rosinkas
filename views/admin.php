@@ -25,11 +25,7 @@
     <![endif]-->
 </head>
 <body>
-    <div class="container">
-        <h1>SECOND</h1>
-        <a href="index.php">index.php</a>
-        <?php echo "<pre>"; print_r($_COOKIE); echo "</pre>"; ?>
-    </div>
+    <div class="container"><h1><?= __FILE__ ?></h1></div>
 
     <!-- env:prod --#>
         <script src='views/js/index.min.js?<?= filemtime("views/js/index.min.js")?>'></script>

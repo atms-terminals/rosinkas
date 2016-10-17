@@ -1,5 +1,5 @@
 <?php
-namespace controllers\IndexController;
+namespace controllers\AdminController;
 
 // include_once ROOT.'/models/News.php';
 // use models\News as model;
@@ -7,7 +7,7 @@ namespace controllers\IndexController;
 /**
 * productController
 */
-class IndexController
+class AdminController
 {
     public function actionIndex()
     {
@@ -15,7 +15,7 @@ class IndexController
 
         // $newsList = model\News::getNewsList();
 
-        require_once(ROOT.'/views/index.php');
+        require_once(ROOT.'/views/admin.php');
         return true;
     }
 }

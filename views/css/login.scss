@@ -9,22 +9,22 @@ body {
 .form-signin {
 	margin: 50px auto 0;
 	max-width: 300px;
-	background-color: darken($background, 10%);
+	background-color: darken($backgroundLogin, 10%);
 	padding: 30px;
 	border-radius: 5px;
 	box-shadow: 1px 1px 10px rgba(0,0,0,.1)
 }
 
 .form-signin .btn-primary {
-	background-color: darken($background, 20%);
-	border-color: darken($background, 30%);
+	background-color: darken($backgroundLogin, 20%);
+	border-color: darken($backgroundLogin, 30%);
 }
 
 .form-signin .btn-primary:hover {
-	background-color: darken($background, 30%);
-	border-color: darken($background, 40%);
+	background-color: darken($backgroundLogin, 30%);
+	border-color: darken($backgroundLogin, 40%);
 }
 
 .form-control:focus {
-    border-color: darken($background, 10%);
+    border-color: darken($backgroundLogin, 10%);
 }

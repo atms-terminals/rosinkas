@@ -1,12 +1,13 @@
 <?php
+
 namespace components\User;
 
-use Exception;
 use components\DbHelper as dbHelper;
+use components\Url as url;
 
 /**
-* создаем пользователя
-*/
+ * создаем пользователя.
+ */
 class User
 {
     /**
@@ -18,64 +19,92 @@ class User
      */
     private static $sid = null;
     /**
-     * @var array привилегии пользователя (по именам)
+     * @var string $startUrl начальная страница пользователя
+     * @var string $firstScreen первый экран сценария
      */
-    public static $rightsByName = array();
-    /**
-     * @var array привилегии пользователя (по id)
-     */
-    private static $rightsById = array();
-    /**
-     * @var array главное меню со всеми пунктами
-     */
-    private static $menu = array();
-    /**
-     * @var string начальная страница пользователя
-     */
-    private static $firstPage = 'index.php';
+    private static $startUrl = 'index.php';
+    private static $firstScreen = 3;
 
     /**
-     * Проверка логина и пароля, создание сессии
+     * Проверка логина и пароля, создание сессии.
      */
     private static function authMe()
     {
         $login = (empty($_POST['login'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['login']);
         $password = (empty($_POST['password'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['password']);
-        $ip = getenv("REMOTE_ADDR");
+        $ip = url\Url::getIp();
 
-        $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT session_add('$login', '$password', '$ip') sid";
+        $query = '/*'.__FILE__.':'.__LINE__.'*/ '."SELECT sessions_add('$login', '$password', '$ip') sid";
         $row = dbHelper\DbHelper::selectRow($query);
         if (empty($row['sid'])) {
-            throw new \Exception("Not auth", 404);
+            throw new \Exception('Not auth', 404);
         } else {
             self::$sid = $row['sid'];
-            $_COOKIE['sid'] = $row['sid'];
-            setcookie("sid", $row['sid'], time() + 24 * 3600);
         }
+
         return true;
     }
 
     /**
-     * Получение id пользователя
+     * Возвращает SID.
+     *
+     * @return string SID
      */
-    private static function getId()
+    public static function getSid()
     {
-        if (empty($_COOKIE['sid']) || $_SERVER['REQUEST_URI'] == '/') {
+        return self::$sid;
+    }
+
+    /**
+     * Возвращает начальную страницу.
+     *
+     * @return string startUrl
+     */
+    public static function getStartUrl()
+    {
+        return self::$startUrl;
+    }
+
+    /**
+     * Возвращает первый экран
+     *
+     * @return string firstScreen
+     */
+    public static function getFirstScreen()
+    {
+        return self::$firstScreen;
+    }
+
+    /**
+     * Возвращает id пользователя
+     *
+     * @return string firstScreen
+     */
+    public static function getId()
+    {
+        return self::$uid;
+    }
+
+    /**
+     * Получение id пользователя.
+     */
+    private static function checktId()
+    {
+        self::$sid = url\Url::extractSid();
+        $firstTime = false;
+
+        if (!self::$sid) {
             self::authMe();
             $firstTime = true;
-        } else {
-            self::$sid = dbHelper\DbHelper::mysqlStr($_COOKIE['sid']);
-            $firstTime = false;
         }
 
         $sid = self::$sid;
 
         // получаем id пользователя
-        $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT session_check('$sid') id_user";
+        $query = '/*'.__FILE__.':'.__LINE__.'*/ '."SELECT sessions_check('$sid') id_user";
         $row = dbHelper\DbHelper::selectRow($query);
         if (empty($row['id_user'])) {
-            setcookie('sid', 0, time() - 24 * 3600);
-            throw new \Exception("Not auth", 404);
+            throw new \Exception('Not auth', 404);
         } else {
             self::$uid = $row['id_user'];
         }
@@ -83,59 +112,33 @@ class User
         $uid = self::$uid;
 
         // получаем настройки пользователя
-        $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT u.first_page from users u where u.id = $uid";
+        $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                "SELECT r.start_url, r.first_screen 
+                from users u
+                    join roles r on u.id_role = r.id
+                where u.id = $uid";
         $row = dbHelper\DbHelper::selectRow($query);
-        self::$firstPage = $row['first_page'];
+        self::$startUrl = $row['start_url'];
+        self::$firstScreen = $row['first_screen'];
 
         if ($firstTime) {
-            $_SERVER['REQUEST_URI'] = self::$firstPage;
-            // header('Location: '.self::$firstPage);
+            $_SERVER['REQUEST_URI'] = "\/$sid\/".self::$startUrl;
         }
-
-        // получаем меню
-        $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT * from main_menu m order by m.parent, m.`order`";
-        $menu = dbHelper\DbHelper::selectSet($query);
-        self::$menu = $menu;
 
         return true;
     }
 
     /**
-     * Получение настроек пользователя
+     * Получение настроек пользователя.
      */
     public static function get()
     {
         if (self::$uid == null) {
-            self::getId();
+            self::checktId();
         }
 
         $uid = self::$uid;
 
-        // получаем права
-        $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT u.id_right, u.name, u.`status` from v_rights_users u where u.id_user = $uid";
-        $trights = dbHelper\DbHelper::selectSet($query);
-
-        if ($trights) {
-            foreach ($trights as $row) {
-                self::$rightsByName[$row['name']] = $row['status'];
-                self::$rightsById[$row['id_right']] = $row['status'];
-            }
-        }
         return true;
-    }
-
-    /**
-     * Проверка прав
-     * @param string $name название привилегии
-     * @return int значение
-     */
-    public static function checkRight($name = '')
-    {
-        if (count(self::$rightsByName)) {
-            self::get();
-        }
-
-        return empty(self::$rightsByName[$name]) ? 0 : 1;
     }
 }

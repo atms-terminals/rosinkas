@@ -3,26 +3,13 @@
 namespace components\Router;
 
 use components\User as user;
+use components\Url as url;
 
 /**
  * Маршрутизация запросов.
  */
 class Router
 {
-    /**
-     * возвращает строку запроса URI.
-     *
-     * @return string
-     */
-    private static function getUri()
-    {
-        if (!empty($_SERVER['REQUEST_URI'])) {
-            return trim($_SERVER['REQUEST_URI'], '/');
-        }
-
-        return '';
-    }
-
     /**
      * Основной метод роутера.
      */
@@ -32,10 +19,11 @@ class Router
         $routes = include $routesPath;
 
         // получить строку запроса
-        $uri = self::getUri();
+        $uri = url\Url::getUri();
 
         // проверить наличие такого запроса в routes.php
         $done = false;
+
         foreach ($routes as $uriPattern => $path) {
             if (preg_match("~$uriPattern~", $uri)) {
                 $internalRoute = preg_replace("~$uriPattern~", $path, $uri);
@@ -43,11 +31,6 @@ class Router
 
                 // имя выполняемого скрипта
                 $rightName = "{$segments[0]}.php";
-
-                // проверяем привилегии на просмотр
-                if (!user\User::checkRight($rightName)) {
-                    throw new \Exception('Not auth', 404);
-                }
 
                 // если есть совпадение, определить какой контроллер и action обрабатывает запрос
                 $controllerName = ucfirst(array_shift($segments)).'Controller';

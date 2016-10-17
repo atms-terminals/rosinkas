@@ -1,7 +1,7 @@
 <?php
 return array(
     'host' => 'localhost',
-    'dbname' => 'servicedesc',
-    'user' => 'servicedesc',
-    'password' => 'Nzp4FUVZ4w3G4a8v'
+    'dbname' => 'albatros',
+    'user' => 'albatros',
+    'password' => 'fdgkje903;5ej-rmf=g0%$9fsd0r-xc.'
     );
