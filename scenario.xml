@@ -1,0 +1,13 @@
+<!-- Этот файл сценария не рабочий, создан для удобства редактирования.
+	рабочий сценарий лежит в mySql -->
+<states>
+    <s1>
+        <desc>Терминал. Основной экран терминала</desc>
+        <screen>5</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>3</timeout>
+            <action>move</action>
+        </timer>
+    </s1>
+</states>
