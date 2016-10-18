@@ -1,13 +1,53 @@
 <!-- Этот файл сценария не рабочий, создан для удобства редактирования.
-	рабочий сценарий лежит в mySql -->
+    рабочий сценарий лежит в mySql -->
 <states>
     <s1>
         <desc>Терминал. Основной экран терминала</desc>
-        <screen>5</screen>
+        <screen>1</screen>
         <timer>
             <screen>1</screen>
-            <timeout>3</timeout>
+            <timeout>20</timeout>
             <action>move</action>
         </timer>
     </s1>
+
+    <s2>
+        <desc>Терминал. Ввод карты</desc>
+        <screen>2</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>90</timeout>
+            <action>move</action>
+        </timer>
+    </s2>
+
+    <s3>
+        <desc>Терминал. Выбор услуги</desc>
+        <screen>3</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>90</timeout>
+            <action>move</action>
+        </timer>
+    </s3>
+
+    <s4>
+        <desc>Терминал. Прием денег</desc>
+        <screen>4</screen>
+        <timer>
+            <screen>5</screen>
+            <timeout>300</timeout>
+            <action>pay</action>
+        </timer>
+    </s4>
+
+    <s5>
+        <desc>Терминал. Платеж</desc>
+        <screen>4</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>300</timeout>
+            <action>move</action>
+        </timer>
+    </s5>
 </states>

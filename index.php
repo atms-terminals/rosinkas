@@ -1,4 +1,5 @@
 <?php
+
 use components\Router as router;
 use components\User as user;
 use components\Url as url;
@@ -6,19 +7,20 @@ use components\Url as url;
 // FRONT CONTROLLER
 
 if ($_SERVER['SERVER_ADDR'] == '127.0.0.1') {
-    ini_set("display_errors", "1");
-    ini_set("error_reporting", E_ALL | E_STRICT | E_NOTICE);
+    ini_set('display_errors', '1');
+    ini_set('error_reporting', E_ALL | E_STRICT | E_NOTICE);
 } else {
-    ini_set("display_errors", "0");
-    ini_set("error_reporting", E_ERROR);
+    ini_set('display_errors', '0');
+    ini_set('error_reporting', E_ERROR);
 }
 
 // подключение файлов системы
 define('ROOT', __DIR__);
-require_once(ROOT.'/components/Router.php');
-require_once(ROOT.'/components/DbHelper.php');
-require_once(ROOT.'/components/User.php');
-require_once(ROOT.'/components/Url.php');
+require_once ROOT.'/components/Router.php';
+require_once ROOT.'/components/DbHelper.php';
+require_once ROOT.'/components/User.php';
+require_once ROOT.'/components/Url.php';
+require_once ROOT.'/components/Proffit.php';
 
 try {
     // создаем пользователя
@@ -26,7 +28,6 @@ try {
 
     // вызов роутера
     router\Router::run();
-
 } catch (Exception $e) {
     switch ($e->getCode()) {
         case 100:
@@ -36,8 +37,6 @@ try {
             router\Router::defaultPage();
             break;
         default:
-            echo "<pre>";
             print_r($e);
-            echo "</pre>";
     }
 }

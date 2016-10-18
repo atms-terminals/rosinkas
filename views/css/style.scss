@@ -1,175 +1,222 @@
 @import '_consts.scss';
 
 body {
-	font-family: arial;
-	background-color: $background;
+    font-family: arial;
+    background-color: $background;
 }
 
 .container-fluid {
-	padding: 0;
+    padding: 0;
 }
 
 .container-fluid .row{
-	margin: 0;
+    margin: 0;
 }
 
 .logos {
-	color: $firmFrontColor;
-	text-align: center;
-	text-transform: uppercase;
-	border-bottom: 2px solid $firstFirmBack;
-	padding-bottom: 15px;
-	margin: 0;
+    color: $firmFrontColor;
+    text-align: center;
+    text-transform: uppercase;
+    border-bottom: 2px solid $firstFirmBack;
+    padding-bottom: 15px;
+    margin: 0;
 }
 
 .logos .lines {
-	padding: 10px 0;
+    padding: 10px 0;
 }
 
 .logos .line1 {
-	background-color: $firstFirmBack;
-	font-size: 15px;
+    background-color: $firstFirmBack;
+    font-size: 15px;
 }
 
 .logos .line2 {
-	background-color: $secondFirmBack;
-	font-size: 20px;
-	padding: 10px 0;
-	font-weight: 700;
+    background-color: $secondFirmBack;
+    font-size: 20px;
+    padding: 10px 0;
+    font-weight: 700;
 }
 
 .logos img {
-	width: 100px;
-	margin: 15px;
-	position: relative;
-	top: 5px;
+    width: 100px;
+    margin: 15px;
+    position: relative;
+    top: 5px;
 }
 
 .logos .title {
-	color: $secondFirmBack;
+    color: $secondFirmBack;
 }
 
 .logos .title  h1 {
-	color: $secondFirmBack;
-	font-size: 50px;
-	font-weight: 600;
+    color: $secondFirmBack;
+    font-size: 50px;
+    font-weight: 600;
 }
 
 .logos .title  h2 {
-	color: $firstFirmBack;
-	font-size: 30px;
+    color: $firstFirmBack;
+    font-size: 30px;
 }
 
 .type {
-	padding: 20px;
-	vertical-align: middle;
-	text-align: center;
+    padding: 20px;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .type h1 {
-	color: $secondFirmBack;
-	font-size: 33px;
-	font-weight: 600;
-	text-align: center;
-	text-transform: uppercase;
+    color: $secondFirmBack;
+    font-size: 33px;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase;
 }
 
 .tarif {
-	font-size: 30px;
-	padding: 10px 0 0 0;
-	text-align: center;
+    font-size: 30px;
+    padding: 10px 0 0 0;
+    text-align: center;
 }
 
 .tarif table {
-	margin: 10px auto 0;
-	width: 600px;
-	font-size: 18px;
+    margin: 10px auto 0;
+    width: 600px;
+    font-size: 18px;
 }
 
 .tarif table thead{
-	font-weight: 700;
-	text-transform: uppercase;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .tarif table td{
-	padding: 3px !important;
+    padding: 3px !important;
 }
 
 .accept {
-	text-align: center;
-	text-transform: uppercase;
-	font-size: 40px;
-	font-weight: 200;
-	width: 350px;
-	border: 3px solid $secondFirmBack; 
-	border-radius: 5px;
-	margin: 40px auto;
-	/*padding-bottom: 10px;*/
-	color: $secondFirmBack;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 40px;
+    font-weight: 200;
+    width: 350px;
+    border: 3px solid $secondFirmBack; 
+    border-radius: 5px;
+    margin: 40px auto;
+    /*padding-bottom: 10px;*/
+    color: $secondFirmBack;
 }
 
 .accept .amount {
-	font-size: 120px;
-	font-weight: 900;
-	padding: -5px 0;
+    font-size: 120px;
+    font-weight: 900;
+    padding: -5px 0;
 }
 
 .accept h3 {
-	font-size: 40px;
-	padding: 0;
-	margin: 5px;	
+    font-size: 40px;
+    padding: 0;
+    margin: 5px;    
 }
 
 .balance h1{
-	color: $secondFirmBack;
-	font-size: 33px;
-	font-weight: 600;
-	text-align: center;
-	text-transform: uppercase;
+    color: $secondFirmBack;
+    font-size: 33px;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase;
 }
 
 .balance table {
-	margin: 30px auto 160px;
-	width: 600px;
-	font-size: 30px;
-	text-align: center;
+    margin: 30px auto 160px;
+    width: 600px;
+    font-size: 30px;
+    text-align: center;
 }
 
 .balance table thead{
-	font-weight: 700;
-	text-transform: uppercase;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .line {
-	margin-top: 150px
+    margin-top: 150px
 }
 .row.time {
-	margin: 20px;
-	font-size: 30px;
-	color: $secondFirmBack;
+    margin: 20px;
+    font-size: 30px;
+    color: $secondFirmBack;
 }
-a.btn {
-	width: 60%;
-	height: 115px;
-	text-align: center;
-	line-height:108px;
-	display: block;
-	margin: 20px auto;
-	background-color: $buttonColor;
-	border: 0;
-	color: $firstFirmBack;
-	font-size: 40px;
-	text-transform: uppercase;
-}
-
-a.btn.back {
-	width: 20%;
-	height: 60px;
-	line-height: 49px;
-	margin: 15px auto;
+#main a.btn {
+    width: 60%;
+    height: 200px;
+    text-align: center;
+    line-height:200px;
+    display: block;
+    margin: 20px auto;
+    background-color: $buttonColor;
+    border: 0;
+    color: $firstFirmBack;
+    font-size: 60px;
+    text-transform: uppercase;
 }
 
-a.btn.balance {
-	width: 600px;
-	margin: 0 auto;
+#main a.btn.small {
+    width: 120px;
+    height: 50px;
+    line-height: 50px;
+    font-weight: 600;
+    font-size: 12px;
+    display: block-inline;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 2px;
+    padding: 2px;
+}
+
+#main .title  h2 {
+    color: $secondFirmBack;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 600;
+}
+
+#main .title  h1 {
+    color: $secondFirmBack;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 50px;
+    font-weight: 600;
+}
+
+#main .serviceListArea {
+    overflow: auto;
+    height: 620px;
+}
+
+::-webkit-scrollbar {
+    width: 20px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: lighten($buttonColor, 50%);
+    border-left: 1px solid $buttonColor;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: darken($buttonColor, 30%);
+}
+
+#main .table {
+    font-size: 22px;
+}
+
+#main .table th {
+    text-align: center;
+}
+
+#main .table tbody tr td {
+    vertical-align: middle;
 }

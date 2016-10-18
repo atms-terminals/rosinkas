@@ -38,9 +38,9 @@ function getCurrTime(needDot) {
 
 /////////////////////////////////////////////////////////////////////////////////////
 // получение содержимого экрана с сервера
-function doAction(activity, nextScreen, value){
+function doAction(activity, nextScreen, values){
     'use strict';
-    value = value || 0;
+    values = values || {};
     if (stopAjax === 1) {
         return false;
     }
@@ -53,7 +53,7 @@ function doAction(activity, nextScreen, value){
 
     var req = {
         nextScreen: nextScreen,
-        value: value
+        values: values
     };
 
     // $('#loadingMessage').show();
@@ -71,19 +71,20 @@ function doAction(activity, nextScreen, value){
             
             // если есть печатная форма - печатаем
             if (response.printForm !== undefined && response.printForm !== '') {
-                var htmlText = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />' +
-                    '</head><body>' + response.printForm + '</body></html>';
+                // console.log('Печать чека');
+                // var htmlText = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />' +
+                //     '</head><body>' + response.printForm + '</body></html>';
 
-                // $('div.print').html(htmlText);
-                // window.print(); 
-                // $('div.print').html('');
-                var detailWindow = window.open('', '_blank', 'left=10000, top=20000, height=1, width=1, menubar=no, toolbar=no, location=no, directories=no, status=no, resizable=no, scrollbars=no, visible=no');
-                detailWindow.resizeTo(0, 0);
-                detailWindow.blur();
-                detailWindow.document.write(htmlText);
-                detailWindow.document.close();
-                detailWindow.print();
-                detailWindow.close();
+                // // $('div.print').html(htmlText);
+                // // window.print(); 
+                // // $('div.print').html('');
+                // var detailWindow = window.open('', '_blank', 'left=10000, top=20000, height=1, width=1, menubar=no, toolbar=no, location=no, directories=no, status=no, resizable=no, scrollbars=no, visible=no');
+                // detailWindow.resizeTo(0, 0);
+                // detailWindow.blur();
+                // detailWindow.document.write(htmlText);
+                // detailWindow.document.close();
+                // detailWindow.print();
+                // detailWindow.close();
             }
 
             // если есть таймер и нет аудио для автоматического перехода
@@ -105,6 +106,7 @@ function doAction(activity, nextScreen, value){
         });
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
 $(document).ready(function () {
     'use strict';
 
@@ -143,12 +145,24 @@ $(document).ready(function () {
         // действие
         var activity = $(this).siblings('.activity').val();
         // значение
-        var value = $(this).siblings('.value').val();
+        var values = {};
+        $(this).parent().find('.value').each(function() {
+            var theClass = $(this).attr('class');
+            var classes = theClass.match(/\w+|"[^"]+"/g);
+            var i;
+            for (i in classes) {
+                if (classes.hasOwnProperty(i)) {
+                    if (classes[i] !== 'value') {
+                        values[classes[i]] = $(this).val();
+                    }
+                }
+            }
+        });
 
         // останавливаем таймеры
         clearTimeout(timer);
 
-        doAction(activity, nextScreen, value);
+        doAction(activity, nextScreen, values);
     });
 });
 
