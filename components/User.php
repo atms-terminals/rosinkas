@@ -11,17 +11,13 @@ use components\Url as url;
 class User
 {
     /**
-     * @var int id пользователя
-     */
-    private static $uid = null;
-    /**
-     * @var int sid пользователя
-     */
-    private static $sid = null;
-    /**
+     * @var int $id пользователя
+     * @var int $sid пользователя
      * @var string $startUrl начальная страница пользователя
      * @var string $firstScreen первый экран сценария
      */
+    private static $uid = null;
+    private static $sid = null;
     private static $startUrl = 'index.php';
     private static $firstScreen = 3;
 

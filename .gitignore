@@ -10,6 +10,6 @@ tmp/**
 # sass файлы
 .sass-cache/**
 style-sass.css
-/css/*.map
+css/*.css.map
 distrib/**
 old/**
