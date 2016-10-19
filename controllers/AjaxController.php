@@ -242,6 +242,7 @@ class AjaxController
             $response['printForm'] = preg_replace('/({.*?})/ui', '', $response['printForm']);
         }
 
+        date_default_timezone_set('Asia/Omsk');
         $response['dt'] = array(
             'year' => date('Y'),
             'month' => date('m') - 1,
