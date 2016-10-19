@@ -9,12 +9,12 @@
     <title>ServiceDesc</title>
 
     <!-- env:prod --#>
-        <link rel="stylesheet" href="views/css/style.min.css?<?= filemtime("views/css/style.min.css")?>">
+        <link rel="stylesheet" href="views/css/style.min.css?<?= filemtime("views/css/login.min.css")?>">
     <!-- env:prod:end -->
 
     <!-- env:dev -->
-        <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="views/css/style-sass.css?<?= filemtime("views/css/style-sass.css")?>" rel="stylesheet">
+        <link href='../bower_components/bootstrap/dist/css/bootstrap.css' rel="stylesheet">
+        <link href='views/css/style-sass.css' rel="stylesheet">
     <!-- env:dev:end -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -28,13 +28,13 @@
     <div class="container"><h1><?= __FILE__ ?></h1></div>
 
     <!-- env:prod --#>
-        <script src='views/js/index.min.js?<?= filemtime("views/js/index.min.js")?>'></script>
+        <script src='views/js/admin.min.js?<?= filemtime("views/js/admin.min.js")?>'></script>
     <!-- env:prod:end -->
 
     <!-- env:dev -->
-        <script src="bower_components/jquery/dist/jquery.js"></script>
-        <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-        <script src='views/js/index.js?<?= filemtime("views/js/index.js")?>'></script>
+        <script src='../bower_components/jquery/dist/jquery.js'></script>
+        <script src='../bower_components/bootstrap/dist/js/bootstrap.js'></script>
+        <script src='views/js/admin.js'></script>
     <!-- env:dev:end -->
 </body>
 </html>

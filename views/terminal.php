@@ -8,7 +8,7 @@
     <title>Albatros</title>
 
     <!-- env:prod --#>
-        <link rel="stylesheet" href="css/style.min.css">
+        <link rel="stylesheet" href="views/css/style.min.css?<?= filemtime("views/css/login.min.css")?>">
     <!-- env:prod:end -->
 
     <!-- env:dev -->
@@ -55,13 +55,14 @@
     </div>
 
     <!-- env:prod --#>
-        <script src='js/script.min.js'></script>
+        <script src='views/js/terminal.min.js?<?= filemtime("views/js/terminal.min.js")?>'></script>
     <!-- env:prod:end -->
 
     <!-- env:dev -->
         <script src='../bower_components/jquery/dist/jquery.js'></script>
         <script src='../bower_components/bootstrap/dist/js/bootstrap.js'></script>
         <script src='views/js/terminal.js'></script>
+        <script src='views/js/cashcode.js'></script>
     <!-- env:dev:end -->
 </body>
 </html>

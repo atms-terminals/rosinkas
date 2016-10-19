@@ -13,9 +13,8 @@
     <!-- env:prod:end -->
 
     <!-- env:dev -->
-        <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="views/css/login-sass.css?<?= filemtime("views/css/login-sass.css")?>" rel="stylesheet">
-        <link href="views/css/style-sass.css?<?= filemtime("views/css/style-sass.css")?>" rel="stylesheet">
+        <link href='../bower_components/bootstrap/dist/css/bootstrap.css' rel="stylesheet">
+        <link href='views/css/login-sass.css' rel="stylesheet">
     <!-- env:dev:end -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->

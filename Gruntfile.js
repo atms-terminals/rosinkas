@@ -63,14 +63,14 @@ module.exports = function(grunt) {
             },
             build: {
                 files: {
-                    'tmp/index.js': ['tmp/bower.js', 'views/js/index.js'],
+                    'tmp/terminal.js': ['tmp/bower.js', 'views/js/terminal.js', 'views/js/cashcode.js'],
                 },
             }
         },
         removelogging: {
             build: {
                 files: {
-                    'tmp/index.min.js': 'tmp/index.js',
+                    'tmp/terminal.min.js': 'tmp/terminal.js',
                 },
 
                 options: {
