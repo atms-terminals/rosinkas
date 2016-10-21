@@ -6,4 +6,6 @@ return array(
     '.*?/ajax/getBalance' => 'ajax/getBalance',
     '.*?/ajax/getMoneyScreen' => 'ajax/getMoneyScreen',
     '.*?/ajax/pay' => 'ajax/pay',
+    '.*?/ajax/writeLog' => 'ajax/writeLog',
+    '.*?/ajax/collection' => 'ajax/collection',
 );

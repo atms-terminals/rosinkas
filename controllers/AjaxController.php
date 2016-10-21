@@ -1,10 +1,11 @@
 <?php
-
 namespace controllers\AjaxController;
 
 use components\DbHelper as dbHelper;
 use components\User as user;
 use components\Proffit as proffit;
+
+define('ERROR_SCREEN', 7);
 
 /**
  * обработка запросов ajax.
@@ -22,6 +23,7 @@ class AjaxController
         $amount = (empty($_POST['values']['amount'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['amount']);
         $price = (empty($_POST['values']['price'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['price']);
         $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
+        $customer = (empty($_POST['values']['customer'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['customer']);
         $uid = user\User::getId();
 
         if (!$idAbonement || !$amount || !$card || !$price) {
@@ -31,13 +33,26 @@ class AjaxController
             exit();
         }
 
-        $countUnits = ceil($amount / $price);
+        $replArray = $this->makeReplaceArray($nextScreen);
 
         // записываем запрос на оплату
         $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-            "SELECT payments_prepare($uid, '$idAbonement', '$card', '$amount', $countUnits) idPayment;";
-        $pay = dbHelper\DbHelper::selectRow($query);
-        $idPayment = $pay['idPayment'];
+            "call payments_prepare($uid, '$idAbonement', '$card', '$customer', '$amount', $price, @idPayment, @countUnits, @prepayment);";
+        $pay = dbHelper\DbHelper::call($query);
+        $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT @idPayment idPayment, @countUnits countUnits, @prepayment prepayment";
+        $payment = dbHelper\DbHelper::selectRow($query);
+
+        $prepayment = $payment['prepayment'];
+        $replArray['patterns'][] = '{PREPAYMENT_BEFORE}';
+        $replArray['values'][] = $prepayment;
+
+        $idPayment = $payment['idPayment'];
+        $replArray['patterns'][] = '{ID_PAYMENT}';
+        $replArray['values'][] = $idPayment;
+
+        $countUnits = $payment['countUnits'];
+        $replArray['patterns'][] = '{COUNT_UNITS}';
+        $replArray['values'][] = $countUnits;
 
         // пишем платеж в проффит
         try {
@@ -45,17 +60,24 @@ class AjaxController
             $servicesList = proffit\Proffit::pay($card, $idAbonement, $amount, $countUnits);
         } catch (\Exception $e) {
             // уходим на первый экран
-            $_POST['nextScreen'] = user\User::getFirstScreen();
-            $this->actionMove($e->getMessage());
+            $_POST['nextScreen'] = ERROR_SCREEN;
+            $_POST['values']['type'] = 'proffit';
+            $_POST['values']['message'] = 'Ошибка зачисления платежа: '.$e->getMessage();
+            $this->actionWriteLog();
             exit();
         }
 
         // подтверждаем оплату
         $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-            "SELECT payments_confirm($uid, $idPayment)";
-        $pay = dbHelper\DbHelper::selectRow($query);
+            "call payments_confirm($uid, $idPayment, @prepayment)";
+        $pay = dbHelper\DbHelper::call($query);
+        $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT @prepayment prepayment";
+        $prepayment = dbHelper\DbHelper::selectRow($query);
 
-        $replArray = $this->makeReplaceArray($nextScreen);
+        $preAmount = $prepayment['prepayment'];
+        $replArray['patterns'][] = '{PREPAYMENT}';
+        $replArray['values'][] = $preAmount;
+
         // добавляем список сервисов
         $replArray['patterns'][] = '{ABONEMENT_ID}';
         $replArray['values'][] = $idAbonement;
@@ -67,6 +89,7 @@ class AjaxController
         
         //отправляем результат
         echo json_encode($response);
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,6 +126,7 @@ class AjaxController
         
         //отправляем результат
         echo json_encode($response);
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,8 +146,10 @@ class AjaxController
             $servicesList = proffit\Proffit::getBalance($card);
         } catch (\Exception $e) {
             // уходим на первый экран
-            $_POST['nextScreen'] = user\User::getFirstScreen();
-            $this->actionMove($e->getMessage());
+            $_POST['nextScreen'] = ERROR_SCREEN;
+            $_POST['values']['type'] = 'proffit';
+            $_POST['values']['message'] = 'Ошибка запроса баланса: '.$e->getMessage();
+            $this->actionWriteLog();
             exit();
         }
 
@@ -141,6 +167,7 @@ class AjaxController
                         <input class='value idAbonement' type='hidden' value='{$service['id']}' />
                         <input class='value price' type='hidden' value='{$service['price']}' />
                         <input class='value card' type='hidden' value='$card' />
+                        <input class='value customer' type='hidden' value='{$service['customer']}' />
                         <a class='btn btn-primary action small'>Пополнить</a>
                     </td>
                 </tr>";
@@ -159,6 +186,7 @@ class AjaxController
         
         //отправляем результат
         echo json_encode($response);
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -177,6 +205,57 @@ class AjaxController
         
         //отправляем результат
         echo json_encode($response);
+        return true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Обработка команды инкассации
+     */
+    public function actionCollection()
+    {
+        $uid = user\User::getId();
+
+        $replArray = $this->makeReplaceArray($nextScreen);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT collection($uid) collectionAmount";
+        $row = dbHelper\DbHelper::selectRow($query);
+        $replArray['patterns'][] = '{COLLECTION_AMOUNT}';
+        $replArray['values'][] = $row['collectionAmount'];
+
+        $response = $this->getScreen($nextScreen, $replArray);
+
+        $response['message'] = $message;
+        $response['code'] = 0;
+        
+        //отправляем результат
+        echo json_encode($response);
+        return true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Обработка команды записи ошибки
+     */
+    public function actionWriteLog()
+    {
+        $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
+        $type = (empty($_POST['values']['type'])) ? 'NA' : dbHelper\DbHelper::mysqlStr($_POST['values']['type']);
+        $message = (empty($_POST['values']['message'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['values']['message']);
+        $uid = user\User::getId();
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ "."CALL hws_status_write($uid, '$type', '$message')";
+        $row = dbHelper\DbHelper::call($query);
+
+        $replArray = $this->makeReplaceArray($nextScreen);
+        $response = $this->getScreen($nextScreen, $replArray);
+
+        $response['message'] = $message;
+        $response['code'] = 0;
+        
+        //отправляем результат
+        echo json_encode($response);
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,6 +289,20 @@ class AjaxController
         if (!empty($xml->$idScreen->desc)) {
             $replArray['patterns'][] = '{SCREEN}';
             $replArray['values'][] = $xml->$idScreen->desc;
+        }
+
+        // работа с купюроприемником
+        $response['cash'] = (empty($xml->$idScreen->cash)) ? '0' : '1';
+
+        // вцыполнение проверок
+        $response['check']['hw'] = (empty($xml->$idScreen->check->hw)) ? '0' : '1';
+        // проверяем проффит
+        if (!empty($xml->$idScreen->check->proffit)) {
+            if (!proffit\Proffit::checkConnection()) {
+                $_POST['nextScreen'] = ERROR_SCREEN;
+                $this->actionMove();
+                exit;
+            }
         }
 
         // экранная форма

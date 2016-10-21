@@ -4,6 +4,10 @@
     <s1>
         <desc>Терминал. Основной экран терминала</desc>
         <screen>1</screen>
+        <check>
+            <hw>1</hw>
+            <proffit>1</proffit>
+        </check>
         <timer>
             <screen>1</screen>
             <timeout>20</timeout>
@@ -14,6 +18,9 @@
     <s2>
         <desc>Терминал. Ввод карты</desc>
         <screen>2</screen>
+        <check>
+            <proffit>1</proffit>
+        </check>
         <timer>
             <screen>1</screen>
             <timeout>90</timeout>
@@ -33,7 +40,11 @@
 
     <s4>
         <desc>Терминал. Прием денег</desc>
+        <check>
+            <hw>1</hw>
+        </check>
         <screen>4</screen>
+        <cash>1</cash>
         <timer>
             <screen>5</screen>
             <timeout>300</timeout>
@@ -44,10 +55,39 @@
     <s5>
         <desc>Терминал. Платеж</desc>
         <screen>4</screen>
+        <print>6</print>
         <timer>
             <screen>1</screen>
             <timeout>300</timeout>
             <action>move</action>
         </timer>
     </s5>
+
+    <s6></s6>
+
+    <s7>
+        <desc>Терминал. Ошибка работы с Проффит</desc>
+        <screen>7</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>10</timeout>
+            <action>move</action>
+        </timer>
+    </s7>
+
+    <s8>
+        <desc>Терминал. Ошибка работы с оборудованием</desc>
+        <screen>8</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>10</timeout>
+            <action>move</action>
+        </timer>
+    </s8>
+
+    <s9>
+        <desc>Терминал. Инкассация</desc>
+        <screen>9</screen>
+        <print>10</print>
+    </s9>
 </states>

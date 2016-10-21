@@ -191,6 +191,14 @@ body {
     font-weight: 600;
 }
 
+#main .error  h1 {
+    color: $errorColor;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 50px;
+    font-weight: 600;
+}
+
 #main .serviceListArea {
     overflow: auto;
     height: 620px;

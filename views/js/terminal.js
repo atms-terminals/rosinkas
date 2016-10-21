@@ -1,5 +1,8 @@
+/*jshint unused:false*/
+/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState*/
+
 var currScreen;
-var timer, iAmAliveTimer, clockTimer = 0;
+var timer;
 var flash = 1;
 var currDate = new Date();
 var stopAjax = 0;
@@ -35,19 +38,18 @@ function getCurrTime(needDot) {
     return ret;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////
 // получение содержимого экрана с сервера
 function doAction(activity, nextScreen, values){
     'use strict';
+    // останавливаем таймеры
+    clearTimeout(timer);
+
     values = values || {};
     if (stopAjax === 1) {
         return false;
     }
     stopAjax = 1;
-
-    // останавливаем "я живой"
-    clearTimeout(iAmAliveTimer);
 
     var sid = $('#sid').val();
 
@@ -60,6 +62,16 @@ function doAction(activity, nextScreen, values){
     $.post(sid + '/ajax/' + activity, req, function (response) {
         stopAjax = 0;
         if (response.code === 0) {
+            if (response.check.hw && response.check.hw === '1') {
+                // проверка установленного соединения
+                if (ws.readyState !== ws.OPEN) {
+                    DispatcherWebSocket();
+                } else {
+                    // проверка фискальника
+                    frGetState();
+                }
+            }
+
             // сохраняем время
             currDate = new Date(response.dt.year, response.dt.month, response.dt.date, 
                 response.dt.hours, response.dt.minutes, response.dt.seconds);
@@ -69,6 +81,13 @@ function doAction(activity, nextScreen, values){
             }
             $('#main').show();
             
+            // обработка статуса купюрника
+            if (response.cash && response.cash === '1') {
+                setCashmachineEnabled(true);
+            } else {
+                setCashmachineEnabled(false);
+            }
+
             // если есть печатная форма - печатаем
             if (response.printForm !== undefined && response.printForm !== '') {
                 // console.log('Печать чека');
@@ -98,7 +117,7 @@ function doAction(activity, nextScreen, values){
             $('#main').hide();
             stopAjax = 0;
             $('#loadingMessage').hide();
-            clockTimer =  setTimeout(function() {
+            timer =  setTimeout(function() {
                     // первый скрин, который надо запросить
                     currScreen = $('#idScreen').val();
                     doAction('move', currScreen);
@@ -110,7 +129,7 @@ function doAction(activity, nextScreen, values){
 $(document).ready(function () {
     'use strict';
 
-    clockTimer =  setInterval(function() {
+    var clockTimer =  setInterval(function() {
             var today = new Date();
             var time = getCurrTime(today.getSeconds() % 2);
             $('.currHour').html(time.hours);
@@ -132,7 +151,7 @@ $(document).ready(function () {
 
         } , 1000);
 
-    clockTimer =  setTimeout(function() {
+    timer =  setTimeout(function() {
             // первый скрин, который надо запросить
             currScreen = $('#idScreen').val();
             doAction('move', currScreen);
@@ -158,9 +177,6 @@ $(document).ready(function () {
                 }
             }
         });
-
-        // останавливаем таймеры
-        clearTimeout(timer);
 
         doAction(activity, nextScreen, values);
     });
