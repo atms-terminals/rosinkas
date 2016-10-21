@@ -63,6 +63,26 @@ class Proffit
     }
 
     /**
+     * Проверка соединения с Проффит
+     *
+     * @return bool результат проверки
+     */
+    public static function checkConnection()
+    {
+        $streamOptions = array(
+            'http' => array(
+               'method' => 'GET',
+               'timeout' => self::$timeout,
+               'header' => "Content-type: application/xml\r\n",
+            ),
+        );
+
+        $context = stream_context_create($streamOptions);
+
+        return strstr(@file_get_contents(self::$url, null, $context), "Proffit Sport") ? true : false;
+    }
+
+    /**
      * Отправка запроса в Проффит
      *
      * @param string $post строка запроса
@@ -106,6 +126,8 @@ class Proffit
         $raw = self::sendRequest(self::makeReqBalance($card));
 
         $result = array();
+        $customer = (empty($raw['answer']['CLIENT']['@attributes']['NAME'])) ? '' : $raw['answer']['CLIENT']['@attributes']['NAME'];
+
         foreach ($raw['answer']['ITEM'] as $abon) {
             if ($abon['@attributes']['ACTIVE'] == 1) {
                 $result[] = array (
@@ -114,7 +136,8 @@ class Proffit
                     'dtFinish' => (empty($abon['@attributes']['PURCHASE_FINISH'])) ? 'Бессрочный' : $abon['@attributes']['PURCHASE_FINISH'],
                     'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
                     'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
-                    'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY']
+                    'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY'],
+                    'customer' => $customer
                     );
             }
         }
