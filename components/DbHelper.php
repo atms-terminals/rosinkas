@@ -78,7 +78,7 @@ class DbHelper
     }
 
     /**
-     * Выполнение выборки (1 строкf)
+     * Выполнение выборки (1 строки)
      * @param string $query строка запроса к БД
      * @return array результаты запроса
      *
@@ -102,5 +102,26 @@ class DbHelper
             throw new \Exception("mySql: Ошибка: ".self::$connection->error."<hr /> <pre>$query</pre>", 100);
         }
         return true;
+    }
+
+    /**
+     * Выполнение процедуры
+     * @param string $query строка запроса к БД
+     * @return array результаты запроса
+     *
+     */
+    public static function call($query)
+    {
+        // echo "<pre>"; print_r($query); echo "</pre>";
+        if (self::$connection == null) {
+            self::getConnection();
+        }
+
+        $array = array();
+        if ($result = self::$connection->query($query)) {
+            return true;
+        } else {
+            throw new \Exception("mySql: Ошибка: ".self::$connection->error."<hr /> <pre>$query</pre>", 100);
+        }
     }
 }
