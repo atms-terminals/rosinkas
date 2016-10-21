@@ -54,8 +54,12 @@
 
     <s5>
         <desc>Терминал. Платеж</desc>
-        <screen>4</screen>
-        <print>6</print>
+        <screen>5</screen>
+        <print>
+            <top>6</top>
+            <elements>11</elements>
+            <bottom>10</bottom>
+        </print>
         <timer>
             <screen>1</screen>
             <timeout>300</timeout>
@@ -88,6 +92,9 @@
     <s9>
         <desc>Терминал. Инкассация</desc>
         <screen>9</screen>
-        <print>10</print>
     </s9>
+
+    <s10></s10>
+    <s11></s11>
+
 </states>

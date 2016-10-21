@@ -175,6 +175,14 @@ body {
     padding: 2px;
 }
 
+#main .title  h3 {
+    color: $secondFirmBack;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 300;
+}
+
 #main .title  h2 {
     color: $secondFirmBack;
     text-transform: uppercase;
@@ -201,7 +209,7 @@ body {
 
 #main .serviceListArea {
     overflow: auto;
-    height: 620px;
+    height: 610px;
 }
 
 ::-webkit-scrollbar {

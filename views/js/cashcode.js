@@ -1,8 +1,8 @@
 ﻿/*jshint unused:false*/
 /*global doAction*/
 var ws;
-// const DISPATCHER_URL = 'ws://192.168.3.216:8011'; 
-const DISPATCHER_URL = 'ws://localhost:8011'; 
+const DISPATCHER_URL = 'ws://192.168.3.216:8011'; 
+// const DISPATCHER_URL = 'ws://localhost:8011'; 
 
 /**
  * Блокировка/разблокировка купюрника
@@ -163,6 +163,28 @@ function DispatcherWebSocket() {
         doAction('writeLog', 8, event);
        // The browser doesn't support WebSocket
         // window.alert('WebSocket NOT supported by your Browser!');
+    }
+}
+
+/**
+ * 
+ * Полный функционал по созданию фискального чека
+ *
+ * Позиции задаются списком "название";"цена";"количество";, разделенных между собой символом '|'
+ * Пример: товар 1;100;2;|товар2;300;1;
+ * 
+ * Комментарии печатаются до позиций и после, разделитель в комментариях - конец строки \n
+ */
+function frPrintCheck(positions, summ, comment1, comment2) {
+    'use strict';
+    if (ws.readyState === ws.OPEN) {
+        ws.send('{"object": "fr",' + 
+            ' "cmd": "printcheck",' + 
+            ' "text": "' + positions + '",' + 
+            ' "summ": "' + summ + '",' +
+            ' "comment1": "' + encodeURIComponent(comment1) + '",' + 
+            ' "comment2": "' + encodeURIComponent(comment2) + '"' + 
+            '}');
     }
 }
 

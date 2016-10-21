@@ -1,5 +1,5 @@
 /*jshint unused:false*/
-/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState*/
+/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck*/
 
 var currScreen;
 var timer;
@@ -90,20 +90,12 @@ function doAction(activity, nextScreen, values){
 
             // если есть печатная форма - печатаем
             if (response.printForm !== undefined && response.printForm !== '') {
-                // console.log('Печать чека');
-                // var htmlText = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />' +
-                //     '</head><body>' + response.printForm + '</body></html>';
+                var elements = response.printForm.elements || ';;',
+                    top = response.printForm.top || '',
+                    bottom = response.printForm.top || '',
+                    amount = response.printForm.top || 0;
 
-                // // $('div.print').html(htmlText);
-                // // window.print(); 
-                // // $('div.print').html('');
-                // var detailWindow = window.open('', '_blank', 'left=10000, top=20000, height=1, width=1, menubar=no, toolbar=no, location=no, directories=no, status=no, resizable=no, scrollbars=no, visible=no');
-                // detailWindow.resizeTo(0, 0);
-                // detailWindow.blur();
-                // detailWindow.document.write(htmlText);
-                // detailWindow.document.close();
-                // detailWindow.print();
-                // detailWindow.close();
+                frPrintCheck(elements, amount, top, bottom);
             }
 
             // если есть таймер и нет аудио для автоматического перехода

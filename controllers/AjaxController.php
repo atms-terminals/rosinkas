@@ -24,12 +24,13 @@ class AjaxController
         $price = (empty($_POST['values']['price'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['price']);
         $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
         $customer = (empty($_POST['values']['customer'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['customer']);
+        $serviceName = (empty($_POST['values']['serviceName'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['values']['serviceName']);
         $uid = user\User::getId();
 
         if (!$idAbonement || !$amount || !$card || !$price) {
             // уходим на первый экран
             $_POST['nextScreen'] = user\User::getFirstScreen();
-            $this->actionMove($e->getMessage());
+            $this->actionMove('Не все поля переданы');
             exit();
         }
 
@@ -41,6 +42,15 @@ class AjaxController
         $pay = dbHelper\DbHelper::call($query);
         $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT @idPayment idPayment, @countUnits countUnits, @prepayment prepayment";
         $payment = dbHelper\DbHelper::selectRow($query);
+
+        $replArray['patterns'][] = '{AMOUNT}';
+        $replArray['values'][] = $amount;
+
+        $replArray['patterns'][] = '{SERVICE_NAME}';
+        $replArray['values'][] = $serviceName;
+
+        $replArray['patterns'][] = '{PRICE}';
+        $replArray['values'][] = $price;
 
         $prepayment = $payment['prepayment'];
         $replArray['patterns'][] = '{PREPAYMENT_BEFORE}';
@@ -84,6 +94,8 @@ class AjaxController
 
         $response = $this->getScreen($nextScreen, $replArray);
 
+        $response['printForm']['amount'] = $amount;
+
         $response['message'] = '';
         $response['code'] = 0;
         
@@ -102,6 +114,8 @@ class AjaxController
         $idAbonement = (empty($_POST['values']['idAbonement'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idAbonement']);
         $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
         $price = (empty($_POST['values']['price'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['price']);
+        $customer = (empty($_POST['values']['customer'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['values']['customer']);
+        $serviceName = (empty($_POST['values']['serviceName'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['values']['serviceName']);
 
         if (!$idAbonement) {
             // уходим на первый экран
@@ -118,6 +132,10 @@ class AjaxController
         $replArray['values'][] = $card;
         $replArray['patterns'][] = '{PRICE}';
         $replArray['values'][] = $price;
+        $replArray['patterns'][] = '{CUSTOMER}';
+        $replArray['values'][] = $customer;
+        $replArray['patterns'][] = '{SERVICE_NAME}';
+        $replArray['values'][] = $serviceName;
 
         $response = $this->getScreen($nextScreen, $replArray);
 
@@ -168,6 +186,7 @@ class AjaxController
                         <input class='value price' type='hidden' value='{$service['price']}' />
                         <input class='value card' type='hidden' value='$card' />
                         <input class='value customer' type='hidden' value='{$service['customer']}' />
+                        <input class='value serviceName' type='hidden' value='{$service['name']}' />
                         <a class='btn btn-primary action small'>Пополнить</a>
                     </td>
                 </tr>";
@@ -177,6 +196,16 @@ class AjaxController
         // добавляем список сервисов
         $replArray['patterns'][] = '{SERVICES_LIST}';
         $replArray['values'][] = $rows;
+
+        // получаем текущие авансы
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT p.amount 
+            from cards c
+                join prepayments p on c.id = p.id_card
+            where c.card = '$card'";
+        $row = dbHelper\DbHelper::selectRow($query);
+        $replArray['patterns'][] = '{PREPAYMENT}';
+        $replArray['values'][] = empty($row['amount']) ? 0 : $row['amount'];
 
         $response = $this->getScreen($nextScreen, $replArray);
 
@@ -326,13 +355,35 @@ class AjaxController
         }
 
         // печатная форма
-        if (!empty($xml->$idScreen->print)) {
+        if (!empty($xml->$idScreen->print->top)) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                "SELECT s.html from screens s where s.id = '{$xml->$idScreen->print}'";
+                "SELECT s.html from screens s where s.id = '{$xml->$idScreen->print->top}'";
             $row = dbHelper\DbHelper::selectRow($query);
-            $response['printForm'] = stripslashes($row['html']);
-            $response['printForm'] = str_replace($replArray['patterns'], $replArray['values'], $response['printForm']);
-            $response['printForm'] = preg_replace('/({.*?})/ui', '', $response['printForm']);
+
+            $printForm = stripslashes($row['html']);
+            $printForm = str_replace($replArray['patterns'], $replArray['values'], $printForm);
+            $printForm = preg_replace('/({.*?})/ui', '', $printForm);
+            $response['printForm']['top'] = $printForm;
+        }
+        if (!empty($xml->$idScreen->print->bottom)) {
+            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                "SELECT s.html from screens s where s.id = '{$xml->$idScreen->print->bottom}'";
+            $row = dbHelper\DbHelper::selectRow($query);
+
+            $printForm = stripslashes($row['html']);
+            $printForm = str_replace($replArray['patterns'], $replArray['values'], $printForm);
+            $printForm = preg_replace('/({.*?})/ui', '', $printForm);
+            $response['printForm']['bottom'] = $printForm;
+        }
+        if (!empty($xml->$idScreen->print->elements)) {
+            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                "SELECT s.html from screens s where s.id = '{$xml->$idScreen->print->elements}'";
+            $row = dbHelper\DbHelper::selectRow($query);
+
+            $printForm = stripslashes($row['html']);
+            $printForm = str_replace($replArray['patterns'], $replArray['values'], $printForm);
+            $printForm = preg_replace('/({.*?})/ui', '', $printForm);
+            $response['printForm']['elements'] = $printForm;
         }
 
         date_default_timezone_set('Asia/Omsk');
