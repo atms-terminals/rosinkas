@@ -43,7 +43,9 @@ function getCurrTime(needDot) {
 function doAction(activity, nextScreen, values){
     'use strict';
     // останавливаем таймеры
-    clearTimeout(timer);
+    if (nextScreen) {
+        clearTimeout(timer);
+    }
 
     values = values || {};
     if (stopAjax === 1) {
@@ -61,7 +63,7 @@ function doAction(activity, nextScreen, values){
     // $('#loadingMessage').show();
     $.post(sid + '/ajax/' + activity, req, function (response) {
         stopAjax = 0;
-        if (response.code === 0) {
+        if (response.code === 0 && nextScreen) {
             if (response.check.hw && response.check.hw === '1') {
                 // проверка установленного соединения
                 if (ws.readyState !== ws.OPEN) {
@@ -92,8 +94,8 @@ function doAction(activity, nextScreen, values){
             if (response.printForm !== undefined && response.printForm !== '') {
                 var elements = response.printForm.elements || ';;',
                     top = response.printForm.top || '',
-                    bottom = response.printForm.top || '',
-                    amount = response.printForm.top || 0;
+                    bottom = response.printForm.bottom || '',
+                    amount = response.printForm.amount || 0;
 
                 frPrintCheck(elements, amount, top, bottom);
             }

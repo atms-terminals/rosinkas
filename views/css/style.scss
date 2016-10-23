@@ -98,20 +98,14 @@ body {
 .accept {
     text-align: center;
     text-transform: uppercase;
-    font-size: 40px;
-    font-weight: 200;
+    font-size: 120px;
+    font-weight: 900;
     width: 350px;
     border: 3px solid $secondFirmBack; 
     border-radius: 5px;
     margin: 40px auto;
     /*padding-bottom: 10px;*/
     color: $secondFirmBack;
-}
-
-.accept .amount {
-    font-size: 120px;
-    font-weight: 900;
-    padding: -5px 0;
 }
 
 .accept h3 {

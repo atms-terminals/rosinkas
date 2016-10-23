@@ -47,13 +47,18 @@ function handleCashmachineEvent(eventType, eventValue) {
     var event;
     
     if (eventType === 'banknote') {
-        var currAmount = $('.amount').val();
-        currAmount += eventValue;
+        var currAmount = parseInt($('.amount').val());
+        currAmount += parseInt(eventValue);
 
         $('.amount').val(currAmount);
         $('.amountScreen').html(currAmount);
 
         console.log('Купюроприемник: банкнота принята ' + eventValue);
+        event = {
+            type: 'cash',
+            message: 'Купюроприемник: банкнота принята ' + eventValue
+        };
+        doAction('writeLog', 0, event);
     } else if (eventType === 'started') {
         console.log('Купюроприемник: запущен');
         event = {
@@ -68,7 +73,7 @@ function handleCashmachineEvent(eventType, eventValue) {
             message: 'Купюроприемник: остановлен (пропала до него связь)'
         };
         doAction('writeLog', 8, event);
-    } else if (eventType === 'DropCassetteOutOfPosition') {
+    } else if (eventValue === 'DropCassetteOutOfPosition') {
         // инкассация
         frPrintZReport();
         console.log('Купюроприемник: Кассета изъята');
@@ -81,7 +86,7 @@ function handleCashmachineEvent(eventType, eventValue) {
             message: 'Купюроприемник: Кассета вставлена'
         };
         doAction('writeLog', 1, event);
-    } else if (eventType === 'writeLog') {
+    } else if (eventType === 'error') {
         console.log('Купюроприемник: ошибка ' + eventValue);
         event = {
             type: 'cash',
@@ -103,13 +108,13 @@ function handleCashmachineEvent(eventType, eventValue) {
  */
 function handleFRResponse(result, obj) {
     'use strict';
-    if (result !== 'ok') {
-        var event = {
-            type: 'fr',
-            message: 'ФР: ' + result + '\n' + obj
-        };
-        doAction('writeLog', 8, event);
-    }
+    var event = {
+        type: 'fr',
+        message: 'ФР: ' + result + '\n' + obj
+    };
+
+    var nextScreen = (result !== 'ok') ? 8 : 0;
+    doAction('writeLog', nextScreen, event);
     console.log('ФР: ' + result + '\n' + obj);
 }
 
@@ -121,6 +126,14 @@ function DispatcherWebSocket() {
     if ('WebSocket' in window) {
         // Let us open a web socket
         ws = new WebSocket(DISPATCHER_URL);
+
+        if (ws.readyState !== ws.OPEN) {
+            var event = {
+                type: 'webSocket',
+                message: 'Нет соединения с оборудованием'
+            };
+            doAction('writeLog', 8, event);
+        }
         
         ws.onerror = function function_name(argument) {
             var event = {

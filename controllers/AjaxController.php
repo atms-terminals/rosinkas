@@ -43,26 +43,30 @@ class AjaxController
         $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT @idPayment idPayment, @countUnits countUnits, @prepayment prepayment";
         $payment = dbHelper\DbHelper::selectRow($query);
 
-        $replArray['patterns'][] = '{AMOUNT}';
-        $replArray['values'][] = $amount;
-
         $replArray['patterns'][] = '{SERVICE_NAME}';
-        $replArray['values'][] = $serviceName;
-
-        $replArray['patterns'][] = '{PRICE}';
-        $replArray['values'][] = $price;
+        // $replArray['values'][] = $serviceName;
+        $replArray['values'][] = 'Внесение наличных в счет оплаты';
 
         $prepayment = $payment['prepayment'];
         $replArray['patterns'][] = '{PREPAYMENT_BEFORE}';
         $replArray['values'][] = $prepayment;
 
         $idPayment = $payment['idPayment'];
-        $replArray['patterns'][] = '{ID_PAYMENT}';
+        $replArray['patterns'][] = '{TRN}';
         $replArray['values'][] = $idPayment;
 
         $countUnits = $payment['countUnits'];
         $replArray['patterns'][] = '{COUNT_UNITS}';
         $replArray['values'][] = $countUnits;
+
+        $replArray['patterns'][] = '{PRICE}';
+        $replArray['values'][] = $price;
+
+        $replArray['patterns'][] = '{SUMM}';
+        $replArray['values'][] = $countUnits * $price;
+
+        $replArray['patterns'][] = '{AMOUNT}';
+        $replArray['values'][] = $amount;
 
         // пишем платеж в проффит
         try {
@@ -94,7 +98,7 @@ class AjaxController
 
         $response = $this->getScreen($nextScreen, $replArray);
 
-        $response['printForm']['amount'] = $amount;
+        $response['printForm']['amount'] = $price * $countUnits;
 
         $response['message'] = '';
         $response['code'] = 0;
@@ -243,6 +247,7 @@ class AjaxController
      */
     public function actionCollection()
     {
+        $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $uid = user\User::getId();
 
         $replArray = $this->makeReplaceArray($nextScreen);
@@ -254,7 +259,7 @@ class AjaxController
 
         $response = $this->getScreen($nextScreen, $replArray);
 
-        $response['message'] = $message;
+        $response['message'] = '';
         $response['code'] = 0;
         
         //отправляем результат
@@ -268,7 +273,7 @@ class AjaxController
      */
     public function actionWriteLog()
     {
-        $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
+        $nextScreen = (empty($_POST['nextScreen'])) ? false : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $type = (empty($_POST['values']['type'])) ? 'NA' : dbHelper\DbHelper::mysqlStr($_POST['values']['type']);
         $message = (empty($_POST['values']['message'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['values']['message']);
         $uid = user\User::getId();
@@ -276,8 +281,10 @@ class AjaxController
         $query = "/*".__FILE__.':'.__LINE__."*/ "."CALL hws_status_write($uid, '$type', '$message')";
         $row = dbHelper\DbHelper::call($query);
 
-        $replArray = $this->makeReplaceArray($nextScreen);
-        $response = $this->getScreen($nextScreen, $replArray);
+        if ($nextScreen) {
+            $replArray = $this->makeReplaceArray($nextScreen);
+            $response = $this->getScreen($nextScreen, $replArray);
+        }
 
         $response['message'] = $message;
         $response['code'] = 0;
@@ -328,9 +335,17 @@ class AjaxController
         // проверяем проффит
         if (!empty($xml->$idScreen->check->proffit)) {
             if (!proffit\Proffit::checkConnection()) {
+                $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                    "call hws_status_write(".user\User::getId().", 'proffit', 'Нет связи с сервером Проффит')";
+                $row = dbHelper\DbHelper::call($query);
+
                 $_POST['nextScreen'] = ERROR_SCREEN;
                 $this->actionMove();
                 exit;
+            } else {
+                $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                    "call hws_status_write(".user\User::getId().", 'proffit', 'Сервер Проффит: ОК')";
+                $row = dbHelper\DbHelper::call($query);
             }
         }
 

@@ -19,6 +19,7 @@
         <desc>Терминал. Ввод карты</desc>
         <screen>2</screen>
         <check>
+            <hw>1</hw>
             <proffit>1</proffit>
         </check>
         <timer>
@@ -31,6 +32,10 @@
     <s3>
         <desc>Терминал. Выбор услуги</desc>
         <screen>3</screen>
+        <check>
+            <hw>1</hw>
+            <proffit>1</proffit>
+        </check>
         <timer>
             <screen>1</screen>
             <timeout>90</timeout>
@@ -42,6 +47,7 @@
         <desc>Терминал. Прием денег</desc>
         <check>
             <hw>1</hw>
+            <proffit>1</proffit>
         </check>
         <screen>4</screen>
         <cash>1</cash>
@@ -62,7 +68,7 @@
         </print>
         <timer>
             <screen>1</screen>
-            <timeout>300</timeout>
+            <timeout>20</timeout>
             <action>move</action>
         </timer>
     </s5>
