@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Albatros</title>
+    <title>СОК "Альбатрос"</title>
 
     <!-- env:prod --#>
         <link rel="stylesheet" href="views/css/style.min.css?<?= filemtime("views/css/login.min.css")?>">
@@ -61,8 +61,8 @@
     <!-- env:dev -->
         <script src='../bower_components/jquery/dist/jquery.js'></script>
         <script src='../bower_components/bootstrap/dist/js/bootstrap.js'></script>
-        <script src='views/js/terminal.js'></script>
-        <script src='views/js/cashcode.js'></script>
+        <script src='views/js/terminal.js?<?= filemtime(ROOT.'js/terminal.js')?>'></script>
+        <script src='views/js/cashcode.js?<?= filemtime(ROOT.'js/cashcode.js')?>'></script>
     <!-- env:dev:end -->
 </body>
 </html>

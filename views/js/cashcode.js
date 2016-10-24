@@ -56,21 +56,24 @@ function handleCashmachineEvent(eventType, eventValue) {
         console.log('Купюроприемник: банкнота принята ' + eventValue);
         event = {
             type: 'cash',
-            message: 'Купюроприемник: банкнота принята ' + eventValue
+            isError: 0,
+            message: 'банкнота принята ' + eventValue
         };
         doAction('writeLog', 0, event);
     } else if (eventType === 'started') {
         console.log('Купюроприемник: запущен');
         event = {
             type: 'cash',
-            message: 'Купюроприемник: запущен (связь восстановилась)'
+            isError: 0,
+            message: 'запущен (связь восстановилась)'
         };
         doAction('writeLog', 1, event);
     } else if (eventType === 'stopped') {
         console.log('Купюроприемник: остановлен');
         event = {
             type: 'cash',
-            message: 'Купюроприемник: остановлен (пропала до него связь)'
+            isError: 1,
+            message: 'остановлен (пропала до него связь)'
         };
         doAction('writeLog', 8, event);
     } else if (eventValue === 'DropCassetteOutOfPosition') {
@@ -83,21 +86,24 @@ function handleCashmachineEvent(eventType, eventValue) {
         // конец инкассации
         event = {
             type: 'cash',
-            message: 'Купюроприемник: Кассета вставлена'
+            isError: 0,
+            message: 'Кассета вставлена'
         };
         doAction('writeLog', 1, event);
     } else if (eventType === 'error') {
         console.log('Купюроприемник: ошибка ' + eventValue);
         event = {
             type: 'cash',
-            message: 'Купюроприемник: ошибка ' + eventValue
+            isError: 1,
+            message: 'ошибка ' + eventValue
         };
         doAction('writeLog', 8, event);
     } else {
         console.log('Купюроприемник: неизвестная ошибка ' + eventType);
         event = {
             type: 'cash',
-            message: 'Купюроприемник: неизвестная ошибка ' + eventType
+            isError: 1,
+            message: 'неизвестная ошибка ' + eventType
         };
         doAction('writeLog', 8, event);
     }
@@ -110,10 +116,16 @@ function handleFRResponse(result, obj) {
     'use strict';
     var event = {
         type: 'fr',
-        message: 'ФР: ' + result + '\n' + obj
-    };
+        isError: 0,
+        message: obj
+        },
+        nextScreen = 0;
 
-    var nextScreen = (result !== 'ok') ? 8 : 0;
+    if (result !== 'ok') {
+        nextScreen = 8;
+        event.isError = 1;
+    }
+
     doAction('writeLog', nextScreen, event);
     console.log('ФР: ' + result + '\n' + obj);
 }
@@ -123,13 +135,14 @@ function handleFRResponse(result, obj) {
  */
 function DispatcherWebSocket() {
     'use strict';
+    var event;
     if ('WebSocket' in window) {
         // Let us open a web socket
         ws = new WebSocket(DISPATCHER_URL);
-
         if (ws.readyState !== ws.OPEN) {
-            var event = {
+            event = {
                 type: 'webSocket',
+                isError: 1,
                 message: 'Нет соединения с оборудованием'
             };
             doAction('writeLog', 8, event);
@@ -138,12 +151,20 @@ function DispatcherWebSocket() {
         ws.onerror = function function_name(argument) {
             var event = {
                 type: 'webSocket',
+                isError: 1,
                 message: 'ошибка'
             };
             doAction('writeLog', 8, event);
         };
 
         ws.onopen = function() {
+            var event = {
+                type: 'webSocket',
+                isError: 0,
+                message: 'OK'
+            };
+            doAction('writeLog', 0, event);
+
             var msg = '{"object": "common", "cmd": "connect"}';
             ws.send(msg);
         };
@@ -169,8 +190,9 @@ function DispatcherWebSocket() {
        
        ws.onclose = function() {};
     } else {
-        var event = {
+        event = {
             type: 'webSocket',
+            isError: 1,
             message: 'WebSocket NOT supported by your Browser!'
         };
         doAction('writeLog', 8, event);
@@ -200,33 +222,6 @@ function frPrintCheck(positions, summ, comment1, comment2) {
             '}');
     }
 }
-
-/**
- * Полный функционал по созданию фискального чека
- *
- * Позиции задаются списком "название";"цена";"количество";, разделенных между собой символом '|'
- * Пример: товар 1;100;2;|товар2;300;1;
- */
-// function frPrintCheck(positions, summ) {
-//     'use strict';
-//     if (ws.readyState === ws.OPEN) {
-//         ws.send('{"object": "fr", "cmd": "printcheck", "text": "' + positions + '", "summ": ' + summ + '}');
-//     }
-// }
-
-// /**
-//  * Печать X-отчета
-//  */
-// function frPrintXReport() {
-//     'use strict';
-//     ws.send('{"object": "fr", "cmd": "printxreport"}');
-// }
-
-// // печать позиции
-// function printCheck(name, price, cnt, summ) {
-//     'use strict';
-//     frPrintCheck(name + ';' + price + ';' + cnt + ';', summ);
-// }
 
 $(document).ready(function() {
     'use strict';

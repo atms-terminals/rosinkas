@@ -48,7 +48,7 @@ function doAction(activity, nextScreen, values){
     }
 
     values = values || {};
-    if (stopAjax === 1) {
+    if (stopAjax === 1 && false) {
         return false;
     }
     stopAjax = 1;

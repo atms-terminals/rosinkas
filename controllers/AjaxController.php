@@ -276,9 +276,10 @@ class AjaxController
         $nextScreen = (empty($_POST['nextScreen'])) ? false : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $type = (empty($_POST['values']['type'])) ? 'NA' : dbHelper\DbHelper::mysqlStr($_POST['values']['type']);
         $message = (empty($_POST['values']['message'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['values']['message']);
+        $isError = (empty($_POST['values']['isError'])) ? 0 : 1;
         $uid = user\User::getId();
 
-        $query = "/*".__FILE__.':'.__LINE__."*/ "."CALL hws_status_write($uid, '$type', '$message')";
+        $query = "/*".__FILE__.':'.__LINE__."*/ "."CALL hws_status_write($uid, '$type', $isError, '$message')";
         $row = dbHelper\DbHelper::call($query);
 
         if ($nextScreen) {
@@ -336,7 +337,7 @@ class AjaxController
         if (!empty($xml->$idScreen->check->proffit)) {
             if (!proffit\Proffit::checkConnection()) {
                 $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                    "call hws_status_write(".user\User::getId().", 'proffit', 'Нет связи с сервером Проффит')";
+                    "call hws_status_write(".user\User::getId().", 'proffit', 1, 'Нет связи с сервером')";
                 $row = dbHelper\DbHelper::call($query);
 
                 $_POST['nextScreen'] = ERROR_SCREEN;
@@ -344,7 +345,7 @@ class AjaxController
                 exit;
             } else {
                 $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                    "call hws_status_write(".user\User::getId().", 'proffit', 'Сервер Проффит: ОК')";
+                    "call hws_status_write(".user\User::getId().", 'proffit', 0, 'ОК')";
                 $row = dbHelper\DbHelper::call($query);
             }
         }

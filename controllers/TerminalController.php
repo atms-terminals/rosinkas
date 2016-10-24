@@ -3,11 +3,6 @@ namespace controllers\TerminalController;
 
 use components\User as user;
 
-// require_once(ROOT.'/components/User.php');
-
-// include_once ROOT.'/models/News.php';
-// use models\News as model;
-
 /**
 * productController
 */
