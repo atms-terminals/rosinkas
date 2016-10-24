@@ -30,6 +30,14 @@ class AdminController
         return true;
     }
 
+    public function actionGetCollections()
+    {
+        $collections = admin\Admin::getCollections();
+
+        require_once(ROOT.'/views/collections.php');
+        return true;
+    }
+
     public function actionGetTerminals()
     {
         $list = admin\Admin::getTerminals();

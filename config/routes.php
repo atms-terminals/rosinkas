@@ -10,6 +10,7 @@ return array(
     '.*?/ajax/collection' => 'ajax/collection',
 
     '.*?/admin/getHwsState' => 'admin/getHwsState',
+    '.*?/admin/getCollections' => 'admin/getCollections',
 
     '.*?/admin/getTerminals' => 'admin/getTerminals',
     '.*?/admin/changeStatus' => 'admin/changeStatus',

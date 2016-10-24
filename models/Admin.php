@@ -20,7 +20,27 @@ class Admin
         );
 
     /**
-     * получение массива состояний оборудования
+     * получение списка инкассаций
+     * @return array массива состояний
+     */
+    public static function getCollections()
+    {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT u.address, s.`action`, date_format(s.dt, '%d.%m.%Y %H:%i') dt
+            from system_log s
+                join users u on s.id_user = u.id
+                join (
+                    select max(s.dt) dt, s.id_user 
+                    from system_log s 
+                    where s.id_action = 15
+                    group by s.id_user) t on t.dt = s.dt
+                        and t.id_user = s.id_user
+            order by 1";
+        return dbHelper\DbHelper::selectSet($query);
+    }
+
+    /**
+     * получение списка состояний оборудования
      * @return array массива состояний
      */
     public static function getHwsState()
@@ -66,9 +86,7 @@ class Admin
             where c.card regexp '$searchStr'
                 or upper(c.name) regexp upper('$searchStr')
             order by c.card";
-        $list = dbHelper\DbHelper::selectSet($query);
-
-        return $list;
+        return  dbHelper\DbHelper::selectSet($query);
     }
 
     /**

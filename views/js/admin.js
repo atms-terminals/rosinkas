@@ -19,11 +19,20 @@ $(document).ready(function() {
             case '#hws': 
                 get('getHwsState', $('#hws'));
                 break;
+            case '#collections': 
+                get('getCollections', $('#collections'));
+                break;
             case '#admin': 
                 get('getTerminals', $('#terminals'));
                 get('getUsers', $('#users'));
                 break;
         }
+    });
+
+    // запрос инкассаций
+    $('#refreshCollections').click(function(event) {
+        event.preventDefault();
+        get('getCollections', $('#collections'));
     });
 
     // запрос статусов оборудования
