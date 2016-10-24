@@ -159,6 +159,31 @@ $(document).ready(function() {
 
     });
 
+    // окно ввода нового пароля
+    $(document).on('click', '.changeUserPassword', function(event) {
+        event.preventDefault();
+        var $tr = $(this).closest('tr');
+        $('#changePasswordDialog .password').val('');
+        $('#changePasswordDialog .modal-body .id').val($tr.find('.id').val());
+    });
+
+    // сохранение нового пароля
+    $(document).on('click', '#changePassword', function(event) {
+        event.preventDefault();
+        var sid = $('#sid').val(),
+            action = 'changePassword', 
+            req = {
+                id: $('#changePasswordDialog .id').val(), 
+                new: $('#changePasswordDialog .password').val(), 
+            };
+
+        $.post(sid + '/admin/' + action, req, function() {
+        }, 'json')
+            .fail(function(){
+            });
+
+    });
+
     // окно подтверждения удаления
     $(document).on('click', '.confirmDelete', function(event) {
         event.preventDefault();

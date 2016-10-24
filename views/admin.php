@@ -69,6 +69,7 @@
     include 'include/confirmDeleteDialog.php';
     include 'include/prepaidDialog.php';
     include 'include/editUserDialog.php';
+    include 'include/changePasswordDialog.php';
     ?>
 
     <!-- env:prod --#>

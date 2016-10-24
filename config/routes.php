@@ -13,14 +13,15 @@ return array(
 
     '.*?/admin/getTerminals' => 'admin/getTerminals',
     '.*?/admin/changeStatus' => 'admin/changeStatus',
-    '.*?/admin/deleteTerminal' => 'admin/deleteUser',
-    '.*?/admin/addUser' => 'admin/addUser',
-    '.*?/admin/editUser' => 'admin/editUser',
-
-    '.*?/admin/getUsers' => 'admin/getUsers',
-    '.*?/admin/deleteUser' => 'admin/deleteUser',
     '.*?/admin/addTerminal' => 'admin/addUser',
     '.*?/admin/editTerminal' => 'admin/editUser',
+    '.*?/admin/deleteTerminal' => 'admin/deleteUser',
+
+    '.*?/admin/getUsers' => 'admin/getUsers',
+    '.*?/admin/addUser' => 'admin/addUser',
+    '.*?/admin/editUser' => 'admin/editUser',
+    '.*?/admin/deleteUser' => 'admin/deleteUser',
+    '.*?/admin/changePassword' => 'admin/changePassword',
 
     '.*?/admin/getPrepaidStatus' => 'admin/getPrepaidStatus',
     '.*?/admin/changePrepaid' => 'admin/changePrepaid',

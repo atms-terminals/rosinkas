@@ -53,6 +53,21 @@ class AdminController
         return true;
     }
 
+    public function actionChangePassword()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+        $password = empty($_POST['new']) ? '123' : dbHelper\DbHelper::mysqlStr($_POST['new']);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT users_change_password($uid, '$id', '$password')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
     public function actionAddUser()
     {
         $uid = user\User::getId();
