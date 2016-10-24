@@ -230,3 +230,15 @@ body {
 #main .table tbody tr td {
     vertical-align: middle;
 }
+
+.tab-pane {
+    padding: 15px;
+}
+
+#getPrepaid {
+    margin: 0 0 0 10px;
+}
+
+.table > thead:first-child > tr:first-child > th {
+    text-align: center;
+}

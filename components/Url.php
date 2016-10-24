@@ -27,7 +27,11 @@ class Url
     public static function getUri()
     {
         if (!empty($_SERVER['REQUEST_URI'])) {
-            return trim($_SERVER['REQUEST_URI'], '/');
+            if ($pos = strpos($_SERVER['REQUEST_URI'], '?')) {
+                return substr($_SERVER['REQUEST_URI'], 0, $pos);
+            } else {
+                return trim($_SERVER['REQUEST_URI'], '/');
+            }
         }
 
         return '';
