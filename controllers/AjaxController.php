@@ -6,6 +6,7 @@ use components\User as user;
 use components\Proffit as proffit;
 
 define('ERROR_SCREEN', 7);
+define('LOCK_SCREEN', 12);
 
 /**
  * обработка запросов ajax.
@@ -228,6 +229,10 @@ class AjaxController
      */
     public function actionMove($message = '')
     {
+        if (user\User::getStatus() == 0) {
+            $_POST['nextScreen'] = LOCK_SCREEN;
+        }
+
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
 
         $replArray = $this->makeReplaceArray($nextScreen);

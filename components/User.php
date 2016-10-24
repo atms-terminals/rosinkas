@@ -15,11 +15,13 @@ class User
      * @var int $sid пользователя
      * @var string $startUrl начальная страница пользователя
      * @var string $firstScreen первый экран сценария
+     * @var int $status статус блокировки пользователя
      */
     private static $uid = null;
     private static $sid = null;
     private static $startUrl = 'index.php';
     private static $firstScreen = 3;
+    private static $status = 0;
 
     /**
      * Проверка логина и пароля, создание сессии.
@@ -82,6 +84,16 @@ class User
     }
 
     /**
+     * Возвращает статус пользователя
+     *
+     * @return string status
+     */
+    public static function getStatus()
+    {
+        return self::$status;
+    }
+
+    /**
      * Получение id пользователя.
      */
     private static function checktId()
@@ -109,14 +121,15 @@ class User
 
         // получаем настройки пользователя
         $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                "SELECT r.start_url, r.first_screen 
+                "SELECT r.start_url, r.first_screen, u.status, u.id_role
                 from users u
                     join roles r on u.id_role = r.id
                 where u.id = $uid";
         $row = dbHelper\DbHelper::selectRow($query);
         self::$startUrl = $row['start_url'];
         self::$firstScreen = $row['first_screen'];
-
+        self::$status = $row['status'];
+        
         if ($firstTime) {
             $_SERVER['REQUEST_URI'] = "\/$sid\/".self::$startUrl;
         }

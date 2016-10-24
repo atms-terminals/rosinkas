@@ -10,7 +10,7 @@
         </check>
         <timer>
             <screen>1</screen>
-            <timeout>20</timeout>
+            <timeout>10</timeout>
             <action>move</action>
         </timer>
     </s1>
@@ -102,5 +102,15 @@
 
     <s10></s10>
     <s11></s11>
+
+    <s12>
+        <desc>Терминал. Временно не работает</desc>
+        <screen>12</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>10</timeout>
+            <action>move</action>
+        </timer>
+    </s12>
 
 </states>
