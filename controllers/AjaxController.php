@@ -99,7 +99,7 @@ class AjaxController
 
         $response = $this->getScreen($nextScreen, $replArray);
 
-        $response['printForm']['amount'] = $price * $countUnits;
+        $response['printForm']['amount'] = $amount;
 
         $response['message'] = '';
         $response['code'] = 0;

@@ -13,7 +13,7 @@
 
     <!-- env:dev -->
         <link href='../bower_components/bootstrap/dist/css/bootstrap.css' rel="stylesheet">
-        <link href='views/css/style-sass.css' rel="stylesheet">
+        <link href='views/css/style-sass.css?<?= filemtime(ROOT.'/views/css/style-sass.css')?>' rel="stylesheet">
     <!-- env:dev:end -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -61,8 +61,8 @@
     <!-- env:dev -->
         <script src='../bower_components/jquery/dist/jquery.js'></script>
         <script src='../bower_components/bootstrap/dist/js/bootstrap.js'></script>
-        <script src='views/js/terminal.js?<?= filemtime(ROOT.'js/terminal.js')?>'></script>
-        <script src='views/js/cashcode.js?<?= filemtime(ROOT.'js/cashcode.js')?>'></script>
+        <script src='views/js/terminal.js?<?= filemtime(ROOT.'/views/js/terminal.js')?>'></script>
+        <script src='views/js/cashcode.js?<?= filemtime(ROOT.'/views/js/cashcode.js')?>'></script>
     <!-- env:dev:end -->
 </body>
 </html>

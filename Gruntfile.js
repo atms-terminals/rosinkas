@@ -64,6 +64,7 @@ module.exports = function(grunt) {
             build: {
                 files: {
                     'tmp/terminal.js': ['tmp/bower.js', 'views/js/terminal.js', 'views/js/cashcode.js'],
+                    'tmp/admin.js': ['tmp/bower.js', 'views/js/admin.js'],
                 },
             }
         },
@@ -71,6 +72,7 @@ module.exports = function(grunt) {
             build: {
                 files: {
                     'tmp/terminal.min.js': 'tmp/terminal.js',
+                    'tmp/admin.min.js': 'tmp/admin.js',
                 },
 
                 options: {

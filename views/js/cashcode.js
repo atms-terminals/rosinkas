@@ -1,8 +1,8 @@
 ﻿/*jshint unused:false*/
 /*global doAction*/
 var ws;
-const DISPATCHER_URL = 'ws://192.168.3.216:8011'; 
-// const DISPATCHER_URL = 'ws://localhost:8011'; 
+// const DISPATCHER_URL = 'ws://192.168.3.216:8011'; 
+const DISPATCHER_URL = 'ws://localhost:8011'; 
 
 /**
  * Блокировка/разблокировка купюрника
