@@ -1,13 +1,12 @@
 {
   "name": "Albatros",
   "version": "1.0.0",
-  "description": "",
+  "description": "Платежные терминалы для бассейна 'Альбатрос'",
   "main": "Gruntfile.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:123ss33/queue.albatros.git"
   },
-  "description": "Платежные терминалы для бассейна 'Альбатрос'",
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-bower-concat": "^1.0.0",
@@ -16,13 +15,16 @@
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-cssmin": "^1.0.2",
+    "grunt-contrib-htmlmin": "^2.0.0",
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-dev-prod-switch": "^0.1.8",
+    "grunt-exec": "^1.0.1",
     "grunt-newer": "^1.2.0",
     "grunt-remove-logging": "^0.2.0",
+    "grunt-run": "^0.6.0",
     "load-grunt-tasks": "^3.5.2",
     "time-grunt": "^1.4.0"
   },
@@ -30,5 +32,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {}
 }

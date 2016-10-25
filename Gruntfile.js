@@ -11,8 +11,8 @@ module.exports = function(grunt) {
         concurrent: {
             stream1: ['jshint', 'copy', 'bower_concat'],
             stream2: ['concat', 'dev_prod_switch'],
-            stream3: ['removelogging', 'sass'],
-            stream4: ['uglify', 'cssmin']
+            stream3: ['removelogging', 'sass', 'exec'],
+            stream4: ['uglify', 'cssmin', 'htmlmin']
         },
         jshint: {
             options: {
@@ -122,6 +122,32 @@ module.exports = function(grunt) {
                 }
             }
         },
+        htmlmin: {                                     // Task
+            dist: {                                      // Target
+                options: {                                 // Target options
+                    removeComments: true,
+                    collapseWhitespace: true
+                },
+                files: [{
+                    expand: true,
+                    cwd: 'release/views',
+                    src: ['*.php', '*.html'],
+                    dest: 'release/views'
+                }],
+            },
+            dev: {                                       // Another target
+                options: {                                 // Target options
+                    removeComments: true,
+                    collapseWhitespace: true
+                },
+                files: [{
+                    expand: true,
+                    cwd: 'release/views/include',
+                    src: ['*.php', '*.html'],
+                    dest: 'release/views/include'
+                }],
+            }
+        },
         watch: {
             sass: {
                 files: ['views/css/*.scss', '!views/css/_*.scss'],
@@ -172,10 +198,12 @@ module.exports = function(grunt) {
                 {expand: true, flatten: true, src: ['controllers/*'], dest: 'release/controllers/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['config/*'], dest: 'release/config/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['models/*'], dest: 'release/models/', filter: 'isFile'},
-                {expand: true, flatten: true, src: ['controllers/'], dest: 'release/controllers/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['.htaccess'], dest: 'release/', filter: 'isFile'},
                 ]
             },
+        },
+        exec: {
+            echo_something: './phpmin.sh'
         },
         clean: {
             build: ['tmp/'],
