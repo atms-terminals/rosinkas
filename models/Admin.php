@@ -36,7 +36,27 @@ class Admin
                     group by s.id_user) t on t.dt = s.dt
                         and t.id_user = s.id_user
             order by 1";
-        return dbHelper\DbHelper::selectSet($query);
+        $collections = dbHelper\DbHelper::selectSet($query);
+
+        // наличка
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT p.id_user, if(p.dt_confirm is null, 'notConfirmed', 'confirmed') confirmed, sum(p.amount) summ, u.address
+            from payments p
+                join users u on u.id = p.id_user
+            where p.collected = 0
+            group by p.id_user, if(p.dt_confirm is null, 'notConfirmed', 'confirmed')";
+        $tmoney = dbHelper\DbHelper::selectSet($query);
+        $money = array();
+        foreach ($tmoney as $row) {
+            if (empty($money[$row['address']])) {
+                $money[$row['address']]['confirmed'] = 0;
+                $money[$row['address']]['notConfirmed'] = 0;
+            }
+            $money[$row['address']][$row['confirmed']] = $row['summ'];
+        }
+
+        return array('collections' => $collections,
+            'money' => $money);
     }
 
     /**
@@ -45,6 +65,7 @@ class Admin
      */
     public static function getHwsState()
     {
+        // тех. состояние
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT u.id, u.address, h.`type`, h.is_error, date_format(h.dt, '%d.%m.%Y %H:%i') dt, h.message
             from hws_status h
