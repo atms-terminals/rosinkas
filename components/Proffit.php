@@ -15,8 +15,8 @@ class Proffit
      * @var string $termId Вид платежа - код кассы
      */
     private static $timeout = 3;
-    // private static $url = 'http://192.168.0.106:8000';
-    private static $url = 'http://192.168.3.71:8000';
+    private static $url = 'http://192.168.0.105:8000';
+    // private static $url = 'http://192.168.3.71:8000';
     private static $user = 'User';
     private static $password = 'Password';
     private static $termId = 4;
