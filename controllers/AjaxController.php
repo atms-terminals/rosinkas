@@ -7,6 +7,8 @@ use components\Proffit as proffit;
 
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
+define('NO_CARD_SCREEN', 13);
+define('NO_SERVICES_SCREEN', 14);
 
 /**
  * обработка запросов ajax.
@@ -186,9 +188,9 @@ class AjaxController
             $servicesList = proffit\Proffit::getBalance($card);
         } catch (\Exception $e) {
             // уходим на первый экран
-            $_POST['nextScreen'] = ERROR_SCREEN;
+            $_POST['nextScreen'] = $e->getCode() == -2 ? NO_CARD_SCREEN : ERROR_SCREEN;
             $_POST['values']['type'] = 'proffit';
-            $_POST['values']['message'] = 'Ошибка запроса баланса: '.$e->getMessage();
+            $_POST['values']['message'] = "Ошибка запроса баланса: {$e->getCode()} {$e->getMessage()}";
             $this->actionWriteLog();
             exit();
         }
@@ -207,27 +209,35 @@ class AjaxController
         $replArray['values'][] = $prepayment;
 
         $rows = '';
-        foreach ($servicesList as $service) {
-            $minSumm = $service['purchaseAmount'] - $prepayment;
-            $rows .= "<tr>
-                    <td>{$service['name']}</td>
-                    <td class='text-center'>{$service['balance']}</td>
-                    <td class='text-center'>{$service['dtFinish']}</td>
-                    <td class='text-center'>$minSumm</td>
-                    <td class='text-center'>{$service['price']}</td>
-                    <td class='text-center'>
-                        <input class='nextScreen' type='hidden' value='4' />
-                        <input class='activity' type='hidden' value='getMoneyScreen' />
-                        <input class='value idAbonement' type='hidden' value='{$service['id']}' />
-                        <input class='value price' type='hidden' value='{$service['price']}' />
-                        <input class='value card' type='hidden' value='$card' />
-                        <input class='value customer' type='hidden' value='{$service['customer']}' />
-                        <input class='value serviceName' type='hidden' value='{$service['name']}' />
-                        <input class='value purchaseAmount' type='hidden' value='{$service['purchaseAmount']}' />
-                        <input class='value prepayment' type='hidden' value='$prepayment' />
-                        <a class='btn btn-primary action small'>Пополнить</a>
-                    </td>
-                </tr>";
+        if ($servicesList) {
+            foreach ($servicesList as $service) {
+                $minSumm = $service['purchaseAmount'] - $prepayment;
+                $rows .= "<tr>
+                        <td>{$service['name']}</td>
+                        <td class='text-center'>{$service['balance']}</td>
+                        <td class='text-center'>{$service['dtFinish']}</td>
+                        <td class='text-center'>$minSumm</td>
+                        <td class='text-center'>{$service['price']}</td>
+                        <td class='text-center'>
+                            <input class='nextScreen' type='hidden' value='4' />
+                            <input class='activity' type='hidden' value='getMoneyScreen' />
+                            <input class='value idAbonement' type='hidden' value='{$service['id']}' />
+                            <input class='value price' type='hidden' value='{$service['price']}' />
+                            <input class='value card' type='hidden' value='$card' />
+                            <input class='value customer' type='hidden' value='{$service['customer']}' />
+                            <input class='value serviceName' type='hidden' value='{$service['name']}' />
+                            <input class='value purchaseAmount' type='hidden' value='{$service['purchaseAmount']}' />
+                            <input class='value prepayment' type='hidden' value='$prepayment' />
+                            <a class='btn btn-primary action small'>Пополнить</a>
+                        </td>
+                    </tr>";
+            }
+        } else {
+            $_POST['nextScreen'] = NO_SERVICES_SCREEN;
+            $_POST['values']['type'] = 'proffit';
+            $_POST['values']['message'] = "Нет доступных услуг";
+            $this->actionWriteLog();
+            exit();
         }
 
         // добавляем список сервисов
@@ -357,6 +367,9 @@ class AjaxController
 
         // работа с купюроприемником
         $response['cash'] = (empty($xml->$idScreen->cash)) ? '0' : '1';
+
+        // работа со считкой
+        $response['rfid'] = (empty($xml->$idScreen->rfid)) ? array() : $xml->$idScreen->rfid;
 
         // вцыполнение проверок
         $response['check']['hw'] = (empty($xml->$idScreen->check->hw)) ? '0' : '1';

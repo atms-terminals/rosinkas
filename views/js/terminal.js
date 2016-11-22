@@ -1,5 +1,6 @@
 /*jshint unused:false*/
 /* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck*/
+/* global getCard*/
 
 var currScreen;
 var timer;
@@ -90,6 +91,11 @@ function doAction(activity, nextScreen, values){
                 setCashmachineEnabled(false);
             }
 
+            // обработка статуса считки карт
+            if (response.rfid && response.rfid.length !== 0) {
+                getCard(response.rfid);
+            }
+
             // если есть печатная форма - печатаем
             if (response.printForm !== undefined && response.printForm !== '') {
                 var elements = response.printForm.elements || ';;',
@@ -122,6 +128,10 @@ function doAction(activity, nextScreen, values){
 //////////////////////////////////////////////////////////////////////////////////////////////////
 $(document).ready(function () {
     'use strict';
+
+    document.oncontextmenu = function () {
+        return false;
+    };
 
     var clockTimer =  setInterval(function() {
             var today = new Date();

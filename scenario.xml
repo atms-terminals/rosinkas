@@ -22,11 +22,11 @@
             <hw>1</hw>
             <proffit>1</proffit>
         </check>
-        <timer>
-            <screen>1</screen>
-            <timeout>90</timeout>
-            <action>move</action>
-        </timer>
+        <rfid>
+            <screen>3</screen>
+            <timeout>30</timeout>
+            <action>getBalance</action>
+        </rfid>
     </s2>
 
     <s3>
@@ -38,7 +38,7 @@
         </check>
         <timer>
             <screen>1</screen>
-            <timeout>90</timeout>
+            <timeout>40</timeout>
             <action>move</action>
         </timer>
     </s3>
@@ -112,5 +112,25 @@
             <action>move</action>
         </timer>
     </s12>
+
+    <s13>
+        <desc>Терминал. Карта не найдена</desc>
+        <screen>13</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>5</timeout>
+            <action>move</action>
+        </timer>
+    </s13>
+
+    <s14>
+        <desc>Терминал. Нет доступных услуг</desc>
+        <screen>14</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>5</timeout>
+            <action>move</action>
+        </timer>
+    </s14>
 
 </states>

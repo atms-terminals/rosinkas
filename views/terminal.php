@@ -61,8 +61,9 @@
     <!-- env:dev -->
         <script src='../bower_components/jquery/dist/jquery.js'></script>
         <script src='../bower_components/bootstrap/dist/js/bootstrap.js'></script>
-        <script src='views/js/terminal.js?<?= filemtime(ROOT.'/views/js/terminal.js')?>'></script>
-        <script src='views/js/cashcode.js?<?= filemtime(ROOT.'/views/js/cashcode.js')?>'></script>
+        <script src='views/js/terminal.js'></script>
+        <script src='views/js/cashcode.js'></script>
+        <script src='views/js/rfid.js'></script>
     <!-- env:dev:end -->
 </body>
 </html>

@@ -63,7 +63,7 @@ module.exports = function(grunt) {
             },
             build: {
                 files: {
-                    'tmp/terminal.js': ['tmp/bower.js', 'views/js/terminal.js', 'views/js/cashcode.js'],
+                    'tmp/terminal.js': ['tmp/bower.js', 'views/js/terminal.js', 'views/js/cashcode.js', 'views/js/rfid.js'],
                     'tmp/admin.js': ['tmp/bower.js', 'views/js/admin.js'],
                 },
             }

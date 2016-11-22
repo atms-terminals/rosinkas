@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="windows-1251">
 <?php
+header('Access-Control-Allow-Origin: *');
+ini_set('max_execution_time', 300);
 ini_set('display_errors', '1');
 ini_set("error_reporting", E_ALL);
 
@@ -25,6 +23,13 @@ function microtime_float()
     return ((float) $usec + (float) $sec);
 }
 
+function swap($str)
+{
+    $part1 = substr($str, 0, 2);
+    $part2 = substr($str, 2);
+    return $part2.$part1;
+}
+
 include 'PhpSerial.php';
 
 // открываем порт
@@ -33,7 +38,7 @@ $serial->deviceSet("/dev/ttyUSB0");
 $serial->deviceOpen();
 
 $response = array(
-    'code' => '0',
+    'code' => 0,
     'message' => '',
     'str' => ''
     );
@@ -62,7 +67,34 @@ if (!empty($_POST['action']) && $_POST['action'] == 'read') {
             'str' => ''
             );
     } else {
+        // Преобразуем считанный номер (добавляем лидирующие нули)
+        // $read = ' [3300] 255,00053';
+        $hasSegments = preg_match('~([0-9a-fA-F]*?)[^\d]*(\d*),(\d*)~', $read, $segments);
+
+        $first = swap($segments[1]);
+
+        $middle = dechex($segments[2]);
+        if ((strlen($middle)) == 1) {
+            $middle = "0$middle";
+        }
+
+        $last = dechex($segments[3]);
+        switch (strlen($last)) {
+            case 1:
+                $last = "000$last";
+                break;
+            case 2:
+                $last = "00$last";
+                break;
+            case 3:
+                $last = "0$last";
+                break;
+        }
+        $last = swap($last);
+
+        $key = strtoupper($last.$middle.$first);
         $response['str'] = $read;
+        $response['key'] = $key;
     }
 }
 
