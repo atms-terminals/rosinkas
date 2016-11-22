@@ -15,8 +15,8 @@ class Proffit
      * @var string $termId Вид платежа - код кассы
      */
     private static $timeout = 3;
-    // private static $url = 'http://192.168.0.105:8000';
-    private static $url = 'http://192.168.3.71:8000';
+    private static $url = 'http://192.168.0.105:8000';
+    // private static $url = 'http://192.168.3.71:8000';
     private static $user = 'User';
     private static $password = 'Password';
     private static $termId = 4;
@@ -128,17 +128,19 @@ class Proffit
         $result = array();
         $customer = (empty($raw['answer']['CLIENT']['@attributes']['NAME'])) ? '' : $raw['answer']['CLIENT']['@attributes']['NAME'];
 
-        foreach ($raw['answer']['ITEM'] as $abon) {
-            if ($abon['@attributes']['ACTIVE'] == 1) {
-                $result[] = array (
-                    'id' => $abon['@attributes']['ID'],
-                    'name' => $abon['@attributes']['NAME'],
-                    'dtFinish' => (empty($abon['@attributes']['PURCHASE_FINISH'])) ? 'Бессрочный' : $abon['@attributes']['PURCHASE_FINISH'],
-                    'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
-                    'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
-                    'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY'],
-                    'customer' => $customer
-                    );
+        if (!empty($raw['answer']['ITEM'])) {
+            foreach ($raw['answer']['ITEM'] as $abon) {
+                if ($abon['@attributes']['ACTIVE'] == 1) {
+                    $result[] = array (
+                        'id' => $abon['@attributes']['ID'],
+                        'name' => $abon['@attributes']['NAME'],
+                        'dtFinish' => (empty($abon['@attributes']['PURCHASE_FINISH'])) ? 'Бессрочный' : $abon['@attributes']['PURCHASE_FINISH'],
+                        'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
+                        'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
+                        'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY'],
+                        'customer' => $customer
+                        );
+                }
             }
         }
         return $result;
