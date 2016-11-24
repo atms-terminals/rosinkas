@@ -68,7 +68,7 @@
         </print>
         <timer>
             <screen>1</screen>
-            <timeout>20</timeout>
+            <timeout>5</timeout>
             <action>move</action>
         </timer>
     </s5>
