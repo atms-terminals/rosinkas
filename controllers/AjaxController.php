@@ -43,6 +43,13 @@ class AjaxController
             exit();
         }
 
+        if (!$amount) {
+            // уходим на первый экран
+            $_POST['nextScreen'] = user\User::getFirstScreen();
+            $this->actionMove();
+            exit();
+        }
+
         $replArray = $this->makeReplaceArray($nextScreen);
 
         // записываем запрос на оплату
