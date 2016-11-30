@@ -186,9 +186,14 @@ body {
     text-transform: uppercase;
     text-align: center;
     font-size: 30px;
-    font-weight: 600;
-    margin-top: 30px;
-    margin-bottom: -10px;
+    font-weight: 300;
+    margin-top: 20px;
+    margin-bottom: 0px;
+}
+
+#main .bigDigit {
+    font-size: 30px;
+    font-weight: 800;
 }
 
 #main .title  h1 {
@@ -273,5 +278,9 @@ body {
 }
 
 .table > thead:first-child > tr:first-child > th {
+    text-align: center;
+}
+
+div.imgContainer {
     text-align: center;
 }

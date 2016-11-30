@@ -184,12 +184,13 @@ class AjaxController
      */
     public function actionGetBalance()
     {
-        // $card = '64FA32000D';
-        // $card = '92FC820003';
-
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
 
+        // $card = '64FA32000D';
+        // $card = '92FC820003';
+
+        $servicesList = array();
         try {
             // получаем список услуг
             $servicesList = proffit\Proffit::getBalance($card);
@@ -216,12 +217,21 @@ class AjaxController
         $replArray['values'][] = $prepayment;
 
         $rows = '';
+
+        // удаляем пустые услуги
+        foreach ($servicesList as $key => $service) {
+            if (!$service['balance']) {
+                unset($servicesList['$key']);
+            }
+        }
+
         if ($servicesList) {
             foreach ($servicesList as $service) {
                 $minSumm = $service['purchaseAmount'] - $prepayment;
                 $rows .= "<tr>
                         <td>{$service['name']}</td>
-                        <td class='text-center'>{$service['balance']}</td>
+                        <td class='text-center bigDigit'>{$service['balance']}</td>
+                        <td class='text-center'>{$service['dtPay']}</td>
                         <td class='text-center'>{$service['dtFinish']}</td>
                         <td class='text-center'>$minSumm</td>
                         <td class='text-center'>{$service['price']}</td>
@@ -247,6 +257,9 @@ class AjaxController
             exit();
         }
 
+        // добавляем список ФИО
+        $replArray['patterns'][] = '{CLIENT}';
+        $replArray['values'][] = $service['customer'];
         // добавляем список сервисов
         $replArray['patterns'][] = '{SERVICES_LIST}';
         $replArray['values'][] = $rows;

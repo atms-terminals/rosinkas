@@ -27,7 +27,14 @@
             <timeout>30</timeout>
             <action>getBalance</action>
         </rfid>
-    </s2>
+<!--         
+        <timer>
+            <screen>3</screen>
+            <timeout>1</timeout>
+            <action>getBalance</action>
+        </timer>
+ -->    
+        </s2>
 
     <s3>
         <desc>Терминал. Выбор услуги</desc>

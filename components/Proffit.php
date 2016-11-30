@@ -15,8 +15,9 @@ class Proffit
      * @var string $termId Вид платежа - код кассы
      */
     private static $timeout = 3;
+    private static $url = 'http://192.168.20.100:8000';
     // private static $url = 'http://192.168.0.105:8000';
-    private static $url = 'http://192.168.3.71:8000';
+    // private static $url = 'http://192.168.3.71:8000';
     private static $user = 'User';
     private static $password = 'Password';
     private static $termId = 4;
@@ -36,7 +37,7 @@ class Proffit
         return "<?xml version='1.0'?>
             <proffit code='PS' ver='1' lang='RU'>
             <user name='$user' pass='$password'/>
-            <command name='GET_STATUS_CARD' CARD_CODE='$card' DAYS='900'/>
+            <command name='GET_STATUS_CARD' CARD_CODE='$card' DAYS='30'/>
             </proffit>";
     }
 
@@ -135,6 +136,7 @@ class Proffit
                         'id' => $abon['@attributes']['ID'],
                         'name' => $abon['@attributes']['NAME'],
                         'dtFinish' => (empty($abon['@attributes']['PURCHASE_FINISH'])) ? 'Бессрочный' : $abon['@attributes']['PURCHASE_FINISH'],
+                        'dtPay' => (empty($abon['@attributes']['PURCHASE_DATE'])) ? '' : $abon['@attributes']['PURCHASE_DATE'],
                         'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
                         'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
                         'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY'],
