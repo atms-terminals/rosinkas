@@ -245,7 +245,7 @@ class AjaxController
                             <input class='value serviceName' type='hidden' value='{$service['name']}' />
                             <input class='value purchaseAmount' type='hidden' value='{$service['purchaseAmount']}' />
                             <input class='value prepayment' type='hidden' value='$prepayment' />
-                            <a class='btn btn-primary action small'>Пополнить</a>
+                            <!--a class='btn btn-primary action small'>Пополнить</a-->
                         </td>
                     </tr>";
             }
