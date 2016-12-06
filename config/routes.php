@@ -8,6 +8,7 @@ return array(
     '.*?/ajax/pay' => 'ajax/pay',
     '.*?/ajax/writeLog' => 'ajax/writeLog',
     '.*?/ajax/collection' => 'ajax/collection',
+    '.*?/ajax/getServiceList' => 'ajax/getServiceList',
 
     '.*?/admin/getHwsState' => 'admin/getHwsState',
     '.*?/admin/getCollections' => 'admin/getCollections',

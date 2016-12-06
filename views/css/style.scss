@@ -142,19 +142,20 @@ body {
     margin-top: 80px
 }
 .row.time {
-    margin: 20px;
+    // margin: 20px;
     font-size: 30px;
     color: $secondFirmBack;
 }
+
 #main a.btn {
     width: 60%;
-    height: 160px;
+    height: 100px;
+    line-height: 100px;
     text-align: center;
-    line-height: 160px;
     display: block;
     margin: 20px auto;
     background-color: $buttonColor;
-    border: 0;
+    border: 1 solid $firstFirmBack;
     color: $firstFirmBack;
     font-size: 60px;
     text-transform: uppercase;
@@ -222,7 +223,7 @@ body {
     font-weight: 600;
 }
 
-#main .error  h2 {
+#main .error h2 {
     color: $errorColor;
     text-transform: uppercase;
     margin-bottom: 26px;
@@ -283,4 +284,43 @@ body {
 
 div.imgContainer {
     text-align: center;
+}
+
+button.service {
+    width: 48%;
+    font-size: 36px;
+    min-height: 165px;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    white-space: normal;
+}
+
+button.service.control {
+    width: 100%;
+    min-height: 0;
+    background-color: $buttonColor;
+    color: $firstFirmBack;
+    font-size: 50px;
+    height: 100px;
+    padding: 0;
+    margin: 0;
+}
+
+#main .newServiceListArea {
+    overflow: auto;
+    height: 550px;
+}
+#main .controlArea {
+    overflow: auto;
+    text-align: center;
+    height: 150px;
+}
+.controlArea .controlDiv {
+    width: 30%;
+    margin: 0 10px;
+    display: inline-block;
+}
+
+.controlArea button {
+    height: 100px;
 }

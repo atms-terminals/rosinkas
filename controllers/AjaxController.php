@@ -9,6 +9,7 @@ define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
 define('NO_CARD_SCREEN', 13);
 define('NO_SERVICES_SCREEN', 14);
+define('SERVICE_LIST_SCREEN', 15);
 
 /**
  * обработка запросов ajax.
@@ -267,6 +268,102 @@ class AjaxController
         $response = $this->getScreen($nextScreen, $replArray);
 
         $response['servicesList'] = $servicesList;
+        $response['message'] = '';
+        $response['code'] = 0;
+        
+        //отправляем результат
+        echo json_encode($response);
+        return true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Обработка команды получения новых услуг
+     */
+    public function actionGetServiceList()
+    {
+        define('BUTTON_PER_SCREEN', 6);
+
+        $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
+        $id = (empty($_POST['values']['id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['id']);
+        $start = (empty($_POST['values']['start'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['start']);
+
+        $replArray = $this->makeReplaceArray($nextScreen);
+
+        // кнопки возврата назад и на 1 уровень вверх
+        $controls = '';
+        $controls .= "<div class='controlDiv'>";
+        if ($id) {
+            if ($start) {
+                $ns = $start - BUTTON_PER_SCREEN;
+                $controls .= "<input class='activity' type='hidden' value='getServiceList' />
+                        <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
+                        <input class='value id' type='hidden' value='$id' />
+                        <input class='value start' type='hidden' value='$ns' />
+                        <button class='btn btn-primary action service control'>Предыдущий</button>";
+            } else {
+                $query = "/*".__FILE__.':'.__LINE__."*/ ".
+                    "SELECT p.id_parent
+                    from v_custom_price_list p
+                    where p.id = '$id'";
+                $row = dbHelper\DbHelper::selectRow($query);
+
+                $controls .= "<input class='activity' type='hidden' value='getServiceList' />
+                        <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
+                        <input class='value id' type='hidden' value='{$row['id_parent']}' />
+                        <button class='btn btn-primary action service control'>Предыдущий</button>";
+            }
+        } else {
+            $controls .= "&nbsp;";
+        }
+        $controls .= "</div>";
+
+        $controls .= "<div class='controlDiv'>
+                <input class='nextScreen' type='hidden' value='1' />
+                <input class='activity' type='hidden' value='move' />
+                <button class='btn btn-primary action service control'>Отмена</button>   
+            </div>";
+
+        // добавляем список сервисов
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT p.id, p.`desc`, p.price, p.price_unit, p.price_min_unit, p.period, p.period_unit
+            FROM v_custom_price_list p
+            WHERE p.`status` = 1 
+                AND p.id_parent = '$id'
+            ORDER BY p.id_parent, p.`desc`";
+        $rows = dbHelper\DbHelper::selectSet($query);
+        $buttons = '';
+
+        for ($i = $start; $i < $start + BUTTON_PER_SCREEN && $i < count($rows); $i++) {
+            $buttons .= "<span>
+                    <input class='activity' type='hidden' value='getServiceList' />
+                    <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
+                    <input class='value id' type='hidden' value='{$rows[$i]['id']}' />
+                    <button class='btn btn-primary action service'>{$rows[$i]['desc']}</button>   
+                </span>";
+        }
+
+        $controls .= "<div class='controlDiv'>";
+        if ($start + BUTTON_PER_SCREEN < count($rows)) {
+            $start += BUTTON_PER_SCREEN;
+            $controls .= "<input class='activity' type='hidden' value='getServiceList' />
+                    <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
+                    <input class='value id' type='hidden' value='$id' />
+                    <input class='value start' type='hidden' value='$start' />
+                    <button class='btn btn-primary action service control'>Следующий</button>";
+        } else {
+            $controls .= "&nbsp;";
+        }
+        $controls .= "</div>";
+
+        $replArray['patterns'][] = '{CONTROLS_LIST}';
+        $replArray['values'][] = $controls;
+
+        $replArray['patterns'][] = '{SERVICES_LIST}';
+        $replArray['values'][] = $buttons;
+
+        $response = $this->getScreen($nextScreen, $replArray);
+
         $response['message'] = '';
         $response['code'] = 0;
         
