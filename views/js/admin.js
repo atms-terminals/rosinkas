@@ -22,11 +22,35 @@ $(document).ready(function() {
             case '#collections': 
                 get('getCollections', $('#collections'));
                 break;
+            case '#priceGroup': 
+                get('getPriceGroup', $('#priceGroup'), {active: $('#priceStatus').prop('checked') ? 1 : 0});
+                break;
             case '#admin': 
                 get('getTerminals', $('#terminals'));
                 get('getUsers', $('#users'));
                 break;
         }
+    });
+
+    // разрешение/запрещение услуги
+    $(document).on('click', '.serviceItem', function() {
+        var sid = $('#sid').val(),
+            req = {
+                id: $(this).attr('id'), 
+                status: $(this).prop('checked') ? 1 : 0
+            };
+
+        $.post(sid + '/admin/setPriceGroupStatus', req, function() {
+
+        }, 'json')
+            .fail(function(){
+                get('getPriceGroup', $('#priceGroup'));
+            });
+    });
+
+    // показ услуг
+    $(document).on('click', '#priceStatus', function() {
+        get('getPriceGroup', $('#priceGroup'), {active: $(this).prop('checked') ? 1 : 0});
     });
 
     // запрос инкассаций

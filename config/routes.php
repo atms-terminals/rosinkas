@@ -12,6 +12,9 @@ return array(
     '.*?/admin/getHwsState' => 'admin/getHwsState',
     '.*?/admin/getCollections' => 'admin/getCollections',
 
+    '.*?/admin/getPriceGroup' => 'admin/getPriceGroup',
+    '.*?/admin/setPriceGroupStatus' => 'admin/setPriceGroupStatus',
+
     '.*?/admin/getTerminals' => 'admin/getTerminals',
     '.*?/admin/changeStatus' => 'admin/changeStatus',
     '.*?/admin/addTerminal' => 'admin/addUser',

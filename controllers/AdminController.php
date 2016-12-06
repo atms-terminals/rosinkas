@@ -46,6 +46,30 @@ class AdminController
         return true;
     }
 
+    public function actionGetPriceGroup()
+    {
+        $active = empty($_GET['active']) ? 0 : dbHelper\DbHelper::mysqlStr($_GET['active']);
+        $list = admin\Admin::getPriceGroup($active);
+
+        require_once(ROOT.'/views/priceGroup.php');
+        return true;
+    }
+
+    public function actionSetPriceGroupStatus()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+        $status = empty($_POST['status']) ? 0 : 1;
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_pricelist_set_status($uid, '$id', $status)";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
     public function actionChangeStatus()
     {
         $uid = user\User::getId();

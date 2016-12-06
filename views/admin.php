@@ -31,6 +31,7 @@
         <ul class="nav nav-tabs" role="tablist" id='mainTabs'>
             <li role="presentation" class="active"><a href="#hws" aria-controls="hws" role="tab" data-toggle="tab">Оборудование</a></li>
             <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Администрирование</a></li>
+            <li role="presentation"><a href="#priceGroup" aria-controls="priceGroup" role="tab" data-toggle="tab">Настройка меню</a></li>
             <li role="presentation"><a href="#prepaid" aria-controls="prepaid" role="tab" data-toggle="tab">Проверка авансов</a></li>
             <li role="presentation"><a href="#collections" aria-controls="collections" role="tab" data-toggle="tab">Инкассации</a></li>
         </ul>
@@ -65,6 +66,10 @@
             <div role="tabpanel" id="prepaid" class="tab-pane fade">
                 <input type="text" class="col-sm-10 col-xs-12" placeholder="Введите номер карты или фамилию" id="searchStr">
                 <a class="btn btn-primary" id='getPrepaid'>Найти</a>
+                <div class="resultArea"></div>
+            </div>
+            <div role="tabpanel" id="priceGroup" class="tab-pane fade">
+                <input type="checkbox" id="priceStatus" checked> Только активные услуги
                 <div class="resultArea"></div>
             </div>
         </div>
