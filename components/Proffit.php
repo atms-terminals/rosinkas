@@ -37,7 +37,19 @@ class Proffit
         return "<?xml version='1.0'?>
             <proffit code='PS' ver='1' lang='RU'>
             <user name='$user' pass='$password'/>
-            <command name='GET_STATUS_CARD' CARD_CODE='$card' DAYS='30'/>
+            <command name='GET_STATUS_CARD' CARD_CODE='$card' DAYS='900'/>
+            </proffit>";
+    }
+
+    private static function makeReqGetServices()
+    {
+        $user = self::$user;
+        $password = self::$password;
+
+        return "<?xml version='1.0'?>
+            <proffit code='PS' ver='1' lang='RU'>
+            <user name='$user' pass='$password'/>
+            <command name='GET_SERVICES'/>
             </proffit>";
     }
 
@@ -109,7 +121,6 @@ class Proffit
             if (!empty($data['result']['@attributes']['code'])) {
                 throw new \Exception($data['result']['@attributes']['text'], -2);
             }
-
             return $data;
         }
         throw new \Exception('Нет связи с сервером Проффит', -1);
@@ -125,13 +136,15 @@ class Proffit
     public static function getBalance($card)
     {
         $raw = self::sendRequest(self::makeReqBalance($card));
+        // $mockBalance = include 'mockBalance.php';
+        // $raw = $mockBalance[$card];
 
         $result = array();
         $customer = (empty($raw['answer']['CLIENT']['@attributes']['NAME'])) ? '' : $raw['answer']['CLIENT']['@attributes']['NAME'];
 
         if (!empty($raw['answer']['ITEM'])) {
             foreach ($raw['answer']['ITEM'] as $abon) {
-                if ($abon['@attributes']['ACTIVE'] == 1) {
+                if ($abon['@attributes']['ACTIVE'] == 1 || 1) {
                     $result[] = array (
                         'id' => $abon['@attributes']['ID'],
                         'name' => $abon['@attributes']['NAME'],
@@ -140,6 +153,8 @@ class Proffit
                         'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
                         'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
                         'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY'],
+                        'paid' => $abon['@attributes']['PAID'],
+                        'active' => $abon['@attributes']['ACTIVE'],
                         'customer' => $customer
                         );
                 }

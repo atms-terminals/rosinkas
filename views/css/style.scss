@@ -148,9 +148,9 @@ body {
 }
 
 #main a.btn {
-    width: 60%;
-    height: 100px;
-    line-height: 100px;
+    width: 62%;
+    height: 160px;
+    line-height: 160px;
     text-align: center;
     display: block;
     margin: 20px auto;
@@ -286,13 +286,20 @@ div.imgContainer {
     text-align: center;
 }
 
+button.addServiceBtn {
+    font-size: 30px;
+}
 button.service {
     width: 48%;
-    font-size: 36px;
+    font-size: 30px;
     min-height: 165px;
     margin-left: 15px;
     margin-bottom: 15px;
     white-space: normal;
+}
+button.service hr{
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 button.service.control {
