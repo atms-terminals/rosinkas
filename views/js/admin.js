@@ -33,6 +33,23 @@ $(document).ready(function() {
     });
 
     // разрешение/запрещение услуги
+    $(document).on('change', '.clientsDesc', function() {
+        var sid = $('#sid').val(),
+            $checkbox = $(this).siblings('.serviceItem'),
+            req = {
+                id: $checkbox.attr('id'), 
+                text: $(this).val()
+            };
+
+        $.post(sid + '/admin/setClientsDesc', req, function() {
+
+        }, 'json')
+            .fail(function(){
+                get('getPriceGroup', $('#priceGroup'));
+            });
+    });
+
+    // разрешение/запрещение услуги
     $(document).on('click', '.serviceItem', function() {
         var sid = $('#sid').val(),
             req = {

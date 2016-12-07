@@ -70,6 +70,21 @@ class AdminController
         return true;
     }
 
+    public function actionSetClientsDesc()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+        $text = empty($_POST['text']) ? '' : dbHelper\DbHelper::mysqlStr($_POST['text']);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_pricelist_set_clients_desc($uid, '$id', '$text')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
     public function actionChangeStatus()
     {
         $uid = user\User::getId();

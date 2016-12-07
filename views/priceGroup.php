@@ -12,9 +12,15 @@ function getMenuLevel($menu, $id)
         foreach ($menu[$id] as $key => $item) {
             $status = $item['status'] ? 'checked' : '';
             if (empty($menu[$item['id']])) {
-                $html .= "<li><input class='serviceItem' type='checkbox' id='{$item['id']}' $status> {$item['desc']} (id={$item['id']})</li>";
+                $html .= "<li><input class='serviceItem' type='checkbox' id='{$item['id']}' $status>
+                    {$item['desc']} (id={$item['id']})<br>
+                    <input type='text' value='{$item['clients_desc']}' class='clientsDesc' size='100' placeholder='Название для терминала' />
+                    </li>";
             } else {
-                $html .= "<li><input class='serviceItem' type='checkbox' id='{$item['id']}' $status> {$item['desc']} (id={$item['id']})";
+                $html .= "<li><input class='serviceItem' type='checkbox' id='{$item['id']}' $status>
+                    {$item['desc']} (id={$item['id']})<br>
+                    <input type='text' value='{$item['clients_desc']}' class='clientsDesc' size='100' placeholder='Название для терминала' />
+                    ";
                 $html .= "<ul>";
                 $html .= getMenuLevel($menu, $item['id']);
                 $html .= "</ul>";
