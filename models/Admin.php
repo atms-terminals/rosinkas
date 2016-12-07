@@ -68,7 +68,7 @@ class Admin
         $sql = $status ? 'p.status = 1' : '1';
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT p.id, p.id_parent, p.`desc`, p.`status`
-            from v_custom_price_list p
+            from v_custom_pricelist p
             where $sql
             order by p.id_parent, p.`desc`";
         $tservices = dbHelper\DbHelper::selectSet($query);
