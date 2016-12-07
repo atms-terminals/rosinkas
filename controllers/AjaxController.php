@@ -5,6 +5,8 @@ use components\DbHelper as dbHelper;
 use components\User as user;
 use components\Proffit as proffit;
 
+define('FIRST_SCREEN', 1);
+define('GET_MONEY_SCREEN', 4);
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
 define('NO_CARD_SCREEN', 13);
@@ -204,6 +206,7 @@ class AjaxController
             exit();
         }
 
+        $servicesListFirst = $servicesList;
         $replArray = $this->makeReplaceArray($nextScreen);
 
         // получаем текущие авансы
@@ -237,7 +240,7 @@ class AjaxController
                         <td class='text-center'>$minSumm</td>
                         <td class='text-center'>{$service['price']}</td>
                         <td class='text-center'>
-                            <input class='nextScreen' type='hidden' value='4' />
+                            <input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
                             <input class='activity' type='hidden' value='getMoneyScreen' />
                             <input class='value idAbonement' type='hidden' value='{$service['id']}' />
                             <input class='value price' type='hidden' value='{$service['price']}' />
@@ -258,7 +261,10 @@ class AjaxController
             exit();
         }
 
-        // добавляем список ФИО
+        // добавляем номер карты
+        $replArray['patterns'][] = '{CARD}';
+        $replArray['values'][] = $card;
+        // добавляем ФИО
         $replArray['patterns'][] = '{CLIENT}';
         $replArray['values'][] = $service['customer'];
         // добавляем список сервисов
@@ -268,6 +274,7 @@ class AjaxController
         $response = $this->getScreen($nextScreen, $replArray);
 
         $response['servicesList'] = $servicesList;
+        $response['servicesListFirst'] = $servicesListFirst;
         $response['message'] = '';
         $response['code'] = 0;
         
@@ -287,6 +294,7 @@ class AjaxController
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $id = (empty($_POST['values']['id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['id']);
         $start = (empty($_POST['values']['start'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['start']);
+        $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
 
         $replArray = $this->makeReplaceArray($nextScreen);
 
@@ -304,7 +312,7 @@ class AjaxController
             } else {
                 $query = "/*".__FILE__.':'.__LINE__."*/ ".
                     "SELECT p.id_parent
-                    from v_custom_price_list p
+                    from v_custom_pricelist p
                     where p.id = '$id'";
                 $row = dbHelper\DbHelper::selectRow($query);
 
@@ -319,7 +327,7 @@ class AjaxController
         $controls .= "</div>";
 
         $controls .= "<div class='controlDiv'>
-                <input class='nextScreen' type='hidden' value='1' />
+                <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
                 <input class='activity' type='hidden' value='move' />
                 <button class='btn btn-primary action service control'>Отмена</button>   
             </div>";
@@ -327,20 +335,29 @@ class AjaxController
         // добавляем список сервисов
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT p.id, p.`desc`, p.price, p.price_unit, p.price_min_unit, p.period, p.period_unit
-            FROM v_custom_price_list p
-            WHERE p.`status` = 1 
-                AND p.id_parent = '$id'
+            FROM v_clients_custom_pricelist p
+            WHERE p.id_parent = '$id'
             ORDER BY p.id_parent, p.`desc`";
         $rows = dbHelper\DbHelper::selectSet($query);
         $buttons = '';
 
         for ($i = $start; $i < $start + BUTTON_PER_SCREEN && $i < count($rows); $i++) {
-            $buttons .= "<span>
-                    <input class='activity' type='hidden' value='getServiceList' />
-                    <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
-                    <input class='value id' type='hidden' value='{$rows[$i]['id']}' />
-                    <button class='btn btn-primary action service'>{$rows[$i]['desc']}</button>   
-                </span>";
+            $cost = $rows[$i]['price'] && $rows[$i]['price'] != '0.00' ? "<hr>{$rows[$i]['price']} руб." : '';
+            if ($cost) {
+                $buttons .= "<span>
+                        <input class='activity' type='hidden' value='move' />
+                        <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
+                        <button class='btn btn-primary action service'>{$rows[$i]['desc']}$cost</button>   
+                    </span>";
+            } else {
+                $buttons .= "<span>
+                        <input class='activity' type='hidden' value='getServiceList' />
+                        <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
+                        <input class='value id' type='hidden' value='{$rows[$i]['id']}' />
+                        <input class='value card' type='hidden' value='$card' />
+                        <button class='btn btn-primary action service'>{$rows[$i]['desc']}$cost</button>   
+                    </span>";
+            }
         }
 
         $controls .= "<div class='controlDiv'>";
