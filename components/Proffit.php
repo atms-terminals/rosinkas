@@ -143,21 +143,37 @@ class Proffit
         $customer = (empty($raw['answer']['CLIENT']['@attributes']['NAME'])) ? '' : $raw['answer']['CLIENT']['@attributes']['NAME'];
 
         if (!empty($raw['answer']['ITEM'])) {
-            foreach ($raw['answer']['ITEM'] as $abon) {
-                if ($abon['@attributes']['ACTIVE'] == 1 || 1) {
-                    $result[] = array (
-                        'id' => $abon['@attributes']['ID'],
-                        'name' => $abon['@attributes']['NAME'],
-                        'dtFinish' => (empty($abon['@attributes']['PURCHASE_FINISH'])) ? 'Бессрочный' : $abon['@attributes']['PURCHASE_FINISH'],
-                        'dtPay' => (empty($abon['@attributes']['PURCHASE_DATE'])) ? '' : $abon['@attributes']['PURCHASE_DATE'],
-                        'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
-                        'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
-                        'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY'],
-                        'paid' => $abon['@attributes']['PAID'],
-                        'active' => $abon['@attributes']['ACTIVE'],
-                        'customer' => $customer
-                        );
+            if (empty($raw['answer']['ITEM']['@attributes'])) {
+                foreach ($raw['answer']['ITEM'] as $abon) {
+                    if ($abon['@attributes']['ACTIVE'] == 1 || 1) {
+                        $result[] = array (
+                            'id' => $abon['@attributes']['ID'],
+                            'name' => $abon['@attributes']['NAME'],
+                            'dtFinish' => (empty($abon['@attributes']['PURCHASE_FINISH'])) ? 'Бессрочный' : $abon['@attributes']['PURCHASE_FINISH'],
+                            'dtPay' => (empty($abon['@attributes']['PURCHASE_DATE'])) ? '' : $abon['@attributes']['PURCHASE_DATE'],
+                            'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
+                            'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
+                            'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY'],
+                            'paid' => $abon['@attributes']['PAID'],
+                            'active' => $abon['@attributes']['ACTIVE'],
+                            'customer' => $customer
+                            );
+                    }
                 }
+            } else {
+                $abon = $raw['answer']['ITEM'];
+                $result[] = array (
+                    'id' => $abon['@attributes']['ID'],
+                    'name' => $abon['@attributes']['NAME'],
+                    'dtFinish' => (empty($abon['@attributes']['PURCHASE_FINISH'])) ? 'Бессрочный' : $abon['@attributes']['PURCHASE_FINISH'],
+                    'dtPay' => (empty($abon['@attributes']['PURCHASE_DATE'])) ? '' : $abon['@attributes']['PURCHASE_DATE'],
+                    'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
+                    'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
+                    'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY'],
+                    'paid' => $abon['@attributes']['PAID'],
+                    'active' => $abon['@attributes']['ACTIVE'],
+                    'customer' => $customer
+                    );
             }
         }
         return $result;
