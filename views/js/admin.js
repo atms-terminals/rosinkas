@@ -32,7 +32,24 @@ $(document).ready(function() {
         }
     });
 
-    // разрешение/запрещение услуги
+    // удаление услуги
+    $(document).on('click', 'button.delete', function() {
+        var sid = $('#sid').val(),
+            $checkbox = $(this).siblings('.serviceItem'),
+            req = {
+                id: $checkbox.attr('id'), 
+                text: $(this).val()
+            };
+
+        $.post(sid + '/admin/setClientsDesc', req, function() {
+
+        }, 'json')
+            .fail(function(){
+                get('getPriceGroup', $('#priceGroup'));
+            });
+    });
+
+    // редактирование названия услуги для терминала
     $(document).on('change', '.clientsDesc', function() {
         var sid = $('#sid').val(),
             $checkbox = $(this).siblings('.serviceItem'),
@@ -246,6 +263,10 @@ $(document).ready(function() {
             $('#confirmDeleteDialog .modal-body span').html('терминал');
             $('#confirmDeleteDialog .modal-body .id').val($this.siblings('.id').val());
             $('#confirmDeleteDialog .modal-body .action').val('deleteTerminal');
+        } else if ($this.hasClass('price')) {
+            $('#confirmDeleteDialog .modal-body span').html('элемент меню');
+            $('#confirmDeleteDialog .modal-body .id').val($this.siblings('.serviceItem').attr('id'));
+            $('#confirmDeleteDialog .modal-body .action').val('deletePriceItem');
         }
     });
 
@@ -261,15 +282,19 @@ $(document).ready(function() {
         $.post(sid + '/admin/' + action, req, function() {
             if (action === 'deleteUser') {
                 get('getUsers', $('#users'));
-            } else {
+            } else if (action === 'deleteTerminal') {
                 get('getTerminals', $('#terminals'));
+            } else if (action === 'deletePriceItem') {
+                get('getPriceGroup', $('#priceGroup'), {active: $('#priceStatus').prop('checked') ? 1 : 0});
             }
         }, 'json')
             .fail(function(){
                 if (action === 'deleteUser') {
                     get('getUsers', $('#users'));
-                } else {
+                } else if (action === 'deleteTerminal') {
                     get('getTerminals', $('#terminals'));
+                } else if (action === 'deletePriceItem') {
+                    get('getPriceGroup', $('#priceGroup'), {active: $('#priceStatus').prop('checked') ? 1 : 0});
                 }
             });
 

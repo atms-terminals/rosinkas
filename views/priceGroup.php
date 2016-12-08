@@ -12,14 +12,16 @@ function getMenuLevel($menu, $id)
         foreach ($menu[$id] as $key => $item) {
             $status = $item['status'] ? 'checked' : '';
             if (empty($menu[$item['id']])) {
-                $html .= "<li><input class='serviceItem' type='checkbox' id='{$item['id']}' $status>
-                    {$item['desc']} (id={$item['id']})<br>
-                    <input type='text' value='{$item['clients_desc']}' class='clientsDesc' size='100' placeholder='Название для терминала' />
+                $html .= "<li><input class='serviceItem id' type='checkbox' id='{$item['id']}' $status title='запретить/разрешить'>
+                    {$item['desc']} (id={$item['id']}) 
+                    <button class='confirmDelete price'><span class='glyphicon glyphicon-remove' title='Удалить' data-toggle='modal' data-target='#confirmDeleteDialog'></span></button><br>
+                    <input type='text' value='{$item['clients_desc']}' class='clientsDesc' size='100' placeholder='Название для терминала' title='Название для терминала' />
                     </li>";
             } else {
-                $html .= "<li><input class='serviceItem' type='checkbox' id='{$item['id']}' $status>
-                    {$item['desc']} (id={$item['id']})<br>
-                    <input type='text' value='{$item['clients_desc']}' class='clientsDesc' size='100' placeholder='Название для терминала' />
+                $html .= "<li><input class='serviceItem id' type='checkbox' id='{$item['id']}' $status title='запретить/разрешить'>
+                    {$item['desc']} (id={$item['id']}) 
+                    <button class='confirmDelete price'><span class='glyphicon glyphicon-remove' title='Удалить' data-toggle='modal' data-target='#confirmDeleteDialog'></span></button><br>
+                    <input type='text' value='{$item['clients_desc']}' class='clientsDesc' size='100' placeholder='Название для терминала' title='Название для терминала' />
                     ";
                 $html .= "<ul>";
                 $html .= getMenuLevel($menu, $item['id']);

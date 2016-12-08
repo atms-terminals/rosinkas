@@ -70,6 +70,20 @@ class AdminController
         return true;
     }
 
+    public function actionDeletePriceItem()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_pricelist_delete($uid, '$id')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
     public function actionSetClientsDesc()
     {
         $uid = user\User::getId();
