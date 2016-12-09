@@ -136,7 +136,16 @@ class Proffit
     public static function getBalance($card)
     {
         $raw = self::sendRequest(self::makeReqBalance($card));
+
         // $mockBalance = include 'mockBalance.php';
+        // $card = '64FA32000D'; // есть в базе
+        // $card = '92FC820003'; // есть в базе
+        // $card = '179AFF0029'; // корпоративная
+        // $card = '5714270030'; // корпоративная с 2-мя одинаковыми услугами
+        // $card = 'C985FF0029'; // корпоративная без услуг
+        // $card = '256702006A'; // реальный клиент
+        // $card = '4F97670088'; // клиент с долгами
+
         // $raw = $mockBalance[$card];
 
         $result = array();

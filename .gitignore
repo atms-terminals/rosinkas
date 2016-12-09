@@ -3,6 +3,9 @@
 bower_components/**
 node_modules/**
 
+# mock
+components/cards/**
+
 # релиз файлы
 release/**
 tmp/**

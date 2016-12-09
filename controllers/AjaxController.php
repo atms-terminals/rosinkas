@@ -190,9 +190,6 @@ class AjaxController
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
 
-        // $card = '64FA32000D';
-        // $card = '92FC820003';
-
         $servicesList = array();
         try {
             // получаем список услуг
