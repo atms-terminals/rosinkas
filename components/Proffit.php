@@ -127,13 +127,59 @@ class Proffit
     }
 
     /**
+     * Сохранение одной услуги
+     */
+    private static function saveServiceItem($paid, $abon, &$result)
+    {
+        $id = $abon['@attributes']['ID'];
+        $dtPay = (empty($abon['@attributes']['PURCHASE_DATE'])) ? '' : $abon['@attributes']['PURCHASE_DATE'];
+        $price = (empty($abon['@attributes']['PRICE'])) ? 0 : (int)$abon['@attributes']['PRICE'];
+
+        if (preg_match('~(\d{2}).(\d{2}).(\d{4})~', $dtPay, $dtParts)) {
+            $dt = $dtParts[2].$dtParts[1].$dtParts[0];
+        } else {
+            $dt = 0;
+        }
+
+        // проверяем дату покупки. нужно сохранить самую последнюю
+        // если цены нет, то сохраняем в любом случае
+        if (!empty($result['services'][$id])) {
+            if ($dt < $result['services'][$id]['dt'] && !$price) {
+                return;
+            }
+        }
+
+        if (!$price) {
+            $id = $id.count($result['services']);
+        }
+
+        $cpaid = empty($abon['@attributes']['PAID']) ? 0 : 1;
+        if ($cpaid == $paid) {
+            $result['services'][$id] = array (
+                'dt' => $dt,
+                'id' => $abon['@attributes']['ID'],
+                'name' => $abon['@attributes']['NAME'],
+                'dtFinish' => (empty($abon['@attributes']['PURCHASE_FINISH'])) ? 'Бессрочный' : $abon['@attributes']['PURCHASE_FINISH'],
+                'dtPay' => $dtPay,
+                'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
+                'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
+                'price' => $price,
+                'paid' => $abon['@attributes']['PAID'],
+                'active' => $abon['@attributes']['ACTIVE'],
+                );
+        } elseif ($paid) {
+            $result['debts'] = '';
+        }
+    }
+
+    /**
      * Получение списка подключенных услуг.
      *
      * @param string $card номер карты
      *
      * @return array статус карты;
      */
-    public static function getBalance($card)
+    public static function getBalance($card, $paid)
     {
         $raw = self::sendRequest(self::makeReqBalance($card));
 
@@ -143,49 +189,34 @@ class Proffit
         // $card = '179AFF0029'; // корпоративная
         // $card = '5714270030'; // корпоративная с 2-мя одинаковыми услугами
         // $card = 'C985FF0029'; // корпоративная без услуг
-        // $card = '256702006A'; // реальный клиент
+        // $card = '2567020206A'; // реальный клиент
         // $card = '4F97670088'; // клиент с долгами
-
         // $raw = $mockBalance[$card];
 
-        $result = array();
-        $customer = (empty($raw['answer']['CLIENT']['@attributes']['NAME'])) ? '' : $raw['answer']['CLIENT']['@attributes']['NAME'];
+        $result = array(
+            'customer' => (empty($raw['answer']['CLIENT']['@attributes']['NAME'])) ? '' : $raw['answer']['CLIENT']['@attributes']['NAME'],
+            'services' => array(),
+            'debts' => 'noDisplay'
+        );
 
         if (!empty($raw['answer']['ITEM'])) {
             if (empty($raw['answer']['ITEM']['@attributes'])) {
                 foreach ($raw['answer']['ITEM'] as $abon) {
-                    if ($abon['@attributes']['ACTIVE'] == 1 || 1) {
-                        $result[] = array (
-                            'id' => $abon['@attributes']['ID'],
-                            'name' => $abon['@attributes']['NAME'],
-                            'dtFinish' => (empty($abon['@attributes']['PURCHASE_FINISH'])) ? 'Бессрочный' : $abon['@attributes']['PURCHASE_FINISH'],
-                            'dtPay' => (empty($abon['@attributes']['PURCHASE_DATE'])) ? '' : $abon['@attributes']['PURCHASE_DATE'],
-                            'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
-                            'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
-                            'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY'],
-                            'paid' => $abon['@attributes']['PAID'],
-                            'active' => $abon['@attributes']['ACTIVE'],
-                            'customer' => $customer
-                            );
-                    }
+                    self::saveServiceItem($paid, $abon, $result);
                 }
             } else {
-                $abon = $raw['answer']['ITEM'];
-                $result[] = array (
-                    'id' => $abon['@attributes']['ID'],
-                    'name' => $abon['@attributes']['NAME'],
-                    'dtFinish' => (empty($abon['@attributes']['PURCHASE_FINISH'])) ? 'Бессрочный' : $abon['@attributes']['PURCHASE_FINISH'],
-                    'dtPay' => (empty($abon['@attributes']['PURCHASE_DATE'])) ? '' : $abon['@attributes']['PURCHASE_DATE'],
-                    'balance' => "{$abon['@attributes']['QTY']} {$abon['@attributes']['UNIT']}",
-                    'purchaseAmount' => $abon['@attributes']['PURCHASE_SYMA'],
-                    'price' => $abon['@attributes']['PURCHASE_SYMA'] / $abon['@attributes']['PURCHASE_QTY'],
-                    'paid' => $abon['@attributes']['PAID'],
-                    'active' => $abon['@attributes']['ACTIVE'],
-                    'customer' => $customer
-                    );
+                self::saveServiceItem($paid, $raw['answer']['ITEM'], $result);
             }
         }
+        
+        uksort($result['services'], "self::cmp");
+
         return $result;
+    }
+
+    private static function cmp($a, $b)
+    {
+        return $a['dt'] == $b['dt'] ? 0 : ($a['dt'] < $b['dt'] ? 1 : -1);
     }
 
     /**

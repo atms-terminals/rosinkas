@@ -147,6 +147,10 @@ body {
     color: $secondFirmBack;
 }
 
+.noDisplay {
+    display: none;
+}
+
 #main a.btn {
     width: 62%;
     height: 160px;
@@ -193,7 +197,7 @@ body {
 }
 
 #main .bigDigit {
-    font-size: 30px;
+    // font-size: 30px;
     font-weight: 800;
 }
 
@@ -288,7 +292,16 @@ div.imgContainer {
 
 button.addServiceBtn {
     font-size: 30px;
+    margin-right: 15px;
 }
+
+button.debtsButton {
+    background-color: red;
+    border: 1px solid red;
+    margin-left: 15px;
+    font-size: 30px;
+}
+
 button.service {
     width: 48%;
     font-size: 30px;

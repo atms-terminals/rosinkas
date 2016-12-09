@@ -189,11 +189,12 @@ class AjaxController
     {
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
+        $paid = (!empty($_POST['values']['notPaid'])) ? 0 : 1;
 
         $servicesList = array();
         try {
             // получаем список услуг
-            $servicesList = proffit\Proffit::getBalance($card);
+            $servicesList = proffit\Proffit::getBalance($card, $paid);
         } catch (\Exception $e) {
             // уходим на первый экран
             $_POST['nextScreen'] = $e->getCode() == -2 ? NO_CARD_SCREEN : ERROR_SCREEN;
@@ -219,30 +220,24 @@ class AjaxController
 
         $rows = '';
 
-        // удаляем пустые услуги
-        foreach ($servicesList as $key => $service) {
-            if (!$service['balance']) {
-                unset($servicesList['$key']);
-            }
-        }
-
-        if ($servicesList) {
-            foreach ($servicesList as $service) {
+        if ($servicesList['services']) {
+            foreach ($servicesList['services'] as $service) {
                 $minSumm = $service['purchaseAmount'] - $prepayment;
+                $balance = !$service['active'] ? 'НЕ АКТИВНА' : $service['balance'];
                 $rows .= "<tr>
                         <td>{$service['name']}</td>
-                        <td class='text-center bigDigit'>{$service['balance']}</td>
+                        <td class='text-center bigDigit'>$balance</td>
                         <td class='text-center'>{$service['dtPay']}</td>
                         <td class='text-center'>{$service['dtFinish']}</td>
-                        <td class='text-center'>$minSumm</td>
                         <td class='text-center'>{$service['price']}</td>
+                        <td class='text-center'>$minSumm</td>
                         <td class='text-center'>
                             <input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
                             <input class='activity' type='hidden' value='getMoneyScreen' />
                             <input class='value idAbonement' type='hidden' value='{$service['id']}' />
                             <input class='value price' type='hidden' value='{$service['price']}' />
                             <input class='value card' type='hidden' value='$card' />
-                            <input class='value customer' type='hidden' value='{$service['customer']}' />
+                            <input class='value customer' type='hidden' value='{$servicesList['customer']}' />
                             <input class='value serviceName' type='hidden' value='{$service['name']}' />
                             <input class='value purchaseAmount' type='hidden' value='{$service['purchaseAmount']}' />
                             <input class='value prepayment' type='hidden' value='$prepayment' />
@@ -251,19 +246,20 @@ class AjaxController
                     </tr>";
             }
         } else {
-            $_POST['nextScreen'] = NO_SERVICES_SCREEN;
-            $_POST['values']['type'] = 'proffit';
-            $_POST['values']['message'] = "Нет доступных услуг";
-            $this->actionWriteLog();
-            exit();
+            $rows = '<tr><td colspan="7" class="error"><h1>Нет доступных услуг</h1><br><br></td></tr>';
         }
 
+        // добавляем класс для кнопки долгов
+        $replArray['patterns'][] = '{DEBTS}';
+        $replArray['values'][] = $servicesList['debts'];
+        $replArray['patterns'][] = '{DEBTS_TITLE}';
+        $replArray['values'][] = !$paid ? '' : 'noDisplay';
         // добавляем номер карты
         $replArray['patterns'][] = '{CARD}';
         $replArray['values'][] = $card;
         // добавляем ФИО
         $replArray['patterns'][] = '{CLIENT}';
-        $replArray['values'][] = $service['customer'];
+        $replArray['values'][] = $servicesList['customer'];
         // добавляем список сервисов
         $replArray['patterns'][] = '{SERVICES_LIST}';
         $replArray['values'][] = $rows;
