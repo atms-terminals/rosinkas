@@ -69,6 +69,12 @@
                 <div class="resultArea"></div>
             </div>
             <div role="tabpanel" id="priceGroup" class="tab-pane fade">
+                <fieldset>
+                    <p>
+                        При загрузке прейскуранта записи, который уже есть, будут обновлены. Отсутствующие записи будут добавлены
+                    </p>
+                    <button type='button' class='btn btn-primary loadPriceList'>Загрузить прейскурант</button><br><br>
+                </fieldset>
                 <input type="checkbox" id="priceStatus" checked> Только активные услуги
                 <div class="resultArea"></div>
             </div>

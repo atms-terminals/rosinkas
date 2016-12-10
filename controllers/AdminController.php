@@ -5,6 +5,7 @@ include_once ROOT.'/models/Admin.php';
 use models\Admin as admin;
 use components\User as user;
 use components\DbHelper as dbHelper;
+use components\Proffit as proffit;
 
 /**
 * productController
@@ -66,6 +67,46 @@ class AdminController
         $result = dbHelper\DbHelper::selectRow($query);
         $response['code'] = 0;
 
+        echo json_encode($response);
+        return true;
+    }
+
+    public function actionLoadPriceList()
+    {
+        $uid = user\User::getId();
+        $response['code'] = 0;
+        $response['message'] = '';
+
+        try {
+            // получаем список услуг
+            $servicesList = proffit\Proffit::loadPriceList();
+        } catch (\Exception $e) {
+            $response['code'] = $e->getCode();
+            $response['message'] = $e->getMessage();
+            echo json_encode($response);
+            exit;
+        }
+
+        if (!empty($servicesList['answer']['ITEM'][0])) {
+            foreach ($servicesList['answer']['ITEM'] as $item) {
+                $id = empty($item['@attributes']['ID']) ? 0 : dbHelper\DbHelper::mysqlStr($item['@attributes']['ID']);
+                $idParent = empty($item['@attributes']['ID_UPPER']) ? 0 : dbHelper\DbHelper::mysqlStr($item['@attributes']['ID_UPPER']);
+                $desc = empty($item['@attributes']['NAME']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['NAME']);
+                $price = empty($item['@attributes']['PRICE']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['PRICE']);
+                $priceUnit = empty($item['@attributes']['UNIT']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['UNIT']);
+                $priceMinUnit = empty($item['@attributes']['CNT_MIN']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['CNT_MIN']);
+                $period = empty($item['@attributes']['SROK']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['SROK']);
+                $periodUnit = empty($item['@attributes']['SROK_VID']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['SROK_VID']);
+
+                if ($id) {
+                    $query = "/*".__FILE__.':'.__LINE__."*/ ".
+                        "SELECT custom_pricelist_add($uid, $id, $idParent, '$desc', '$price', '$priceUnit', '$priceMinUnit', '$period', '$periodUnit')";
+                    $result = dbHelper\DbHelper::selectRow($query);
+                }
+            }
+        }
+
+        $response['servicesList'] = $servicesList;
         echo json_encode($response);
         return true;
     }

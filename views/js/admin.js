@@ -49,6 +49,20 @@ $(document).ready(function() {
             });
     });
 
+    // загрузка прайса
+    $(document).on('click', 'button.loadPriceList', function() {
+        var sid = $('#sid').val(),
+            req = {
+            };
+
+        $.post(sid + '/admin/loadPriceList', req, function() {
+            get('getPriceGroup', $('#priceGroup'), {active: $('#priceStatus').prop('checked') ? 1 : 0});
+        }, 'json')
+            .fail(function(){
+                get('getPriceGroup', $('#priceGroup'));
+            });
+    });
+
     // редактирование названия услуги для терминала
     $(document).on('change', '.clientsDesc', function() {
         var sid = $('#sid').val(),

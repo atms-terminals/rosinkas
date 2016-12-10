@@ -189,7 +189,7 @@ class Proffit
         // $card = '179AFF0029'; // корпоративная
         // $card = '5714270030'; // корпоративная с 2-мя одинаковыми услугами
         // $card = 'C985FF0029'; // корпоративная без услуг
-        // $card = '2567020206A'; // реальный клиент
+        // $card = '256702006A'; // реальный клиент
         // $card = '4F97670088'; // клиент с долгами
         // $raw = $mockBalance[$card];
 
@@ -217,6 +217,17 @@ class Proffit
     private static function cmp($a, $b)
     {
         return $a['dt'] == $b['dt'] ? 0 : ($a['dt'] < $b['dt'] ? 1 : -1);
+    }
+
+    /**
+     * Получение полного списка услуг.
+     *
+     * @return array список услуг;
+     */
+    public static function loadPriceList()
+    {
+        $raw = self::sendRequest(self::makeReqGetServices());
+        return $raw;
     }
 
     /**
