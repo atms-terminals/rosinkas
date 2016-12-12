@@ -45,7 +45,7 @@
         </check>
         <timer>
             <screen>1</screen>
-            <timeout>40</timeout>
+            <timeout>60</timeout>
             <action>move</action>
         </timer>
     </s3>
