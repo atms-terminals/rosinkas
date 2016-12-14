@@ -191,6 +191,9 @@ class AjaxController
         $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
         $paid = (!empty($_POST['values']['notPaid'])) ? 0 : 1;
 
+        // $card = '64FA32000D'; // есть в базе
+        // $card = '92FC820003'; // есть в базе
+
         $servicesList = array();
         try {
             // получаем список услуг
@@ -241,7 +244,7 @@ class AjaxController
                             <input class='value serviceName' type='hidden' value='{$service['name']}' />
                             <input class='value purchaseAmount' type='hidden' value='{$service['purchaseAmount']}' />
                             <input class='value prepayment' type='hidden' value='$prepayment' />
-                            <!--a class='btn btn-primary action small'>Пополнить</a-->
+                            <a class='btn btn-primary action small'>Пополнить</a>
                         </td>
                     </tr>";
             }
@@ -288,6 +291,8 @@ class AjaxController
         $id = (empty($_POST['values']['id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['id']);
         $start = (empty($_POST['values']['start'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['start']);
         $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
+        $prepayment = (empty($_POST['values']['prepayment'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['prepayment']);
+        $customer = (empty($_POST['values']['customer'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['customer']);
 
         $replArray = $this->makeReplaceArray($nextScreen);
 
@@ -301,6 +306,9 @@ class AjaxController
                         <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                         <input class='value id' type='hidden' value='$id' />
                         <input class='value start' type='hidden' value='$ns' />
+                        <input class='value prepayment' type='hidden' value='$prepayment' />
+                        <input class='value card' type='hidden' value='$card' />
+                        <input class='value customer' type='hidden' value='$customer' />
                         <button class='btn btn-primary action service control'>Предыдущий</button>";
             } else {
                 $query = "/*".__FILE__.':'.__LINE__."*/ ".
@@ -312,6 +320,9 @@ class AjaxController
                 $controls .= "<input class='activity' type='hidden' value='getServiceList' />
                         <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                         <input class='value id' type='hidden' value='{$row['id_parent']}' />
+                        <input class='value prepayment' type='hidden' value='$prepayment' />
+                        <input class='value card' type='hidden' value='$card' />
+                        <input class='value customer' type='hidden' value='$customer' />
                         <button class='btn btn-primary action service control'>Предыдущий</button>";
             }
         } else {
@@ -337,9 +348,21 @@ class AjaxController
         for ($i = $start; $i < $start + BUTTON_PER_SCREEN && $i < count($rows); $i++) {
             $cost = $rows[$i]['price'] && $rows[$i]['price'] != '0.00' ? "<hr>{$rows[$i]['price']} руб." : '';
             if ($cost) {
+                $minPurchase = $rows[$i]['price'] * $rows[$i]['price_min_unit'];
                 $buttons .= "<span>
-                        <input class='activity' type='hidden' value='move' />
+                        <!--input class='activity' type='hidden' value='move' />
                         <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
+                        <button class='btn btn-primary action service'>{$rows[$i]['desc']}$cost</button-->   
+
+                        <input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
+                        <input class='activity' type='hidden' value='getMoneyScreen' />
+                        <input class='value purchaseAmount' type='hidden' value='$minPurchase' />
+                        <input class='value price' type='hidden' value='{$rows[$i]['price']}' />
+                        <input class='value idAbonement' type='hidden' value='{$rows[$i]['id']}' />
+                        <input class='value serviceName' type='hidden' value='{$rows[$i]['desc']}' />
+                        <input class='value card' type='hidden' value='$card' />
+                        <input class='value prepayment' type='hidden' value='$prepayment' />
+                        <input class='value customer' type='hidden' value='$customer' />
                         <button class='btn btn-primary action service'>{$rows[$i]['desc']}$cost</button>   
                     </span>";
             } else {
@@ -348,6 +371,8 @@ class AjaxController
                         <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                         <input class='value id' type='hidden' value='{$rows[$i]['id']}' />
                         <input class='value card' type='hidden' value='$card' />
+                        <input class='value prepayment' type='hidden' value='$prepayment' />
+                        <input class='value customer' type='hidden' value='$customer' />
                         <button class='btn btn-primary action service'>{$rows[$i]['desc']}$cost</button>   
                     </span>";
             }
@@ -360,6 +385,9 @@ class AjaxController
                     <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                     <input class='value id' type='hidden' value='$id' />
                     <input class='value start' type='hidden' value='$start' />
+                    <input class='value prepayment' type='hidden' value='$prepayment' />
+                    <input class='value card' type='hidden' value='$card' />
+                    <input class='value customer' type='hidden' value='$customer' />
                     <button class='btn btn-primary action service control'>Следующий</button>";
         } else {
             $controls .= "&nbsp;";

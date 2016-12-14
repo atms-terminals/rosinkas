@@ -181,8 +181,6 @@ class Proffit
      */
     public static function getBalance($card, $paid)
     {
-        $raw = self::sendRequest(self::makeReqBalance($card));
-
         // $mockBalance = include 'mockBalance.php';
         // $card = '64FA32000D'; // есть в базе
         // $card = '92FC820003'; // есть в базе
@@ -192,6 +190,8 @@ class Proffit
         // $card = '256702006A'; // реальный клиент
         // $card = '4F97670088'; // клиент с долгами
         // $raw = $mockBalance[$card];
+
+        $raw = self::sendRequest(self::makeReqBalance($card));
 
         $result = array(
             'customer' => (empty($raw['answer']['CLIENT']['@attributes']['NAME'])) ? '' : $raw['answer']['CLIENT']['@attributes']['NAME'],
