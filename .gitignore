@@ -12,7 +12,8 @@ tmp/**
 
 # sass файлы
 .sass-cache/**
-style-sass.css
+views/css/*.css
+views/css/*.map
 css/*.map
 distrib/**
 old/**
