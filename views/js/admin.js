@@ -49,6 +49,27 @@ $(document).ready(function() {
             });
     });
 
+    // детализация инкассации
+    $(document).on('click', 'button.getCollectionDetails', function() {
+        var sid = $('#sid').val(),
+            idCollection = $(this).siblings('.id').val(),
+            req = {
+                idCollection: idCollection
+            };
+
+        $.post(sid + '/admin/getCollectionDetails', req, function(response) {
+            var $a = $('<a>');
+            $a.attr('href', response.file);
+            $('body').append($a);
+            $a.attr('download', 'collectionDetail.xls');
+            $a[0].click();
+            $a.remove();
+
+        }, 'json')
+            .fail(function(){
+            });
+    });
+
     // загрузка прайса
     $(document).on('click', 'button.loadPriceList', function() {
         var sid = $('#sid').val(),

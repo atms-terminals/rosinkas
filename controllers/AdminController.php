@@ -31,6 +31,30 @@ class AdminController
         return true;
     }
 
+    public function actionGetCollectionDetails()
+    {
+        $idCollection = empty($_POST['idCollection']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['idCollection']);
+        
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT date_format(co.dt, '%d.%m.%Y %H:%i') dt_collection, u.address
+            from collections co
+                join users u on u.id = co.id_user
+            where co.id = '$idCollection'";
+        $collectionParams = dbHelper\DbHelper::selectSet($query);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT date_format(p.dt_confirm, '%d.%m.%Y %H:%i') dt_oper, a.name `client`, a.card, c.`desc` service, p.amount, p.deposit, p.summ
+            from v_payments p
+                left join custom_pricelist c on p.abonement = c.id
+                left join cards a on p.id_card = a.id
+            where p.id_collection = '$idCollection'
+            order by p.dt_confirm";
+        $opers = dbHelper\DbHelper::selectSet($query);
+
+        require_once(ROOT.'/views/collectionDetailsXls.php');
+        return true;
+    }
+
     public function actionGetCollections()
     {
         $collections = admin\Admin::getCollections();

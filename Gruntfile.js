@@ -193,7 +193,8 @@ module.exports = function(grunt) {
                 files: [
                 {expand: true, flatten: true, src: ['views/img/*'], dest: 'release/views/img/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['views/include/*'], dest: 'release/views/include/', filter: 'isFile'},
-                {expand: true, flatten: true, src: ['bower_components/bootstrap/fonts/*'], dest: 'release/fonts/', filter: 'isFile'},
+                {expand: true, flatten: true, src: ['bower_components/bootstrap/fonts/*'], dest: 'release/views/fonts/', filter: 'isFile'},
+                {expand: true, src: ['components/PHPExcel/Classes/**'], dest: 'release/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['components/*'], dest: 'release/components/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['controllers/*'], dest: 'release/controllers/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['config/*'], dest: 'release/config/', filter: 'isFile'},
