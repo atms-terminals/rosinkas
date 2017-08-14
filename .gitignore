@@ -6,6 +6,8 @@ node_modules/**
 # mock
 components/cards/**
 
+sqlUpdate/**
+
 # релиз файлы
 release/**
 tmp/**

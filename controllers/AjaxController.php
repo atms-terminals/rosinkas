@@ -338,10 +338,10 @@ class AjaxController
 
         // добавляем список сервисов
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id, p.`desc`, p.price, p.price_unit, p.price_min_unit, p.period, p.period_unit
+            "SELECT p.id, p.`desc`, p.price, p.price_unit, p.price_min_unit, p.period, p.period_unit, p.color
             FROM v_clients_custom_pricelist p
             WHERE p.id_parent = '$id'
-            ORDER BY p.id_parent, p.`desc`";
+            ORDER BY p.id_parent, p.color, p.`desc`";
         $rows = dbHelper\DbHelper::selectSet($query);
         $buttons = '';
 
@@ -352,7 +352,7 @@ class AjaxController
                 $buttons .= "<span>
                         <!--input class='activity' type='hidden' value='move' />
                         <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
-                        <button class='btn btn-primary action service'>{$rows[$i]['desc']}$cost</button-->   
+                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button-->   
 
                         <input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
                         <input class='activity' type='hidden' value='getMoneyScreen' />
@@ -363,7 +363,7 @@ class AjaxController
                         <input class='value card' type='hidden' value='$card' />
                         <input class='value prepayment' type='hidden' value='$prepayment' />
                         <input class='value customer' type='hidden' value='$customer' />
-                        <button class='btn btn-primary action service'>{$rows[$i]['desc']}$cost</button>   
+                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>   
                     </span>";
             } else {
                 $buttons .= "<span>
@@ -373,7 +373,7 @@ class AjaxController
                         <input class='value card' type='hidden' value='$card' />
                         <input class='value prepayment' type='hidden' value='$prepayment' />
                         <input class='value customer' type='hidden' value='$customer' />
-                        <button class='btn btn-primary action service'>{$rows[$i]['desc']}$cost</button>   
+                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>   
                     </span>";
             }
         }

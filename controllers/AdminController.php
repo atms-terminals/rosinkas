@@ -140,6 +140,21 @@ class AdminController
         return true;
     }
 
+    public function actionSetColor()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+        $color = empty($_POST['color']) ? 'primary' : dbHelper\DbHelper::mysqlStr($_POST['color']);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_pricelist_set_color($uid, '$id', '$color')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
     public function actionChangeStatus()
     {
         $uid = user\User::getId();

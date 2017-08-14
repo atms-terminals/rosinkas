@@ -23,7 +23,6 @@ class Router
 
         // проверить наличие такого запроса в routes.php
         $done = false;
-
         foreach ($routes as $uriPattern => $path) {
             if (preg_match("~$uriPattern~", $uri)) {
                 $internalRoute = preg_replace("~$uriPattern~", $path, $uri);

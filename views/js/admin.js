@@ -80,6 +80,25 @@ $(document).ready(function() {
             });
     });
 
+    // редактирование цвета кнопки
+    $(document).on('change', '.color input', function() {
+        var sid = $('#sid').val(),
+            $this = $(this).closest('li'),
+            color = $this.find('.color input:checked').val(),
+            $checkbox = $this.find('.serviceItem'),
+            req = {
+                id: $checkbox.attr('id'), 
+                color: color
+            };
+
+        $.post(sid + '/admin/setColor', req, function() {
+
+        }, 'json')
+            .fail(function(){
+                get('getPriceGroup', $('#priceGroup'));
+            });
+    });
+
     // разрешение/запрещение услуги
     $(document).on('click', '.serviceItem', function() {
         var sid = $('#sid').val(),

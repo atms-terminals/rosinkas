@@ -20,7 +20,7 @@
             echo "<tr class='$class'>
                     <td class='login'>{$user['login']}</td>
                     <td class='' align='center'>
-                        <!-- $btn -->
+                        $btn
                         <button type='button' class='btn btn-primary changeUserPassword' data-toggle='modal' data-target='#changePasswordDialog'>Изменить пароль</button>
                     </td>
                     <td class='' align='right'>
