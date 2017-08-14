@@ -26,22 +26,27 @@ class Admin
     public static function getCollections()
     {
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT u.address, s.`action`, date_format(s.dt, '%d.%m.%Y %H:%i') dt
-            from system_log s
-                join users u on s.id_user = u.id
+            "SELECT p.id_collection, u.address, date_format(c.dt, '%d.%m.%Y %H:%i') dt, sum(p.amount) amount, sum(p.deposit) deposit, sum(p.summ) summ
+            from collections c
                 join (
-                    select max(s.dt) dt, s.id_user 
-                    from system_log s 
-                    where s.id_action = 15
-                    group by s.id_user) t on t.dt = s.dt
-                        and t.id_user = s.id_user
-            order by 1";
+                    select max(c.dt) dt, c.id_user
+                    from collections c 
+                    group by c.id_user
+                ) t on c.dt = t.dt 
+                    and c.id_user = t.id_user
+                join v_payments p on p.id_collection = c.id
+                join users u on c.id_user = u.id
+            group by u.address, p.id_collection, date_format(c.dt, '%d.%m.%Y %H:%i')
+            order by u.address";
         $collections = dbHelper\DbHelper::selectSet($query);
 
         // наличка
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id_user, if(p.dt_confirm is null, 'notConfirmed', 'confirmed') confirmed, sum(p.amount) summ, u.address
-            from payments p
+            "SELECT p.id_user, u.address,
+                if(p.dt_confirm is null, 'notConfirmed', 'confirmed') confirmed, 
+                sum(p.amount) summ, 
+                sum(p.deposit) deposit
+            from v_payments p
                 join users u on u.id = p.id_user
             where p.collected = 0
             group by p.id_user, if(p.dt_confirm is null, 'notConfirmed', 'confirmed')";
@@ -51,8 +56,10 @@ class Admin
             if (empty($money[$row['address']])) {
                 $money[$row['address']]['confirmed'] = 0;
                 $money[$row['address']]['notConfirmed'] = 0;
+                $money[$row['address']]['deposit'] = 0;
             }
             $money[$row['address']][$row['confirmed']] = $row['summ'];
+            $money[$row['address']]['deposit'] += $row['deposit'];
         }
 
         return array('collections' => $collections,
@@ -141,6 +148,7 @@ class Admin
             "SELECT u.id, u.login, u.status
             from v_real_users u
             where u.id_role != 2
+                and u.id > 10
             order by u.login";
         $list = dbHelper\DbHelper::selectSet($query);
 
