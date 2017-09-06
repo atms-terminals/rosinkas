@@ -87,7 +87,7 @@ class AdminController
         $status = empty($_POST['status']) ? 0 : 1;
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT custom_pricelist_set_status($uid, '$id', $status)";
+            "SELECT custom_price_set_status($uid, 'albatros', '$id', $status)";
         $result = dbHelper\DbHelper::selectRow($query);
         $response['code'] = 0;
 
@@ -124,7 +124,7 @@ class AdminController
 
                 if ($id) {
                     $query = "/*".__FILE__.':'.__LINE__."*/ ".
-                        "SELECT custom_pricelist_add($uid, $id, $idParent, '$desc', '$price', '$priceUnit', '$priceMinUnit', '$period', '$periodUnit')";
+                        "SELECT custom_price_add($uid, 'albatros', $id, $idParent, '$desc', '$price', '$priceUnit', '$priceMinUnit', '$period', '$periodUnit')";
                     $result = dbHelper\DbHelper::selectRow($query);
                 }
             }
@@ -141,7 +141,7 @@ class AdminController
         $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT custom_pricelist_delete($uid, '$id')";
+            "SELECT custom_price_delete($uid, 'albatros', '$id')";
         $result = dbHelper\DbHelper::selectRow($query);
         $response['code'] = 0;
 
@@ -156,7 +156,7 @@ class AdminController
         $text = empty($_POST['text']) ? '' : dbHelper\DbHelper::mysqlStr($_POST['text']);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT custom_pricelist_set_clients_desc($uid, '$id', '$text')";
+            "SELECT custom_price_set_clients_desc($uid, 'albatros', '$id', '$text')";
         $result = dbHelper\DbHelper::selectRow($query);
         $response['code'] = 0;
 
@@ -171,7 +171,7 @@ class AdminController
         $color = empty($_POST['color']) ? 'primary' : dbHelper\DbHelper::mysqlStr($_POST['color']);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT custom_pricelist_set_color($uid, '$id', '$color')";
+            "SELECT custom_price_set_color($uid, 'albatros', '$id', '$color')";
         $result = dbHelper\DbHelper::selectRow($query);
         $response['code'] = 0;
 
