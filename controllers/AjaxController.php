@@ -3,15 +3,16 @@ namespace controllers\AjaxController;
 
 use components\DbHelper as dbHelper;
 use components\User as user;
-use components\Proffit as proffit;
 
 define('FIRST_SCREEN', 1);
+define('FIRST_ACTION', 'getServiceList');
 define('GET_MONEY_SCREEN', 4);
+define('GET_MONEY_ACTION', 'getMoneyScreen');
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
 define('NO_CARD_SCREEN', 13);
 define('NO_SERVICES_SCREEN', 14);
-define('SERVICE_LIST_SCREEN', 15);
+define('SERVICE_LIST_SCREEN', 1);
 
 /**
  * обработка запросов ajax.
@@ -87,22 +88,7 @@ class AjaxController
         $replArray['patterns'][] = '{AMOUNT}';
         $replArray['values'][] = $amount;
 
-        
-        if ($countUnits) {
-            // пишем платеж в проффит
-            try {
-                // получаем список услуг
-                $servicesList = proffit\Proffit::pay($card, $idAbonement, $countUnits * $price, $countUnits);
-            } catch (\Exception $e) {
-                // уходим на первый экран
-                $_POST['nextScreen'] = ERROR_SCREEN;
-                $_POST['values']['type'] = 'proffit';
-                $_POST['values']['message'] = 'Ошибка зачисления платежа: '.$e->getMessage();
-                $this->actionWriteLog();
-                exit();
-            }
-        }
-
+       
         // подтверждаем оплату
         $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
             "call payments_confirm($uid, $idPayment, @prepayment)";
@@ -183,104 +169,6 @@ class AjaxController
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * Обработка команды получения баланса
-     */
-    public function actionGetBalance()
-    {
-        $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
-        $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
-        $paid = (!empty($_POST['values']['notPaid'])) ? 0 : 1;
-
-        // $card = '64FA32000D'; // есть в базе
-        // $card = '92FC820003'; // есть в базе
-
-        $servicesList = array();
-        try {
-            // получаем список услуг
-            $servicesList = proffit\Proffit::getBalance($card, $paid);
-        } catch (\Exception $e) {
-            // уходим на первый экран
-            $_POST['nextScreen'] = $e->getCode() == -2 ? NO_CARD_SCREEN : ERROR_SCREEN;
-            $_POST['values']['type'] = 'proffit';
-            $_POST['values']['message'] = "Ошибка запроса баланса: {$e->getCode()} {$e->getMessage()}";
-            $this->actionWriteLog();
-            exit();
-        }
-
-        $servicesListFirst = $servicesList;
-        $replArray = $this->makeReplaceArray($nextScreen);
-
-        // получаем текущие авансы
-        $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.amount 
-            from cards c
-                join prepayments p on c.id = p.id_card
-            where c.card = '$card'";
-        $row = dbHelper\DbHelper::selectRow($query);
-        $replArray['patterns'][] = '{PREPAYMENT}';
-        $prepayment = empty($row['amount']) ? 0 : $row['amount'];
-        $replArray['values'][] = $prepayment;
-
-        $rows = '';
-
-        if ($servicesList['services']) {
-            foreach ($servicesList['services'] as $service) {
-                $minSumm = $service['purchaseAmount'] - $prepayment;
-                $balance = !$service['active'] ? 'НЕ АКТИВНА' : $service['balance'];
-                $rows .= "<tr>
-                        <td>{$service['name']}</td>
-                        <td class='text-center bigDigit'>$balance</td>
-                        <td class='text-center'>{$service['dtPay']}</td>
-                        <td class='text-center'>{$service['dtFinish']}</td>
-                        <td class='text-center'>{$service['price']}</td>
-                        <td class='text-center'>$minSumm</td>
-                        <td class='text-center'>
-                            <input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
-                            <input class='activity' type='hidden' value='getMoneyScreen' />
-                            <input class='value idAbonement' type='hidden' value='{$service['id']}' />
-                            <input class='value price' type='hidden' value='{$service['price']}' />
-                            <input class='value card' type='hidden' value='$card' />
-                            <input class='value customer' type='hidden' value='{$servicesList['customer']}' />
-                            <input class='value serviceName' type='hidden' value='{$service['name']}' />
-                            <input class='value purchaseAmount' type='hidden' value='{$service['purchaseAmount']}' />
-                            <input class='value prepayment' type='hidden' value='$prepayment' />
-                            <a class='btn btn-primary action small'>Пополнить</a>
-                        </td>
-                    </tr>";
-            }
-        } else {
-            $rows = '<tr><td colspan="7" class="error"><h1>Нет доступных услуг</h1><br><br></td></tr>';
-        }
-
-        // добавляем класс для кнопки долгов
-        $replArray['patterns'][] = '{DEBTS}';
-        $replArray['values'][] = $servicesList['debts'];
-        $replArray['patterns'][] = '{DEBTS_TITLE}';
-        $replArray['values'][] = !$paid ? '' : 'noDisplay';
-        // добавляем номер карты
-        $replArray['patterns'][] = '{CARD}';
-        $replArray['values'][] = $card;
-        // добавляем ФИО
-        $replArray['patterns'][] = '{CLIENT}';
-        $replArray['values'][] = $servicesList['customer'];
-        // добавляем список сервисов
-        $replArray['patterns'][] = '{SERVICES_LIST}';
-        $replArray['values'][] = $rows;
-
-        $response = $this->getScreen($nextScreen, $replArray);
-
-        $response['servicesList'] = $servicesList;
-        $response['servicesListFirst'] = $servicesListFirst;
-        $response['message'] = '';
-        $response['code'] = 0;
-        
-        //отправляем результат
-        echo json_encode($response);
-        return true;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    /**
      * Обработка команды получения новых услуг
      */
     public function actionGetServiceList()
@@ -332,30 +220,31 @@ class AjaxController
 
         $controls .= "<div class='controlDiv'>
                 <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
-                <input class='activity' type='hidden' value='move' />
+                <input class='activity' type='hidden' value='".FIRST_ACTION."' />
                 <button class='btn btn-primary action service control'>Отмена</button>   
             </div>";
 
         // добавляем список сервисов
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id, p.`desc`, p.price, p.price_unit, p.price_min_unit, p.period, p.period_unit, p.color
+            "SELECT p.id, p.`desc`, round(p.price) price, p.color
             FROM v_clients_custom_pricelist p
             WHERE p.id_parent = '$id'
-            ORDER BY p.id_parent, p.color, p.`desc`";
+            ORDER BY p.id_parent, p.order, p.`desc`";
         $rows = dbHelper\DbHelper::selectSet($query);
         $buttons = '';
 
         for ($i = $start; $i < $start + BUTTON_PER_SCREEN && $i < count($rows); $i++) {
             $cost = $rows[$i]['price'] && $rows[$i]['price'] != '0.00' ? "<hr>{$rows[$i]['price']} руб." : '';
             if ($cost) {
-                $minPurchase = $rows[$i]['price'] * $rows[$i]['price_min_unit'];
+                $cost = $rows[$i]['price'] == -1 ? '' : $cost;
+                $minPurchase = $rows[$i]['price'];
                 $buttons .= "<span>
-                        <!--input class='activity' type='hidden' value='move' />
+                        <input class='activity' type='hidden' value='".FIRST_ACTION."' />
                         <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
-                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button-->   
+                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>
 
-                        <input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
-                        <input class='activity' type='hidden' value='getMoneyScreen' />
+                        <!--input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
+                        <input class='activity' type='hidden' value='".GET_MONEY_ACTION."' />
                         <input class='value purchaseAmount' type='hidden' value='$minPurchase' />
                         <input class='value price' type='hidden' value='{$rows[$i]['price']}' />
                         <input class='value idAbonement' type='hidden' value='{$rows[$i]['id']}' />
@@ -363,7 +252,7 @@ class AjaxController
                         <input class='value card' type='hidden' value='$card' />
                         <input class='value prepayment' type='hidden' value='$prepayment' />
                         <input class='value customer' type='hidden' value='$customer' />
-                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>   
+                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button-->
                     </span>";
             } else {
                 $buttons .= "<span>
@@ -528,22 +417,6 @@ class AjaxController
 
         // вцыполнение проверок
         $response['check']['hw'] = (empty($xml->$idScreen->check->hw)) ? '0' : '1';
-        // проверяем проффит
-        if (!empty($xml->$idScreen->check->proffit)) {
-            if (!proffit\Proffit::checkConnection()) {
-                $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                    "call hws_status_write(".user\User::getId().", 'proffit', 1, 'Нет связи с сервером')";
-                $row = dbHelper\DbHelper::call($query);
-
-                $_POST['nextScreen'] = ERROR_SCREEN;
-                $this->actionMove();
-                exit;
-            } else {
-                $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                    "call hws_status_write(".user\User::getId().", 'proffit', 0, 'ОК')";
-                $row = dbHelper\DbHelper::call($query);
-            }
-        }
 
         // экранная форма
         if (!empty($xml->$idScreen->screen)) {

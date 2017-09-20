@@ -15,7 +15,6 @@ class Admin
     public static $devices = array(
         'cash' => 'Купюроприемник',
         'fr' => 'Фискальный регистратор',
-        'proffit' => 'Сервер Проффит',
         'webSocket' => 'Ubuntu',
         );
 
@@ -74,7 +73,7 @@ class Admin
     {
         $sql = $status ? 'p.status = 1' : '1';
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color
+            "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color, p.price, p.nds
             from v_custom_pricelist p
             where $sql
             order by p.id_parent, p.`desc`";

@@ -17,9 +17,10 @@ return array(
     '.*?/admin/getPriceGroup' => 'admin/getPriceGroup',
     '.*?/admin/setPriceGroupStatus' => 'admin/setPriceGroupStatus',
     '.*?/admin/setClientsDesc' => 'admin/setClientsDesc',
+    '.*?/admin/setPrice' => 'admin/setPrice',
+    '.*?/admin/setNds' => 'admin/setNds',
     '.*?/admin/setColor' => 'admin/setColor',
     '.*?/admin/deletePriceItem' => 'admin/deletePriceItem',
-    '.*?/admin/loadPriceList' => 'admin/loadPriceList',
 
     '.*?/admin/getTerminals' => 'admin/getTerminals',
     '.*?/admin/changeStatus' => 'admin/changeStatus',

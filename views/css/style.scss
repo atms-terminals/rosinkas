@@ -21,9 +21,9 @@ body {
     color: $firmFrontColor;
     text-align: center;
     text-transform: uppercase;
-    border-bottom: 2px solid $firstFirmBack;
     padding-bottom: 15px;
     margin: 0;
+    border-bottom: 2px solid $firstFirmBack;
 }
 
 .logos .lines {
@@ -42,20 +42,36 @@ body {
     font-weight: 700;
 }
 
-.logos img {
-    width: 100px;
+.logos .logo1 img {
+    width: 220px;
     margin: 15px;
     position: relative;
     top: 5px;
 }
 
+.logos .logo2 img {
+    width: 160px;
+    margin: 15px;
+    position: relative;
+    margin-top: -70px;
+}
+
+.logos .title-logo img {
+    width: 650px;
+    margin: 15px;
+    position: relative;
+    top: 15px;
+}
+
 .logos .title {
     color: $secondFirmBack;
+    height: 20px;
+    padding-top: 22px;
 }
 
 .logos .title  h1 {
-    color: $secondFirmBack;
-    font-size: 50px;
+    color: $thirdFirmBack;
+    font-size: 65px;
     font-weight: 600;
 }
 
@@ -144,7 +160,8 @@ body {
 .row.time {
     // margin: 20px;
     font-size: 30px;
-    color: $secondFirmBack;
+    // color: $secondFirmBack;
+    margin: 10px 0;
 }
 
 .noDisplay {
@@ -212,7 +229,7 @@ body {
 #main .error  h1 {
     color: $errorColor;
     text-transform: uppercase;
-    margin-top: 90px;
+    margin: 20px 0;
     text-align: center;
     font-size: 50px;
     font-weight: 600;
@@ -252,12 +269,12 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background-color: lighten($buttonColor, 50%);
-    border-left: 1px solid $buttonColor;
+    background-color: lighten($secondFirmBack, 50%);
+    border-left: 1px solid $secondFirmBack;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: darken($buttonColor, 30%);
+    background-color: darken($secondFirmBack, 0%);
 }
 
 #main .table {
@@ -309,7 +326,7 @@ button.debtsButton {
 
 button.service {
     width: 48%;
-    font-size: 30px;
+    font-size: 50px;
     min-height: 165px;
     margin-left: 15px;
     margin-bottom: 15px;

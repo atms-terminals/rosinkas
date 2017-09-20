@@ -1,8 +1,12 @@
 $backgroundLogin: #47A8BD;
 
-$background: #f2f1f9;
-$firstFirmBack: #3c44b6;
-$secondFirmBack: #262c78;
+$firstFirmBack: #004D2B;
+$secondFirmBack: #18A957;
+$thirdFirmBack: #F30000;
+$fourFirmBack: #B20039;
 $firmFrontColor: #fff;
 $buttonColor: #c6c6dd;
 $errorColor: red;
+
+// $background: #CFE8F9;
+$background: lighten($secondFirmBack, 60%);

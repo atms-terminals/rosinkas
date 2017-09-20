@@ -5,7 +5,6 @@ include_once ROOT.'/models/Admin.php';
 use models\Admin as admin;
 use components\User as user;
 use components\DbHelper as dbHelper;
-use components\Proffit as proffit;
 
 /**
 * productController
@@ -87,50 +86,10 @@ class AdminController
         $status = empty($_POST['status']) ? 0 : 1;
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT custom_price_set_status($uid, 'albatros', '$id', $status)";
+            "SELECT custom_price_set_status($uid, 'redstar', '$id', $status)";
         $result = dbHelper\DbHelper::selectRow($query);
         $response['code'] = 0;
 
-        echo json_encode($response);
-        return true;
-    }
-
-    public function actionLoadPriceList()
-    {
-        $uid = user\User::getId();
-        $response['code'] = 0;
-        $response['message'] = '';
-
-        try {
-            // получаем список услуг
-            $servicesList = proffit\Proffit::loadPriceList();
-        } catch (\Exception $e) {
-            $response['code'] = $e->getCode();
-            $response['message'] = $e->getMessage();
-            echo json_encode($response);
-            exit;
-        }
-
-        if (!empty($servicesList['answer']['ITEM'][0])) {
-            foreach ($servicesList['answer']['ITEM'] as $item) {
-                $id = empty($item['@attributes']['ID']) ? 0 : dbHelper\DbHelper::mysqlStr($item['@attributes']['ID']);
-                $idParent = empty($item['@attributes']['ID_UPPER']) ? 0 : dbHelper\DbHelper::mysqlStr($item['@attributes']['ID_UPPER']);
-                $desc = empty($item['@attributes']['NAME']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['NAME']);
-                $price = empty($item['@attributes']['PRICE']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['PRICE']);
-                $priceUnit = empty($item['@attributes']['UNIT']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['UNIT']);
-                $priceMinUnit = empty($item['@attributes']['CNT_MIN']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['CNT_MIN']);
-                $period = empty($item['@attributes']['SROK']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['SROK']);
-                $periodUnit = empty($item['@attributes']['SROK_VID']) ? '' : dbHelper\DbHelper::mysqlStr($item['@attributes']['SROK_VID']);
-
-                if ($id) {
-                    $query = "/*".__FILE__.':'.__LINE__."*/ ".
-                        "SELECT custom_price_add($uid, 'albatros', $id, $idParent, '$desc', '$price', '$priceUnit', '$priceMinUnit', '$period', '$periodUnit')";
-                    $result = dbHelper\DbHelper::selectRow($query);
-                }
-            }
-        }
-
-        $response['servicesList'] = $servicesList;
         echo json_encode($response);
         return true;
     }
@@ -141,7 +100,7 @@ class AdminController
         $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT custom_price_delete($uid, 'albatros', '$id')";
+            "SELECT custom_price_delete($uid, 'redstar', '$id')";
         $result = dbHelper\DbHelper::selectRow($query);
         $response['code'] = 0;
 
@@ -156,7 +115,37 @@ class AdminController
         $text = empty($_POST['text']) ? '' : dbHelper\DbHelper::mysqlStr($_POST['text']);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT custom_price_set_clients_desc($uid, 'albatros', '$id', '$text')";
+            "SELECT custom_price_set_clients_desc($uid, 'redstar', '$id', '$text')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
+    public function actionSetPrice()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+        $price = empty($_POST['price']) ? '' : dbHelper\DbHelper::mysqlStr($_POST['price']);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_price_set_price($uid, 'redstar', '$id', '$price')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
+    public function actionSetNds()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+        $nds = empty($_POST['nds']) ? 0 : (int)dbHelper\DbHelper::mysqlStr($_POST['nds']);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_price_set_nds($uid, 'redstar', '$id', $nds)";
         $result = dbHelper\DbHelper::selectRow($query);
         $response['code'] = 0;
 
@@ -171,7 +160,7 @@ class AdminController
         $color = empty($_POST['color']) ? 'primary' : dbHelper\DbHelper::mysqlStr($_POST['color']);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT custom_price_set_color($uid, 'albatros', '$id', '$color')";
+            "SELECT custom_price_set_color($uid, 'redstar', '$id', '$color')";
         $result = dbHelper\DbHelper::selectRow($query);
         $response['code'] = 0;
 

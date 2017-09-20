@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>СОК "Альбатрос"</title>
+    <title>Красная звезда</title>
 
     <!-- env:prod --#>
         <link rel="stylesheet" href="views/css/style.min.css?<?= filemtime("views/css/login.min.css")?>">
@@ -25,16 +25,17 @@
 </head>
 <body>
     <input type="hidden" id="idScreen" value="<?= $firstScreen;?>">
+    <input type="hidden" id="action" value="<?= $firstAction;?>">
     <input type="hidden" id="sid" value="<?= $sid;?>">
     <div class="container-fluid">
         <div class="header">
             <div class="logos">
-                <div class="lines line1">Федеральное государственное бюджетное образовательное учреждение высшего образования</div>
-                <div class="lines line2">Сибирский Государственный университет физической культуры и спорта</div>
+                <div class="lines line1">Бюджетное учреждение города Омска</div>
+                <div class="lines line2">Спортивный комплекс имени Кузнецова В.Н.</div>
                 <div class="row">
-                    <div class="col-md-2 logo1"><img src='views/img/sibgufk.png' alt=""></div>
-                    <div class="col-md-8 title"><h2>Спортивно-оздоровительный комплекс</h2><h1>альбатрос</h1></div>
-                    <div class="col-md-2 logo2"><img src='views/img/albatross.png' alt=""></div>
+                    <div class="col-md-3 logo1 text-center"><img src='views/img/logo.png' alt=""></div>
+                    <div class="col-md-6 title-logo text-center"><img src='views/img/title.png' alt=""></div>
+                    <div class="col-md-3 logo2 text-center"><img src='views/img/logo2.png' alt=""></div>
                 </div>
             </div>
 
@@ -63,7 +64,7 @@
         <script src='../bower_components/bootstrap/dist/js/bootstrap.js'></script>
         <script src='views/js/terminal.js?<?= filemtime("views/js/terminal.js")?>'></script>
         <script src='views/js/cashcode.js?<?= filemtime("views/js/cashcode.js")?>'></script>
-        <script src='views/js/rfid.js?<?= filemtime("views/js/rfid.js")?>'></script>
+        <!-- <script src='views/js/rfid.js?<?= filemtime("views/js/rfid.js")?>'></script> -->
     <!-- env:dev:end -->
 </body>
 </html>

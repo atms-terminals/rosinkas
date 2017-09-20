@@ -20,7 +20,6 @@ require_once ROOT.'/components/Router.php';
 require_once ROOT.'/components/DbHelper.php';
 require_once ROOT.'/components/User.php';
 require_once ROOT.'/components/Url.php';
-require_once ROOT.'/components/Proffit.php';
 
 try {
     // создаем пользователя

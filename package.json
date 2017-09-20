@@ -1,12 +1,8 @@
 {
-  "name": "Albatros",
+  "name": "redstar",
   "version": "1.0.0",
-  "description": "Платежные терминалы для бассейна 'Альбатрос'",
+  "description": "Платежные терминалы для стадиона 'Красная звезда'",
   "main": "Gruntfile.js",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:123ss33/queue.albatros.git"
-  },
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-bower-concat": "^1.0.0",

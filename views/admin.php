@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
-    <title>СОК "Альбатрос". Панель администратора</title>
+    <title>Красная звезда. Панель администратора</title>
 
     <!-- env:prod --#>
         <link rel="stylesheet" href="views/css/style.min.css?<?= filemtime("views/css/login.min.css")?>">
@@ -32,7 +32,6 @@
             <li role="presentation" class="active"><a href="#hws" aria-controls="hws" role="tab" data-toggle="tab">Оборудование</a></li>
             <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Администрирование</a></li>
             <li role="presentation"><a href="#priceGroup" aria-controls="priceGroup" role="tab" data-toggle="tab">Настройка меню</a></li>
-            <li role="presentation"><a href="#prepaid" aria-controls="prepaid" role="tab" data-toggle="tab">Проверка авансов</a></li>
             <li role="presentation"><a href="#collections" aria-controls="collections" role="tab" data-toggle="tab">Инкассации</a></li>
         </ul>
 
@@ -63,18 +62,7 @@
                     </div>
                 </div>
             </div>
-            <div role="tabpanel" id="prepaid" class="tab-pane fade">
-                <input type="text" class="col-sm-10 col-xs-12" placeholder="Введите номер карты или фамилию" id="searchStr">
-                <a class="btn btn-primary" id='getPrepaid'>Найти</a>
-                <div class="resultArea"></div>
-            </div>
             <div role="tabpanel" id="priceGroup" class="tab-pane fade">
-                <fieldset>
-                    <p>
-                        При загрузке прейскуранта записи, который уже есть, будут обновлены. Отсутствующие записи будут добавлены
-                    </p>
-                    <button type='button' class='btn btn-primary loadPriceList'>Загрузить прейскурант</button><br><br>
-                </fieldset>
                 <input type="checkbox" id="priceStatus" checked> Только активные услуги
                 <div class="resultArea"></div>
             </div>

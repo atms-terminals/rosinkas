@@ -5,92 +5,21 @@
         <desc>Терминал. Основной экран терминала</desc>
         <screen>1</screen>
         <check>
-            <hw>1</hw>
-            <proffit>1</proffit>
+            <hw>0</hw>
         </check>
         <timer>
             <screen>1</screen>
             <timeout>10</timeout>
-            <action>move</action>
+            <action>getServiceList</action>
         </timer>
     </s1>
 
-    <s2>
-        <desc>Терминал. Ввод карты</desc>
-        <screen>2</screen>
-        <check>
-            <hw>1</hw>
-            <proffit>1</proffit>
-        </check>
-        <rfid>
-            <screen>3</screen>
-            <timeout>30</timeout>
-            <action>getBalance</action>
-        </rfid>
-<!--
-        <timer>
-            <screen>3</screen>
-            <timeout>1</timeout>
-            <action>getBalance</action>
-        </timer>
--->
-        </s2>
-
-    <s3>
-        <desc>Терминал. Выбор услуги</desc>
-        <screen>3</screen>
-        <check>
-            <hw>1</hw>
-            <proffit>1</proffit>
-        </check>
-        <timer>
-            <screen>1</screen>
-            <timeout>60</timeout>
-            <action>move</action>
-        </timer>
-    </s3>
-
-    <s4>
-        <desc>Терминал. Прием денег</desc>
-        <check>
-            <hw>1</hw>
-            <proffit>1</proffit>
-        </check>
-        <screen>4</screen>
-        <cash>1</cash>
-        <timer>
-            <screen>5</screen>
-            <timeout>300</timeout>
-            <action>pay</action>
-        </timer>
-    </s4>
-
-    <s5>
-        <desc>Терминал. Платеж</desc>
-        <screen>5</screen>
-        <print>
-            <top>6</top>
-            <elements>11</elements>
-            <bottom>10</bottom>
-        </print>
-        <timer>
-            <screen>1</screen>
-            <timeout>5</timeout>
-            <action>move</action>
-        </timer>
-    </s5>
-
+    <s2></s2>
+    <s3></s3>
+    <s4></s4>
+    <s5></s5>
     <s6></s6>
-
-    <s7>
-        <desc>Терминал. Ошибка работы с Проффит</desc>
-        <screen>7</screen>
-        <timer>
-            <screen>1</screen>
-            <timeout>10</timeout>
-            <action>move</action>
-        </timer>
-    </s7>
+    <s7></s7>
 
     <s8>
         <desc>Терминал. Ошибка работы с оборудованием</desc>
@@ -98,7 +27,7 @@
         <timer>
             <screen>1</screen>
             <timeout>10</timeout>
-            <action>move</action>
+            <action>getServiceList</action>
         </timer>
     </s8>
 
@@ -116,38 +45,8 @@
         <timer>
             <screen>1</screen>
             <timeout>10</timeout>
-            <action>move</action>
+            <action>getServiceList</action>
         </timer>
     </s12>
-
-    <s13>
-        <desc>Терминал. Карта не найдена</desc>
-        <screen>13</screen>
-        <timer>
-            <screen>1</screen>
-            <timeout>5</timeout>
-            <action>move</action>
-        </timer>
-    </s13>
-
-    <s14>
-        <desc>Терминал. Нет доступных услуг</desc>
-        <screen>14</screen>
-        <timer>
-            <screen>1</screen>
-            <timeout>5</timeout>
-            <action>move</action>
-        </timer>
-    </s14>
-
-    <s15>
-        <desc>Терминал. Выбор новой услуги</desc>
-        <screen>15</screen>
-        <timer>
-            <screen>1</screen>
-            <timeout>60</timeout>
-            <action>move</action>
-        </timer>
-    </s15>
 
 </states>

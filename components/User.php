@@ -15,12 +15,14 @@ class User
      * @var int $sid пользователя
      * @var string $startUrl начальная страница пользователя
      * @var string $firstScreen первый экран сценария
+     * @var string $firstAction первое действие для экрана
      * @var int $status статус блокировки пользователя
      */
     private static $uid = null;
     private static $sid = null;
     private static $startUrl = 'index.php';
     private static $firstScreen = 3;
+    private static $firstAction = 'move';
     private static $status = 0;
 
     /**
@@ -74,9 +76,19 @@ class User
     }
 
     /**
+     * Возвращает первое действие
+     *
+     * @return string firstAction
+     */
+    public static function getFirstAction()
+    {
+        return self::$firstAction;
+    }
+
+    /**
      * Возвращает id пользователя
      *
-     * @return string firstScreen
+     * @return string uid
      */
     public static function getId()
     {
@@ -121,13 +133,14 @@ class User
 
         // получаем настройки пользователя
         $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                "SELECT r.start_url, r.first_screen, u.status, u.id_role
+                "SELECT r.start_url, r.first_screen, r.first_action, u.status, u.id_role
                 from users u
                     join roles r on u.id_role = r.id
                 where u.id = $uid";
         $row = dbHelper\DbHelper::selectRow($query);
         self::$startUrl = $row['start_url'];
         self::$firstScreen = $row['first_screen'];
+        self::$firstAction = $row['first_action'];
         self::$status = $row['status'];
         
         if ($firstTime) {

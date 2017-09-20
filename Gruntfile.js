@@ -102,7 +102,6 @@ module.exports = function(grunt) {
                 files: {
                     'views/css/style-sass.css': 'views/css/style.scss',
                     'views/css/login-sass.css': 'views/css/login.scss',
-                    'views/css/flex-sass.css': 'views/css/flex.scss',
                 }
             }
         },

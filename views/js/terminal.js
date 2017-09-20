@@ -2,7 +2,7 @@
 /* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck*/
 /* global getCard*/
 
-var currScreen;
+var currScreen, currAction;
 var timer;
 var flash = 1;
 var currDate = new Date();
@@ -120,7 +120,8 @@ function doAction(activity, nextScreen, values){
             timer =  setTimeout(function() {
                     // первый скрин, который надо запросить
                     currScreen = $('#idScreen').val();
-                    doAction('move', currScreen);
+                    currAction = $('#action').val();
+                    doAction(currAction, currScreen);
                 } , 3000);
         });
 }
@@ -158,7 +159,8 @@ $(document).ready(function () {
     timer =  setTimeout(function() {
             // первый скрин, который надо запросить
             currScreen = $('#idScreen').val();
-            doAction('move', currScreen);
+            currAction = $('#action').val();
+            doAction(currAction, currScreen);
         } , 3000);
 
     $(document).on('click', '.action', function(event) {

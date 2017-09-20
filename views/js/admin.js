@@ -101,6 +101,40 @@ $(document).ready(function() {
             });
     });
 
+    // редактирование цены услуги для терминала
+    $(document).on('change', '.price', function() {
+        var sid = $('#sid').val(),
+            $checkbox = $(this).siblings('.serviceItem'),
+            req = {
+                id: $checkbox.attr('id'), 
+                price: $(this).val()
+            };
+
+        $.post(sid + '/admin/setPrice', req, function() {
+
+        }, 'json')
+            .fail(function(){
+                get('getPriceGroup', $('#priceGroup'));
+            });
+    });
+
+    // редактирование ндс для услуги для терминала
+    $(document).on('change', '.nds', function() {
+        var sid = $('#sid').val(),
+            $checkbox = $(this).siblings('.serviceItem'),
+            req = {
+                id: $checkbox.attr('id'), 
+                nds: $(this).val()
+            };
+
+        $.post(sid + '/admin/setNds', req, function() {
+
+        }, 'json')
+            .fail(function(){
+                get('getPriceGroup', $('#priceGroup'));
+            });
+    });
+
     // редактирование цвета кнопки
     $(document).on('change', '.color input', function() {
         var sid = $('#sid').val(),
