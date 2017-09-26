@@ -23,7 +23,12 @@ $(document).ready(function() {
                 get('getCollections', $('#collections'));
                 break;
             case '#priceGroup': 
-                get('getPriceGroup', $('#priceGroup'), {active: $('#priceStatus').prop('checked') ? 1 : 0});
+                get('getPriceGroup', $('#priceGroup'), 
+                    {
+                        type: $('.day-type .active').val(),
+                        active: $('#priceStatus').prop('checked') ? 1 : 0
+                    }
+                );
                 break;
             case '#admin': 
                 get('getTerminals', $('#terminals'));
@@ -130,20 +135,6 @@ $(document).ready(function() {
             });
     });
 
-    // загрузка прайса
-    $(document).on('click', 'button.loadPriceList', function() {
-        var sid = $('#sid').val(),
-            req = {
-            };
-
-        $.post(sid + '/admin/loadPriceList', req, function() {
-            get('getPriceGroup', $('#priceGroup'), {active: $('#priceStatus').prop('checked') ? 1 : 0});
-        }, 'json')
-            .fail(function(){
-                get('getPriceGroup', $('#priceGroup'));
-            });
-    });
-
     // редактирование названия услуги для терминала
     $(document).on('change', '.clientsDesc', function() {
         var sid = $('#sid').val(),
@@ -230,9 +221,25 @@ $(document).ready(function() {
             });
     });
 
+    $('.day-type button').click(function() {
+        $('.day-type button').removeClass('active');
+        $(this).addClass('active');
+        get('getPriceGroup', $('#priceGroup'),
+            {
+                type: $('.day-type .active').val(),
+                active: $('#priceStatus').prop('checked') ? 1 : 0
+            }
+        );
+
+    });
     // показ услуг
     $(document).on('click', '#priceStatus', function() {
-        get('getPriceGroup', $('#priceGroup'), {active: $(this).prop('checked') ? 1 : 0});
+        get('getPriceGroup', $('#priceGroup'),
+            {
+                type: $('.day-type .active').val(),
+                active: $('#priceStatus').prop('checked') ? 1 : 0
+            }
+        );
     });
 
     // запрос инкассаций
@@ -433,7 +440,12 @@ $(document).ready(function() {
             } else if (action === 'deleteTerminal') {
                 get('getTerminals', $('#terminals'));
             } else if (action === 'deletePriceItem') {
-                get('getPriceGroup', $('#priceGroup'), {active: $('#priceStatus').prop('checked') ? 1 : 0});
+                get('getPriceGroup', $('#priceGroup'), 
+                    {
+                        type: $('.day-type .active').val(),
+                        active: $('#priceStatus').prop('checked') ? 1 : 0
+                    }
+                );
             }
         }, 'json')
             .fail(function(){
@@ -442,7 +454,12 @@ $(document).ready(function() {
                 } else if (action === 'deleteTerminal') {
                     get('getTerminals', $('#terminals'));
                 } else if (action === 'deletePriceItem') {
-                    get('getPriceGroup', $('#priceGroup'), {active: $('#priceStatus').prop('checked') ? 1 : 0});
+                    get('getPriceGroup', $('#priceGroup'), 
+                        {
+                            type: $('.day-type .active').val(),
+                            active: $('#priceStatus').prop('checked') ? 1 : 0
+                        }
+                    );
                 }
             });
 

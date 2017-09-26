@@ -108,6 +108,12 @@
             </div>
 
             <div role="tabpanel" id="priceGroup" class="tab-pane fade">
+                <div>
+                    <div class="btn-group day-type" role="group" aria-label="...">
+                        <button type="button" class="btn btn-default active" value="2">Рабочий</button>
+                        <button type="button" class="btn btn-default" value="1">Выходной или праздничный</button>
+                    </div>
+                </div>
                 <input type="checkbox" id="priceStatus" checked> Только активные услуги
                 <div class="resultArea"></div>
             </div>

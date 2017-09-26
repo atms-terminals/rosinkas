@@ -69,13 +69,14 @@ class Admin
      * получение списка услуг
      * @return array массив услуг
      */
-    public static function getPriceGroup($status)
+    public static function getPriceGroup($type, $status)
     {
         $sql = $status ? 'p.status = 1' : '1';
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color, p.price, p.nds
             from v_custom_pricelist p
             where $sql
+                and p.day_type = '$type'
             order by p.id_parent, p.`desc`";
         $tservices = dbHelper\DbHelper::selectSet($query);
         $tlist = array();
