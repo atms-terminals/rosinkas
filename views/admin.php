@@ -13,8 +13,9 @@
     <!-- env:prod:end -->
 
     <!-- env:dev -->
-        <link href='../bower_components/bootstrap/dist/css/bootstrap.css' rel="stylesheet">
-        <link href='views/css/style-sass.css?<?= filemtime(ROOT.'/views/css/style-sass.css')?>' rel="stylesheet">
+        <link href='../bower_components/bootstrap/dist/css/bootstrap.css' rel="stylesheet" />
+        <link href="../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+        <link href='views/css/style-sass.css?<?= filemtime(ROOT.'/views/css/style-sass.css')?>' rel="stylesheet" />
     <!-- env:dev:end -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -31,23 +32,66 @@
         <ul class="nav nav-tabs" role="tablist" id='mainTabs'>
             <li role="presentation" class="active"><a href="#hws" aria-controls="hws" role="tab" data-toggle="tab">Оборудование</a></li>
             <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Администрирование</a></li>
+            <li role="presentation"><a href="#schedule" aria-controls="schedule" role="tab" data-toggle="tab">Настройка дней</a></li>
             <li role="presentation"><a href="#priceGroup" aria-controls="priceGroup" role="tab" data-toggle="tab">Настройка меню</a></li>
             <li role="presentation"><a href="#collections" aria-controls="collections" role="tab" data-toggle="tab">Инкассации</a></li>
         </ul>
 
 
         <div class="tab-content">
+            <div role="tabpanel" id="schedule" class="tab-pane fade">
+                <div class="resultArea">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <select class="year">
+                                    <?php
+                                    $year = date('Y');
+                                    for ($i = 0; $i < 3; $i++) {
+                                        echo "<option value='$year'>$year</option>";
+                                        $year++;
+                                    }
+                                    ?>
+                                </select> 
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class='input-group date dt'>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <label><input type="checkbox" class="dt-type"> Выходной</label>&nbsp;
+                                <button class="btn btn-primary add-dt">Добавить дату</button>
+                            </div>
+                        </div>
+                        <div class="row dates">
+                            <?php require_once(ROOT.'/views/dates.php') ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div role="tabpanel" id="collections" class="tab-pane fade">
                 <a class="btn btn-primary" id='refreshCollections'>Обновить</a>
+                    <?php require_once(ROOT.'/views/hwsState.php'); ?>
                 <div class="resultArea">
                 </div>
             </div>
+
             <div role="tabpanel" id="hws" class="tab-pane fade in active">
                 <a class="btn btn-primary" id='refreshHwsStatus'>Обновить</a>
                 <div class="resultArea">
                     <?php require_once(ROOT.'/views/hwsState.php'); ?>
                 </div>
             </div>
+
             <div role="tabpanel" id="admin" class="tab-pane fade">
                 <h2>Терминалы</h2>
                 <button type='button' class='btn btn-primary changeUser add terminal' data-toggle='modal' data-target='#changeUserDialog'>Добавить</button>
@@ -62,6 +106,7 @@
                     </div>
                 </div>
             </div>
+
             <div role="tabpanel" id="priceGroup" class="tab-pane fade">
                 <input type="checkbox" id="priceStatus" checked> Только активные услуги
                 <div class="resultArea"></div>
@@ -83,7 +128,11 @@
 
     <!-- env:dev -->
         <script src='../bower_components/jquery/dist/jquery.js'></script>
+        <script src="../bower_components/moment/min/moment-with-locales.min.js"></script>
+        <script src="../bower_components/moment/locale/ru.js"></script>
         <script src='../bower_components/bootstrap/dist/js/bootstrap.js'></script>
+        <script src="../bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+
         <script src='views/js/admin.js?<?= filemtime(ROOT.'/views/js/admin.js')?>'></script>
     <!-- env:dev:end -->
 </body>

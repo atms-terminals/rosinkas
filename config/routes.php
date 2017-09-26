@@ -14,6 +14,9 @@ return array(
     '.*?/admin/getCollections' => 'admin/getCollections',
     '.*?/admin/getCollectionDetails' => 'admin/getCollectionDetails',
 
+    '.*?/admin/addDate' => 'admin/addDate',
+    '.*?/admin/delDate' => 'admin/delDate',
+
     '.*?/admin/getPriceGroup' => 'admin/getPriceGroup',
     '.*?/admin/setPriceGroupStatus' => 'admin/setPriceGroupStatus',
     '.*?/admin/setClientsDesc' => 'admin/setClientsDesc',

@@ -32,6 +32,52 @@ $(document).ready(function() {
         }
     });
 
+    $(document).on('click', '.del-date', function() {
+        var $button = $(this),
+            id = $(this).val(),
+            sid = $('#sid').val();
+
+        var req = {
+                id: id
+            };
+
+        $.post(sid + '/admin/delDate', req, function(response) {
+            $button.closest('.resultArea').find('.dates').html(response.html);
+        }, 'json')
+            .fail(function(){
+            });
+    });
+
+    $('.add-dt').click(function() {
+        var $button = $(this),
+            dt = $('.dt').find('input').val(),
+            sid = $('#sid').val(),
+            isWork = $(this).closest('.row').find('input[type=checkbox]').prop('checked') ? 1 : 2;
+
+        if ($.trim(dt) === '') {
+            return false;
+        }
+        var req = {
+                dt: dt,
+                isWork: isWork
+            };
+
+        $.post(sid + '/admin/addDate', req, function(response) {
+            $button.closest('.resultArea').find('.dates').html(response.html);
+        }, 'json')
+            .fail(function(){
+            });
+    });
+
+    // дата
+    $('.dt').datetimepicker({
+        format: 'DD.MM.YYYY',
+        locale: 'ru',
+    });
+        // .on('dp.change', function(e) {
+        //     getYear(e.date);
+        // });
+
     // удаление услуги
     $(document).on('click', 'button.delete', function() {
         var sid = $('#sid').val(),

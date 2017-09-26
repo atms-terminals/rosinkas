@@ -201,7 +201,7 @@ class AjaxController
             } else {
                 $query = "/*".__FILE__.':'.__LINE__."*/ ".
                     "SELECT p.id_parent
-                    from v_custom_pricelist p
+                    from v_clients_custom_pricelist p
                     where p.id = '$id'";
                 $row = dbHelper\DbHelper::selectRow($query);
 

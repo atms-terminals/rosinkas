@@ -155,6 +155,30 @@ class Admin
     }
 
     /**
+     * получение списка дат
+     * @return array список
+     */
+    public static function getDates()
+    {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT e.id, DATE_FORMAT(e.dt, '%d.%m.%Y') dt
+            from extra_days e
+            where e.dt_type = 2";
+        $works = dbHelper\DbHelper::selectSet($query);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT e.id, DATE_FORMAT(e.dt, '%d.%m.%Y') dt
+            from extra_days e
+            where e.dt_type = 1";
+        $holidays = dbHelper\DbHelper::selectSet($query);
+
+        return array(
+            'worked' => $works,
+            'holidays' => $holidays,
+        );
+    }
+
+    /**
      * получение списка терминалов
      * @return array список
      */

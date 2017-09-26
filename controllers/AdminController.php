@@ -15,6 +15,7 @@ class AdminController
     {
         $statuses = admin\Admin::getHwsState();
         $devices = admin\Admin::$devices;
+        $dates = admin\Admin::getDates();
         $sid = user\User::getSid();
 
         require_once(ROOT.'/views/admin.php');
@@ -92,6 +93,88 @@ class AdminController
 
         echo json_encode($response);
         return true;
+    }
+
+    public function actionDelDate()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? '0' : dbHelper\DbHelper::mysqlStr($_POST['id']);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT extra_days_del($uid, '$id')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+        $response['html'] = $this->getDates();
+
+        echo json_encode($response);
+        return true;
+    }
+
+    public function actionAddDate()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['dt']) ? '' : dbHelper\DbHelper::mysqlStr($_POST['dt']);
+        $isWork = empty($_POST['isWork']) ? 2 : dbHelper\DbHelper::mysqlStr($_POST['isWork']);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT extra_days_add($uid, str_to_date('$id', '%d.%m.%Y'), $isWork)";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+        $response['html'] = $this->getDates();
+
+        echo json_encode($response);
+        return true;
+    }
+
+    private function getDates()
+    {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT e.id, DATE_FORMAT(e.dt, '%d.%m.%Y') dt
+            from extra_days e
+            where e.dt_type = 2";
+        $works = dbHelper\DbHelper::selectSet($query);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT e.id, DATE_FORMAT(e.dt, '%d.%m.%Y') dt
+            from extra_days e
+            where e.dt_type = 1";
+        $holidays = dbHelper\DbHelper::selectSet($query);
+
+        $html = "<div class='panel panel-default'>
+            <div class='panel-heading'>
+                <h3 class='panel-title'>Дополнительные рабочие дни</h3>
+            </div>
+            <div class='panel-body extra-work'>
+                <table class='table table-striped'>";
+
+        foreach ($works as $day) {
+            $html .= "<tr>";
+            $html .= "<td>{$day['dt']}</td>";
+            $html .= "<td><button type='button' class='btn btn-primary del-date' value='{$day['id']}'>Удалить</button></td>";
+            $html .= "</tr>";
+        }
+
+        $html .= "</table>
+                </div>
+            </div>
+            <div class='panel panel-default'>
+                <div class='panel-heading'>
+                    <h3 class='panel-title'>Дополнительные выходные дни</h3>
+                </div>
+                <div class='panel-body extra-holiday'>
+                    <table class='table table-striped'>";
+
+        foreach ($holidays as $day) {
+            $html .= "<tr>";
+            $html .= "<td>{$day['dt']}</td>";
+            $html .= "<td><button type='button' class='btn btn-primary del-date' value='{$day['id']}'>Удалить</button></td>";
+            $html .= "</tr>";
+        }
+
+        $html .= "</table>
+                </div>
+            </div>";
+        return $html;
     }
 
     public function actionDeletePriceItem()
