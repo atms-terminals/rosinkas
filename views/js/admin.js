@@ -33,24 +33,25 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.del-date', function() {
-        var $button = $(this),
-            id = $(this).val(),
+        var id = $(this).val(),
+            year = $('.year').val(),
             sid = $('#sid').val();
 
         var req = {
+                year: year,
                 id: id
             };
 
         $.post(sid + '/admin/delDate', req, function(response) {
-            $button.closest('.resultArea').find('.dates').html(response.html);
+            $('#schedule .resultArea .dates').html(response.html);
         }, 'json')
             .fail(function(){
             });
     });
 
     $('.add-dt').click(function() {
-        var $button = $(this),
-            dt = $('.dt').find('input').val(),
+        var dt = $('.dt').find('input').val(),
+            year = $('.year').val(),
             sid = $('#sid').val(),
             isWork = $(this).closest('.row').find('input[type=checkbox]').prop('checked') ? 1 : 2;
 
@@ -59,11 +60,12 @@ $(document).ready(function() {
         }
         var req = {
                 dt: dt,
+                year: year,
                 isWork: isWork
             };
 
         $.post(sid + '/admin/addDate', req, function(response) {
-            $button.closest('.resultArea').find('.dates').html(response.html);
+            $('#schedule .resultArea .dates').html(response.html);
         }, 'json')
             .fail(function(){
             });
@@ -74,9 +76,21 @@ $(document).ready(function() {
         format: 'DD.MM.YYYY',
         locale: 'ru',
     });
-        // .on('dp.change', function(e) {
-        //     getYear(e.date);
-        // });
+
+    $('.year').change(function() {
+        var year = $('.year').val(),
+            sid = $('#sid').val();
+
+        var req = {
+                year: year,
+            };
+
+        $.post(sid + '/admin/getSchedule', req, function(response) {
+            $('#schedule .resultArea .dates').html(response.html);
+        }, 'json')
+            .fail(function(){
+            });
+    });
 
     // удаление услуги
     $(document).on('click', 'button.delete', function() {

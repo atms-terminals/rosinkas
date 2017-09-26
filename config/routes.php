@@ -16,6 +16,7 @@ return array(
 
     '.*?/admin/addDate' => 'admin/addDate',
     '.*?/admin/delDate' => 'admin/delDate',
+    '.*?/admin/getSchedule' => 'admin/getSchedule',
 
     '.*?/admin/getPriceGroup' => 'admin/getPriceGroup',
     '.*?/admin/setPriceGroupStatus' => 'admin/setPriceGroupStatus',
