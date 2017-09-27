@@ -22,7 +22,9 @@ function getMenuLevel($menu, $id)
             $checkedWoNds = $item['nds'] == '0' ? 'selected' : '';
             $checkedWithllNds = $item['nds'] == '1' ? 'selected' : '';
 
-            $html .= "<li><input class='serviceItem id' type='checkbox' id='{$item['id']}' $status title='запретить/разрешить'>
+            $dropDown = (!empty($menu[$item['id']])) ? "<button class='dropdown'><span class='glyphicon glyphicon-triangle-top' aria-hidden='true'></span></button>" : '';
+
+            $html .= "<li>$dropDown<input class='serviceItem id' type='checkbox' id='{$item['id']}' $status title='запретить/разрешить'>
                 {$item['desc']} (id={$item['id']}) 
                 <button class='confirmDelete price'><span class='glyphicon glyphicon-remove' title='Удалить' data-toggle='modal' data-target='#confirmDeleteDialog'></span></button><br>
 
@@ -39,7 +41,7 @@ function getMenuLevel($menu, $id)
                     <option value='1' $checkedWithllNds>с НДС</option>
                 </select>";
             } else {
-                $html .= "<ul>";
+                $html .= "<ul class='hidden'>";
                 $html .= getMenuLevel($menu, $item['id']);
                 $html .= "</ul>";
             }

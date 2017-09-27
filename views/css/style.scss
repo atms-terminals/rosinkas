@@ -388,3 +388,11 @@ button.service.control {
 select.year, #priceStatus {
     margin-bottom: 15px;
 }
+
+#priceGroup ul{
+    list-style-type: none;
+}
+
+#priceGroup .dropdown {
+    margin-right: 10px;
+}

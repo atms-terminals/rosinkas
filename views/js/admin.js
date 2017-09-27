@@ -221,6 +221,7 @@ $(document).ready(function() {
             });
     });
 
+    // изменение типа меню
     $('.day-type button').click(function() {
         $('.day-type button').removeClass('active');
         $(this).addClass('active');
@@ -230,8 +231,8 @@ $(document).ready(function() {
                 active: $('#priceStatus').prop('checked') ? 1 : 0
             }
         );
-
     });
+
     // показ услуг
     $(document).on('click', '#priceStatus', function() {
         get('getPriceGroup', $('#priceGroup'),
@@ -240,6 +241,20 @@ $(document).ready(function() {
                 active: $('#priceStatus').prop('checked') ? 1 : 0
             }
         );
+    });
+
+    // сворачивание-разворачивание меню
+    $(document).on('click', '#priceGroup .dropdown', function() {
+        var $span = $(this).children('span'),
+            $ul = $(this).siblings('ul');
+
+        if ($span.hasClass('glyphicon-triangle-bottom')) {
+            $span.removeClass('glyphicon-triangle-bottom').addClass('glyphicon-triangle-top');
+            $ul.addClass('hidden');
+        } else {
+            $span.removeClass('glyphicon-triangle-top').addClass('glyphicon-triangle-bottom');
+            $ul.removeClass('hidden');
+        }
     });
 
     // запрос инкассаций
