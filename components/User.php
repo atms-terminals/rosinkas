@@ -21,8 +21,8 @@ class User
     private static $uid = null;
     private static $sid = null;
     private static $startUrl = 'index.php';
-    private static $firstScreen = 3;
-    private static $firstAction = 'move';
+    private static $firstScreen = 1;
+    private static $firstAction = 'getServiceList';
     private static $status = 0;
 
     /**

@@ -6,7 +6,7 @@ use components\User as user;
 
 define('FIRST_SCREEN', 1);
 define('FIRST_ACTION', 'getServiceList');
-define('GET_MONEY_SCREEN', 4);
+define('GET_MONEY_SCREEN', 2);
 define('GET_MONEY_ACTION', 'getMoneyScreen');
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
@@ -21,92 +21,116 @@ class AjaxController
 {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
+     * кладем в массивы для замены в шаблонах массив POST.
+     *
+     * @return array массивы для замены
+     */
+    private function putPostIntoReplaceArray(&$replArray)
+    {
+        if (!empty($_POST['values'])) {
+            foreach ($_POST['values'] as $key => $value) {
+                $replArray['patterns'][] = '{'.strtoupper($key).'}';
+                $replArray['values'][] = $value;
+            }
+        }
+    }
+
+    private function getServiceNamePart($idService)
+    {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT r.id_parent, r.`desc`
+            from custom_price_redstar r
+            where r.id = '$idService'";
+        $row = dbHelper\DbHelper::selectRow($query);
+
+        if ($row['id_parent'] > 0) {
+            return "{$this->getServiceNamePart($row['id_parent'])}. {$row['desc']}";
+        } else {
+            return $row['desc'];
+        }
+    }
+
+    private function getServiceName($idService)
+    {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT r.price, r.nds
+            from custom_price_redstar r
+            where r.id = '$idService'";
+        $row = dbHelper\DbHelper::selectRow($query);
+
+        return array(
+            'price' => $row['price'],
+            'nds' => $row['nds'],
+            'name' => $this->getServiceNamePart($idService)
+        );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
      * Обработка команды оплаты
      */
     public function actionPay()
     {
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
-        $idAbonement = (empty($_POST['values']['idAbonement'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idAbonement']);
+        $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
         $amount = (empty($_POST['values']['amount'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['amount']);
-        $price = (empty($_POST['values']['price'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['price']);
-        $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
-        $customer = (empty($_POST['values']['customer'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['customer']);
-        $serviceName = (empty($_POST['values']['serviceName'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['values']['serviceName']);
-
-        // $amount = 800;
-
-        $prepayment = (empty($_POST['values']['prepayment'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['prepayment']);
-        $purchaseAmount = (empty($_POST['values']['purchaseAmount'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['purchaseAmount']);
 
         $uid = user\User::getId();
-
-        if (!$idAbonement /*|| !$amount*/ || !$card || !$price) {
-            // уходим на первый экран
-            $_POST['nextScreen'] = user\User::getFirstScreen();
-            $this->actionMove('Не все поля переданы');
-            exit();
-        }
 
         if (!$amount) {
             // уходим на первый экран
             $_POST['nextScreen'] = user\User::getFirstScreen();
-            $this->actionMove();
+            $this->actionGetServiceList();
             exit();
         }
 
         $replArray = $this->makeReplaceArray($nextScreen);
-
-        // записываем запрос на оплату
-        $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-            "call payments_prepare($uid, '$idAbonement', '$card', '$customer', '$amount', $price, '$purchaseAmount', @idPayment, @countUnits, @prepayment);";
-        $pay = dbHelper\DbHelper::call($query);
-        $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT @idPayment idPayment, @countUnits countUnits, @prepayment prepayment";
-        $payment = dbHelper\DbHelper::selectRow($query);
-
-        $replArray['patterns'][] = '{SERVICE_NAME}';
-        // $replArray['values'][] = $serviceName;
-        $replArray['values'][] = 'Внесение наличных в счет оплаты';
-
-        $prepayment = $payment['prepayment'];
-        $replArray['patterns'][] = '{PREPAYMENT_BEFORE}';
-        $replArray['values'][] = $prepayment;
-
-        $idPayment = $payment['idPayment'];
-        $replArray['patterns'][] = '{TRN}';
-        $replArray['values'][] = $idPayment;
-
-        $countUnits = $payment['countUnits'];
-        $replArray['patterns'][] = '{COUNT_UNITS}';
-        $replArray['values'][] = $countUnits;
-
-        $replArray['patterns'][] = '{PRICE}';
-        $replArray['values'][] = $price;
-
-        $replArray['patterns'][] = '{SUMM}';
-        $replArray['values'][] = $countUnits * $price;
-
-        $replArray['patterns'][] = '{AMOUNT}';
-        $replArray['values'][] = $amount;
-
        
         // подтверждаем оплату
         $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-            "call payments_confirm($uid, $idPayment, @prepayment)";
-        $pay = dbHelper\DbHelper::call($query);
-        $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT @prepayment prepayment";
-        $prepayment = dbHelper\DbHelper::selectRow($query);
+            "SELECT payments_add($uid, '$idService', '$amount') id";
+        $pay = dbHelper\DbHelper::selectRow($query);
+        $replArray['patterns'][] = '{TRN}';
+        $replArray['values'][] = $pay['id'];
 
-        $preAmount = $prepayment['prepayment'];
-        $replArray['patterns'][] = '{PREPAYMENT}';
-        $replArray['values'][] = $preAmount;
+        $servParam = $this->getServiceName($idService);
 
-        // добавляем список сервисов
-        $replArray['patterns'][] = '{ABONEMENT_ID}';
-        $replArray['values'][] = $idAbonement;
+        $replArray['patterns'][] = '{NDS}';
+        if ($servParam['nds'] == 1 && $servParam['price'] <= $amount) {
+            $nds = number_format($servParam['price'] / 118 * 18, 2, '.', ' ');
+            $replArray['values'][] = "В том числе НДС 18% $nds";
+        } elseif ($servParam['nds'] == 0) {
+            $replArray['values'][] = 'Без НДС';
+        } else {
+            $replArray['values'][] = '';
+        }
+
+        if ($servParam['price'] > $amount) {
+            // если денег меньше чем цена
+            $replArray['patterns'][] = '{SERVICE}';
+            $replArray['values'][] = '';
+
+            $replArray['patterns'][] = '{PRICE}';
+            $replArray['values'][] = '';
+
+            $rest = $amount;
+            $replArray['patterns'][] = '{REST}';
+            $replArray['values'][] = number_format($rest, 2, '.', ' ');
+        } else {
+            // если есть сдача
+            $replArray['patterns'][] = '{SERVICE}';
+            $replArray['values'][] = $servParam['name'];
+
+            $replArray['patterns'][] = '{PRICE}';
+            $replArray['values'][] = number_format($servParam['price'], 2, '.', ' ');
+
+            $rest = $amount - $servParam['price'];
+            $rest = $rest < 0 ? 0 : $rest;
+            $replArray['patterns'][] = '{REST}';
+            $replArray['values'][] = number_format($rest, 2, '.', ' ');
+        }
 
         $response = $this->getScreen($nextScreen, $replArray);
-
-        $response['printForm']['amount'] = $amount;
 
         $response['message'] = '';
         $response['code'] = 0;
@@ -123,15 +147,9 @@ class AjaxController
     public function actionGetMoneyScreen()
     {
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
-        $idAbonement = (empty($_POST['values']['idAbonement'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idAbonement']);
-        $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
-        $price = (empty($_POST['values']['price'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['price']);
-        $customer = (empty($_POST['values']['customer'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['values']['customer']);
-        $serviceName = (empty($_POST['values']['serviceName'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['values']['serviceName']);
-        $purchaseAmount = (empty($_POST['values']['purchaseAmount'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['purchaseAmount']);
-        $prepayment = (empty($_POST['values']['prepayment'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['prepayment']);
+        $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
 
-        if (!$idAbonement) {
+        if (!$idService) {
             // уходим на первый экран
             $_POST['nextScreen'] = user\User::getFirstScreen();
             $this->actionMove($e->getMessage());
@@ -139,23 +157,13 @@ class AjaxController
         }
 
         $replArray = $this->makeReplaceArray($nextScreen);
-        // добавляем список сервисов
-        $replArray['patterns'][] = '{ABONEMENT_ID}';
-        $replArray['values'][] = $idAbonement;
-        $replArray['patterns'][] = '{CARD}';
-        $replArray['values'][] = $card;
+        $this->putPostIntoReplaceArray($replArray);
+
+        $servParam = $this->getServiceName($idService);
+        $replArray['patterns'][] = '{SERVICE}';
+        $replArray['values'][] = $servParam['name'];
         $replArray['patterns'][] = '{PRICE}';
-        $replArray['values'][] = $price;
-        $replArray['patterns'][] = '{CUSTOMER}';
-        $replArray['values'][] = $customer;
-        $replArray['patterns'][] = '{SERVICE_NAME}';
-        $replArray['values'][] = $serviceName;
-        $replArray['patterns'][] = '{PURCHASE_AMOUNT}';
-        $replArray['values'][] = $purchaseAmount;
-        $replArray['patterns'][] = '{PREPAYMENT}';
-        $replArray['values'][] = number_format($prepayment, 2, '.', ' ');
-        $replArray['patterns'][] = '{MIN_SUMM}';
-        $replArray['values'][] = number_format($purchaseAmount - $prepayment, 2, '.', ' ');
+        $replArray['values'][] = $servParam['price'];
 
         $response = $this->getScreen($nextScreen, $replArray);
 
@@ -178,11 +186,9 @@ class AjaxController
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $id = (empty($_POST['values']['id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['id']);
         $start = (empty($_POST['values']['start'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['start']);
-        $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
-        $prepayment = (empty($_POST['values']['prepayment'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['prepayment']);
-        $customer = (empty($_POST['values']['customer'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['customer']);
 
         $replArray = $this->makeReplaceArray($nextScreen);
+        $this->putPostIntoReplaceArray($replArray);
 
         // кнопки возврата назад и на 1 уровень вверх
         $controls = '';
@@ -194,9 +200,6 @@ class AjaxController
                         <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                         <input class='value id' type='hidden' value='$id' />
                         <input class='value start' type='hidden' value='$ns' />
-                        <input class='value prepayment' type='hidden' value='$prepayment' />
-                        <input class='value card' type='hidden' value='$card' />
-                        <input class='value customer' type='hidden' value='$customer' />
                         <button class='btn btn-primary action service control'>Предыдущий</button>";
             } else {
                 $query = "/*".__FILE__.':'.__LINE__."*/ ".
@@ -208,9 +211,6 @@ class AjaxController
                 $controls .= "<input class='activity' type='hidden' value='getServiceList' />
                         <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                         <input class='value id' type='hidden' value='{$row['id_parent']}' />
-                        <input class='value prepayment' type='hidden' value='$prepayment' />
-                        <input class='value card' type='hidden' value='$card' />
-                        <input class='value customer' type='hidden' value='$customer' />
                         <button class='btn btn-primary action service control'>Предыдущий</button>";
             }
         } else {
@@ -218,11 +218,13 @@ class AjaxController
         }
         $controls .= "</div>";
 
-        $controls .= "<div class='controlDiv'>
-                <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
-                <input class='activity' type='hidden' value='".FIRST_ACTION."' />
-                <button class='btn btn-primary action service control'>Отмена</button>   
-            </div>";
+        if ($id) {
+            $controls .= "<div class='controlDiv'>
+                    <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
+                    <input class='activity' type='hidden' value='".FIRST_ACTION."' />
+                    <button class='btn btn-primary action service control'>Отмена</button>   
+                </div>";
+        }
 
         // добавляем список сервисов
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
@@ -236,32 +238,20 @@ class AjaxController
         for ($i = $start; $i < $start + BUTTON_PER_SCREEN && $i < count($rows); $i++) {
             $cost = $rows[$i]['price'] && $rows[$i]['price'] != '0.00' ? "<hr>{$rows[$i]['price']} руб." : '';
             if ($cost) {
-                $cost = $rows[$i]['price'] == -1 ? '' : $cost;
-                $minPurchase = $rows[$i]['price'];
+                $cost = empty($rows[$i]['price']) || $rows[$i]['price'] == -1 ? '' : $cost;
                 $buttons .= "<span>
-                        <input class='activity' type='hidden' value='".FIRST_ACTION."' />
-                        <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
-                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>
-
-                        <!--input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
+                        <input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
                         <input class='activity' type='hidden' value='".GET_MONEY_ACTION."' />
-                        <input class='value purchaseAmount' type='hidden' value='$minPurchase' />
                         <input class='value price' type='hidden' value='{$rows[$i]['price']}' />
-                        <input class='value idAbonement' type='hidden' value='{$rows[$i]['id']}' />
+                        <input class='value idService' type='hidden' value='{$rows[$i]['id']}' />
                         <input class='value serviceName' type='hidden' value='{$rows[$i]['desc']}' />
-                        <input class='value card' type='hidden' value='$card' />
-                        <input class='value prepayment' type='hidden' value='$prepayment' />
-                        <input class='value customer' type='hidden' value='$customer' />
-                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button-->
+                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>
                     </span>";
             } else {
                 $buttons .= "<span>
                         <input class='activity' type='hidden' value='getServiceList' />
                         <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                         <input class='value id' type='hidden' value='{$rows[$i]['id']}' />
-                        <input class='value card' type='hidden' value='$card' />
-                        <input class='value prepayment' type='hidden' value='$prepayment' />
-                        <input class='value customer' type='hidden' value='$customer' />
                         <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>   
                     </span>";
             }
@@ -312,6 +302,7 @@ class AjaxController
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
 
         $replArray = $this->makeReplaceArray($nextScreen);
+        $this->putPostIntoReplaceArray($replArray);
         $response = $this->getScreen($nextScreen, $replArray);
 
         $response['message'] = $message;

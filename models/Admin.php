@@ -25,12 +25,13 @@ class Admin
     public static function getCollections()
     {
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id_collection, u.address, date_format(c.dt, '%d.%m.%Y %H:%i') dt, sum(p.amount) amount, sum(p.deposit) deposit, sum(p.summ) summ
+            "SELECT p.id_collection, u.address, date_format(c.dt, '%d.%m.%Y %H:%i') dt, sum(p.amount) amount
             from collections c
                 join (
-                    select max(c.dt) dt, c.id_user
+                    select c.dt, c.id_user
                     from collections c 
-                    group by c.id_user
+                    order by c.dt desc
+                    limit 5
                 ) t on c.dt = t.dt 
                     and c.id_user = t.id_user
                 join v_payments p on p.id_collection = c.id
@@ -41,24 +42,15 @@ class Admin
 
         // наличка
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id_user, u.address,
-                if(p.dt_confirm is null, 'notConfirmed', 'confirmed') confirmed, 
-                sum(p.amount) summ, 
-                sum(p.deposit) deposit
+            "SELECT p.id_user, u.address, sum(p.amount) summ
             from v_payments p
                 join users u on u.id = p.id_user
             where p.collected = 0
-            group by p.id_user, if(p.dt_confirm is null, 'notConfirmed', 'confirmed')";
+            group by p.id_user";
         $tmoney = dbHelper\DbHelper::selectSet($query);
         $money = array();
         foreach ($tmoney as $row) {
-            if (empty($money[$row['address']])) {
-                $money[$row['address']]['confirmed'] = 0;
-                $money[$row['address']]['notConfirmed'] = 0;
-                $money[$row['address']]['deposit'] = 0;
-            }
-            $money[$row['address']][$row['confirmed']] = $row['summ'];
-            $money[$row['address']]['deposit'] += $row['deposit'];
+            $money[$row['address']]['summ'] = $row['summ'];
         }
 
         return array('collections' => $collections,

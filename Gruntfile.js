@@ -199,8 +199,6 @@ module.exports = function(grunt) {
                 {expand: true, flatten: true, src: ['controllers/*'], dest: 'release/controllers/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['config/*'], dest: 'release/config/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['models/*'], dest: 'release/models/', filter: 'isFile'},
-                {expand: true, flatten: true, src: ['usb/*'], dest: 'release/usb/', filter: 'isFile'},
-                {expand: true, flatten: true, src: ['usb/config/*'], dest: 'release/usb/config/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['.htaccess'], dest: 'release/', filter: 'isFile'},
                 {expand: true, flatten: true, src: ['start.sh'], dest: 'release/', filter: 'isFile'},
                 ]

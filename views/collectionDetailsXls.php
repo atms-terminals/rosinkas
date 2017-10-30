@@ -28,12 +28,11 @@ if ($opers) {
     $xls->setActiveSheetIndex(0)
         ->setCellValue($col++.$row, '№ п/п')
         ->setCellValue($col++.$row, 'Дата')
-        ->setCellValue($col++.$row, 'Клиент')
-        ->setCellValue($col++.$row, 'Карта')
         ->setCellValue($col++.$row, 'Услуга')
         ->setCellValue($col++.$row, 'Внесено')
-        ->setCellValue($col++.$row, 'Депозит')
-        ->setCellValue($col++.$row++, 'Зачислено');
+        ->setCellValue($col++.$row, 'Цена по прайсу')
+        ->setCellValue($col++.$row, 'Сдача')
+        ->setCellValue($col++.$row++, 'НДС');
 
     $xls->getActiveSheet()->getStyle("A1:X1")->getFont()->setBold(true);
     $xls->getActiveSheet()->getStyle("A6:X6")->getFont()->setBold(true);
@@ -51,15 +50,33 @@ if ($opers) {
     foreach ($opers as $item) {
         $col = 'A';
 
+        switch ($item['nds']) {
+            case '0':
+                $nds = 'без НДС';
+                break;
+            case '1':
+                $nds = '18%';
+                break;
+            default:
+                $nds = '';
+                break;
+        }
+
+        if ($item['price'] <= $item['amount']) {
+            $rest = $item['amount'] - $item['price'];
+        } else {
+            $rest = $item['amount'];
+        }
+
+
         $xls->setActiveSheetIndex(0)
-            ->setCellValue($col++.$row, $i++)               // A
-            ->setCellValue($col++.$row, $item['dt_oper'])   // B
-            ->setCellValue($col++.$row, $item['client'])    // C
-            ->setCellValue($col++.$row, $item['card'])      // D
-            ->setCellValue($col++.$row, $item['service'])   // E
-            ->setCellValue($col++.$row, $item['amount'])    // F
-            ->setCellValue($col++.$row, $item['deposit'])   // G
-            ->setCellValue($col++.$row, $item['summ']);     // H
+            ->setCellValue($col++.$row, $i++)
+            ->setCellValue($col++.$row, $item['dt_oper'])
+            ->setCellValue($col++.$row, $item['fullService']['name'])
+            ->setCellValue($col++.$row, number_format($item['amount'], 2, '.', ' '))
+            ->setCellValue($col++.$row, number_format($item['price'], 2, '.', ' '))
+            ->setCellValue($col++.$row, number_format($rest, 2, '.', ' '))
+            ->setCellValue($col++.$row, $nds);
         $row++;
     }
 
@@ -69,10 +86,9 @@ if ($opers) {
         )
     );
 
-    $xls->getActiveSheet()->getStyle("B6")->applyFromArray($style);
-    $xls->getActiveSheet()->getStyle("A6:B$row")->applyFromArray($style);
-    $xls->getActiveSheet()->getStyle("D6:D$row")->applyFromArray($style);
-    $xls->getActiveSheet()->getStyle("F6:H$row")->applyFromArray($style);
+    $xls->getActiveSheet()->getStyle("A6:G6")->applyFromArray($style);
+    $xls->getActiveSheet()->getStyle("A7:B$row")->applyFromArray($style);
+    $xls->getActiveSheet()->getStyle("D7:G$row")->applyFromArray($style);
 } else {
     $xls->setActiveSheetIndex(0)->setCellValue($col.$row, 'Нет данных');
 }

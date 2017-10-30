@@ -79,8 +79,6 @@
             </div>
 
             <div role="tabpanel" id="collections" class="tab-pane fade">
-                <a class="btn btn-primary" id='refreshCollections'>Обновить</a>
-                    <?php require_once(ROOT.'/views/hwsState.php'); ?>
                 <div class="resultArea">
                 </div>
             </div>

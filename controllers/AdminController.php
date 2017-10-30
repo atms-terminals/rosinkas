@@ -31,6 +31,36 @@ class AdminController
         return true;
     }
 
+    private function getServiceNamePart($idService)
+    {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT r.id_parent, r.`desc`
+            from custom_price_redstar r
+            where r.id = '$idService'";
+        $row = dbHelper\DbHelper::selectRow($query);
+
+        if ($row['id_parent'] > 0) {
+            return "{$this->getServiceNamePart($row['id_parent'])}. {$row['desc']}";
+        } else {
+            return $row['desc'];
+        }
+    }
+
+    private function getServiceName($idService)
+    {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT r.price, r.nds
+            from custom_price_redstar r
+            where r.id = '$idService'";
+        $row = dbHelper\DbHelper::selectRow($query);
+
+        return array(
+            'price' => $row['price'],
+            'nds' => $row['nds'],
+            'name' => $this->getServiceNamePart($idService)
+        );
+    }
+
     public function actionGetCollectionDetails()
     {
         $idCollection = empty($_POST['idCollection']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['idCollection']);
@@ -43,13 +73,15 @@ class AdminController
         $collectionParams = dbHelper\DbHelper::selectSet($query);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT date_format(p.dt_confirm, '%d.%m.%Y %H:%i') dt_oper, a.name `client`, a.card, c.`desc` service, p.amount, p.deposit, p.summ
+            "SELECT date_format(p.dt_insert, '%d.%m.%Y %H:%i') dt_oper, c.`desc` service, p.amount, c.price, c.nds, p.id_service
             from v_payments p
-                left join custom_pricelist c on p.abonement = c.id
-                left join cards a on p.id_card = a.id
+                left join custom_price_redstar c on p.id_service = c.id
             where p.id_collection = '$idCollection'
-            order by p.dt_confirm";
+            order by p.dt_insert";
         $opers = dbHelper\DbHelper::selectSet($query);
+        for ($i = 0; $i < count($opers); $i++) {
+            $opers[$i]['fullService'] = $this->getServiceName($opers[$i]['id_service']);
+        }
 
         require_once(ROOT.'/views/collectionDetailsXls.php');
         return true;
