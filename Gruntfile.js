@@ -63,8 +63,19 @@ module.exports = function(grunt) {
             },
             build: {
                 files: {
-                    'tmp/terminal.js': ['tmp/bower.js', 'views/js/terminal.js', 'views/js/cashcode.js', 'views/js/rfid.js'],
-                    'tmp/admin.js': ['tmp/bower.js', 'views/js/admin.js'],
+                    'tmp/terminal.js': [
+                        'bower_components/jquery/dist/jquery.js',
+                        'bower_components/bootstrap/dist/js/bootstrap.js',
+                        'views/js/terminal.js', 
+                        'views/js/cashcode.js', 
+                        ],
+                    'tmp/admin.js': [
+                        'bower_components/jquery/dist/jquery.js',
+                        'bower_components/bootstrap/dist/js/bootstrap.js',
+                        'bower_components/moment/min/moment-with-locales.js',
+                        'bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js',
+                        'views/js/admin.js',
+                        ],
                 },
             }
         },
@@ -102,6 +113,7 @@ module.exports = function(grunt) {
                 files: {
                     'views/css/style-sass.css': 'views/css/style.scss',
                     'views/css/login-sass.css': 'views/css/login.scss',
+                    'views/css/term-sass.css': 'views/css/term.scss',
                 }
             }
         },
@@ -113,11 +125,17 @@ module.exports = function(grunt) {
                 files: {
                     'release/views/css/login.min.css' : [
                         'bower_components/bootstrap/dist/css/bootstrap.css',
+                        'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
                         'views/css/login*.css',
                     ],
                     'release/views/css/style.min.css' : [
                         'bower_components/bootstrap/dist/css/bootstrap.css',
                         'views/css/style*.css',
+                    ],
+                    'release/views/css/term.min.css' : [
+                        'bower_components/bootstrap/dist/css/bootstrap.css',
+                        'views/css/style*.css',
+                        'views/css/term*.css',
                     ]
                 }
             }

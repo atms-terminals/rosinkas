@@ -8,12 +8,13 @@
     <title>Красная звезда</title>
 
     <!-- env:prod --#>
-        <link rel="stylesheet" href="views/css/style.min.css?<?= filemtime("views/css/login.min.css")?>">
+        <link rel="stylesheet" href="views/css/term.min.css?<?= filemtime("views/css/term.min.css")?>">
     <!-- env:prod:end -->
 
     <!-- env:dev -->
         <link href='../bower_components/bootstrap/dist/css/bootstrap.css' rel="stylesheet">
         <link href='views/css/style-sass.css?<?= filemtime(ROOT.'/views/css/style-sass.css')?>' rel="stylesheet">
+        <link href='views/css/term-sass.css?<?= filemtime(ROOT.'/views/css/term-sass.css')?>' rel="stylesheet">
     <!-- env:dev:end -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
