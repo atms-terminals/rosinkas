@@ -100,7 +100,9 @@ $xls->getActiveSheet()->setTitle('Отчет');
 $xls->setActiveSheetIndex(0);
 
 // Save Excel 2007 file
-$objWriter = PHPExcel_IOFactory::createWriter($xls, 'Excel2007');
+// PHPExcel_IOFactory::createReader('Excel5');
+// PHPExcel_IOFactory::createReader('Excel2003XML');
+$objWriter = PHPExcel_IOFactory::createWriter($xls, 'Excel5');
 
 ob_start();
 $objWriter->save('php://output');
