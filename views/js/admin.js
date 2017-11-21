@@ -205,6 +205,26 @@ $(document).ready(function() {
             });
     });
 
+    // редактирование цвета кнопки
+    $(document).on('change', '.dayStatus', function() {
+        var sid = $('#sid').val(),
+            $this = $(this).closest('li'),
+            idDay = $(this).val(),
+            $checkbox = $this.find('.serviceItem'),
+            req = {
+                id: $checkbox.attr('id'), 
+                idDay: idDay,
+                status: $(this).prop('checked') ? 1 : 0
+            };
+
+        $.post(sid + '/admin/setDayStatus', req, function() {
+
+        }, 'json')
+            .fail(function(){
+                get('getPriceGroup', $('#priceGroup'));
+            });
+    });
+
     // разрешение/запрещение услуги
     $(document).on('click', '.serviceItem', function() {
         var sid = $('#sid').val(),

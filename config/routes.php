@@ -24,6 +24,7 @@ return array(
     '.*?/admin/setPrice' => 'admin/setPrice',
     '.*?/admin/setNds' => 'admin/setNds',
     '.*?/admin/setColor' => 'admin/setColor',
+    '.*?/admin/setDayStatus' => 'admin/setDayStatus',
     '.*?/admin/deletePriceItem' => 'admin/deletePriceItem',
 
     '.*?/admin/getTerminals' => 'admin/getTerminals',

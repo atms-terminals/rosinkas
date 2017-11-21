@@ -7,6 +7,16 @@
  */
 function getMenuLevel($menu, $id)
 {
+    $days = array(
+        0 => 'Пн.',
+        1 => 'Вт.',
+        2 => 'Ср.',
+        3 => 'Чт.',
+        4 => 'Пт.',
+        5 => 'Сб.',
+        6 => 'Вс.',
+    );
+
     $html = '';
     if (!empty($menu[$id])) {
         $i = 0;
@@ -24,9 +34,18 @@ function getMenuLevel($menu, $id)
 
             $dropDown = (!empty($menu[$item['id']])) ? "<button class='dropdown'><span class='glyphicon glyphicon-triangle-top' aria-hidden='true'></span></button>" : '';
 
-            $html .= "<li>$dropDown<input class='serviceItem id' type='checkbox' id='{$item['id']}' $status title='запретить/разрешить'>
+            $daySchedule = '';
+            foreach ($item['schedule'] as $dayId => $dayStatus) {
+                $checked = $dayStatus == 0 ? '' : 'checked';
+                $daySchedule .= "<label><input class='dayStatus' type='checkbox' $checked value='$dayId'> {$days[$dayId]}</label>  ";
+            }
+
+            $html .= "<br><li>$dropDown<input class='serviceItem id' type='checkbox' id='{$item['id']}' $status title='запретить/разрешить'>
                 {$item['desc']} (id={$item['id']}) 
+
+
                 <button class='confirmDelete price'><span class='glyphicon glyphicon-remove' title='Удалить' data-toggle='modal' data-target='#confirmDeleteDialog'></span></button><br>
+                $daySchedule<br>
 
                 <span class='color btn btn-danger'><input type='radio' $checkedDanger name='color$id$i' value='danger' ></span>
                 <span class='color btn btn-success'><input type='radio' $checkedSuccess name='color$id$i' value='success' ></span>

@@ -271,6 +271,22 @@ class AdminController
         return true;
     }
 
+    public function actionSetDayStatus()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+        $idDay = empty($_POST['idDay']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['idDay']);
+        $status = empty($_POST['status']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['status']);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_price_set_dayoff($uid, 'redstar', '$id', '$idDay', '$status')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
     public function actionSetNds()
     {
         $uid = user\User::getId();

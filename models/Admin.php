@@ -65,8 +65,9 @@ class Admin
     {
         $sql = $status ? 'p.status = 1' : '1';
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color, p.price, p.nds
+            "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color, p.price, p.nds, o.id_day
             from v_custom_pricelist p
+                left join custom_price_redstar_dayoff o on p.id = o.id_item
             where $sql
                 and p.day_type = '$type'
             order by p.id_parent, p.`desc`";
@@ -74,7 +75,21 @@ class Admin
         $tlist = array();
         // переупорядочиваем по корневому элементу
         foreach ($tservices as $row) {
-            $tlist[$row['id_parent']][] = $row;
+            if (empty($tlist[$row['id_parent']][$row['id']])) {
+                $tlist[$row['id_parent']][$row['id']] = $row;
+                $tlist[$row['id_parent']][$row['id']]['schedule'] = array(
+                    '0' => 1,
+                    '1' => 1,
+                    '2' => 1,
+                    '3' => 1,
+                    '4' => 1,
+                    '5' => 1,
+                    '6' => 1,
+                );
+            }
+            if ($row['id_day'] != '') {
+                $tlist[$row['id_parent']][$row['id']]['schedule'][$row['id_day']] = 0;
+            }
         }
         return $tlist;
     }
