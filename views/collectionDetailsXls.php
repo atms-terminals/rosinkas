@@ -51,10 +51,10 @@ if ($opers) {
         $col = 'A';
 
         switch ($item['nds']) {
-            case '0':
+            case '4000':
                 $nds = 'без НДС';
                 break;
-            case '1':
+            case '1000':
                 $nds = '18%';
                 break;
             default:

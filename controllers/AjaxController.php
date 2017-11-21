@@ -96,14 +96,15 @@ class AjaxController
         $servParam = $this->getServiceName($idService);
 
         $replArray['patterns'][] = '{NDS}';
-        if ($servParam['nds'] == 1 && $servParam['price'] <= $amount) {
-            $nds = number_format($servParam['price'] / 118 * 18, 2, '.', ' ');
-            $replArray['values'][] = "В том числе НДС 18% $nds";
-        } elseif ($servParam['nds'] == 0) {
-            $replArray['values'][] = 'Без НДС';
-        } else {
-            $replArray['values'][] = '';
-        }
+        $replArray['values'][] = $servParam['nds'];
+        // if ($servParam['nds'] == 1 && $servParam['price'] <= $amount) {
+        //     $nds = number_format($servParam['price'] / 118 * 18, 2, '.', ' ');
+        //     $replArray['values'][] = "В том числе НДС 18% $nds";
+        // } elseif ($servParam['nds'] == 0) {
+        //     $replArray['values'][] = 'Без НДС';
+        // } else {
+        //     $replArray['values'][] = '';
+        // }
 
         if ($servParam['price'] > $amount) {
             // если денег меньше чем цена
