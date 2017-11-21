@@ -183,6 +183,10 @@ class AjaxController
     {
         define('BUTTON_PER_SCREEN', 6);
 
+        if (user\User::getStatus() == 0) {
+            $_POST['nextScreen'] = LOCK_SCREEN;
+        }
+
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $id = (empty($_POST['values']['id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['id']);
         $start = (empty($_POST['values']['start'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['start']);
