@@ -109,10 +109,10 @@ class AjaxController
         if ($servParam['price'] > $amount) {
             // если денег меньше чем цена
             $replArray['patterns'][] = '{SERVICE}';
-            $replArray['values'][] = '';
+            $replArray['values'][] = 'Нет';
 
             $replArray['patterns'][] = '{PRICE}';
-            $replArray['values'][] = '';
+            $replArray['values'][] = '0';
 
             $rest = $amount;
             $replArray['patterns'][] = '{REST}';
@@ -133,6 +133,8 @@ class AjaxController
 
         $response = $this->getScreen($nextScreen, $replArray);
 
+        $response['printForm']['amount'] = $amount;
+        
         $response['message'] = '';
         $response['code'] = 0;
         
