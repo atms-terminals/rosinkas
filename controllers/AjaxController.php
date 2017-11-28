@@ -43,7 +43,7 @@ class AjaxController
             where r.id = '$idService'";
         $row = dbHelper\DbHelper::selectRow($query);
 
-        if ($row['id_parent'] > 0) {
+        if ($row['id_parent'] > 0 && 0) {
             return "{$this->getServiceNamePart($row['id_parent'])}. {$row['desc']}";
         } else {
             return $row['desc'];
@@ -116,19 +116,19 @@ class AjaxController
 
             $rest = $amount;
             $replArray['patterns'][] = '{REST}';
-            $replArray['values'][] = number_format($rest, 2, '.', ' ');
+            $replArray['values'][] = number_format($rest, 2, '.', '');
         } else {
             // если есть сдача
             $replArray['patterns'][] = '{SERVICE}';
             $replArray['values'][] = $servParam['name'];
 
             $replArray['patterns'][] = '{PRICE}';
-            $replArray['values'][] = number_format($servParam['price'], 2, '.', ' ');
+            $replArray['values'][] = number_format($servParam['price'], 2, '.', '');
 
             $rest = $amount - $servParam['price'];
             $rest = $rest < 0 ? 0 : $rest;
             $replArray['patterns'][] = '{REST}';
-            $replArray['values'][] = number_format($rest, 2, '.', ' ');
+            $replArray['values'][] = number_format($rest, 2, '.', '');
         }
 
         $response = $this->getScreen($nextScreen, $replArray);
