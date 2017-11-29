@@ -31,8 +31,8 @@
     <div class="container-fluid">
         <div class="header">
             <div class="logos">
-                <div class="lines line1">Бюджетное учреждение города Омска</div>
-                <div class="lines line2">Спортивный комплекс имени Кузнецова В.Н.</div>
+                <!-- <div class="lines line1">Бюджетное учреждение города Омска</div> -->
+                <div class="lines line2">БУ города Омска Спортивный комплекс</div>
                 <div class="row">
                     <div class="col-md-3 logo1 text-center"><img src='views/img/logo.png' alt=""></div>
                     <div class="col-md-6 title-logo text-center"><img src='views/img/title.png' alt=""></div>

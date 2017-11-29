@@ -35,16 +35,17 @@ class AjaxController
         }
     }
 
-    private function getServiceNamePart($idService)
+    private function getServiceNamePart($idService, $i = 2)
     {
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT r.id_parent, r.`desc`
-            from custom_price_redstar r
+            from v_clients_custom_pricelist r
             where r.id = '$idService'";
         $row = dbHelper\DbHelper::selectRow($query);
 
-        if ($row['id_parent'] > 0 && 0) {
-            return "{$this->getServiceNamePart($row['id_parent'])}. {$row['desc']}";
+        if ($row['id_parent'] > 0 && $i > 0) {
+            $k = $i - 1;
+            return "{$this->getServiceNamePart($row['id_parent'], $k)}. {$row['desc']}";
         } else {
             return $row['desc'];
         }
