@@ -43,6 +43,8 @@ function getMenuLevel($menu, $id)
             $timeStart = $item['time_start'];
             $timeFinish = $item['time_finish'];
 
+            $commentItem = empty($menu[$item['id']]) ? '' : "<textarea rows='3' cols='80' class='commentItem' placeholder='Комментарий'>{$item['comment']}</textarea><br>";
+
             $html .= "<br><li>$dropDown<input class='serviceItem id' type='checkbox' id='{$item['id']}' $status title='запретить/разрешить'>
                 {$item['desc']} (id={$item['id']}) 
 
@@ -67,9 +69,8 @@ function getMenuLevel($menu, $id)
                         </div>
                     </div>
                 </form>
-
-                <textarea rows='3' cols='80' class='commentItem' placeholder='Комментарий'>{$item['comment']}</textarea>
-                <br>
+                $commentItem
+                
                 <span class='color btn btn-danger'><input type='radio' $checkedDanger name='color$id$i' value='danger' ></span>
                 <span class='color btn btn-success'><input type='radio' $checkedSuccess name='color$id$i' value='success' ></span>
                 <span class='color btn btn-warning'><input type='radio' $checkedWarning name='color$id$i' value='warning' ></span>

@@ -73,9 +73,9 @@ if ($opers) {
             ->setCellValue($col++.$row, $i++)
             ->setCellValue($col++.$row, $item['dt_oper'])
             ->setCellValue($col++.$row, $item['fullService']['name'])
-            ->setCellValue($col++.$row, number_format($item['amount'], 2, '.', ' '))
-            ->setCellValue($col++.$row, number_format($item['price'], 2, '.', ' '))
-            ->setCellValue($col++.$row, number_format($rest, 2, '.', ' '))
+            ->setCellValue($col++.$row, number_format($item['amount'], 2, '.', ''))
+            ->setCellValue($col++.$row, number_format($item['price'], 2, '.', ''))
+            ->setCellValue($col++.$row, number_format($rest, 2, '.', ''))
             ->setCellValue($col++.$row, $nds);
         $row++;
     }
