@@ -234,6 +234,15 @@ class AjaxController
                 </div>";
         }
 
+        // получаем комментарий для экрана
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT p.comment
+            FROM v_clients_custom_pricelist p
+            WHERE p.id = '$id'";
+        $row = dbHelper\DbHelper::selectRow($query);
+        $replArray['patterns'][] = '{SCREEN_COMMENT}';
+        $replArray['values'][] = $row['comment'];
+
         // добавляем список сервисов
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT p.id, p.`desc`, round(p.price) price, p.color

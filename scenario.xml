@@ -9,7 +9,7 @@
         </check>
         <timer>
             <screen>1</screen>
-            <timeout>10</timeout>
+            <timeout>30</timeout>
             <action>getServiceList</action>
         </timer>
     </s1>

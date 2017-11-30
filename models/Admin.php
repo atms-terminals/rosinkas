@@ -67,7 +67,7 @@ class Admin
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color, p.price, p.nds, o.id_day, 
                 date_format(t.`start`, '%H:%i') time_start, 
-                date_format(t.`finish`, '%H:%i') time_finish
+                date_format(t.`finish`, '%H:%i') time_finish, p.comment
             from v_custom_pricelist p
                 left join custom_price_redstar_dayoff o on p.id = o.id_item
                 left join custom_price_redstar_time t on p.id = t.id_item

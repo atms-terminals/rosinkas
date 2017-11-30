@@ -53,14 +53,14 @@ function getMenuLevel($menu, $id)
                     <div class='form-group times'>
                         <label>Время работы: с </label>
                         <div class='input-group time'>
-                            <input type='text' class='form-control timeStart' maxlength='5' size='5' value='$timeStart'/>
+                            <input type='text' class='form-control timeStart' maxlength='5' size='5' value='$timeStart' placeholder='Нет'/>
                             <span class='input-group-addon'>
                                 <span class='glyphicon glyphicon-time'></span>
                             </span>
                         </div>
                         <label> по </label>
                         <div class='input-group time'>
-                            <input type='text' class='form-control timeFinish' maxlength='5' size='5' value='$timeFinish'/>
+                            <input type='text' class='form-control timeFinish' maxlength='5' size='5' value='$timeFinish' placeholder='Нет'/>
                             <span class='input-group-addon'>
                                 <span class='glyphicon glyphicon-time'></span>
                             </span>
@@ -72,7 +72,10 @@ function getMenuLevel($menu, $id)
                 <span class='color btn btn-success'><input type='radio' $checkedSuccess name='color$id$i' value='success' ></span>
                 <span class='color btn btn-warning'><input type='radio' $checkedWarning name='color$id$i' value='warning' ></span>
                 <span class='color btn btn-primary'><input type='radio' $checkedPrimary name='color$id$i' value='primary' ></span>
-                <input type='text' value='{$item['clients_desc']}' class='clientsDesc' size='50' placeholder='Название для терминала' title='Название для терминала' />";
+                <input type='text' value='{$item['clients_desc']}' class='clientsDesc' size='50' placeholder='Название для терминала' title='Название для терминала' />
+                <br>
+                <textarea rows='3' cols='80' class='commentItem' placeholder='Комментарий'>{$item['comment']}</textarea>";
+
             if (empty($menu[$item['id']])) {
                 $html .= "<input type='text' value='{$item['price']}' class='price' size='8' placeholder='Цена услуги' title='Цена услуги' />
                 <select class='nds'>

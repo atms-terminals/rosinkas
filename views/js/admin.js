@@ -161,6 +161,23 @@ $(document).ready(function() {
             });
     });
 
+    // редактирование комментария
+    $(document).on('change', '.commentItem', function() {
+        var sid = $('#sid').val(),
+            $checkbox = $(this).siblings('.serviceItem'),
+            req = {
+                id: $checkbox.attr('id'), 
+                text: $(this).val()
+            };
+
+        $.post(sid + '/admin/setCommentItem', req, function() {
+
+        }, 'json')
+            .fail(function(){
+                get('getPriceGroup', $('#priceGroup'));
+            });
+    });
+
     // редактирование названия услуги для терминала
     $(document).on('change', '.clientsDesc', function() {
         var sid = $('#sid').val(),
