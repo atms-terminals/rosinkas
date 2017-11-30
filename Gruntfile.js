@@ -125,11 +125,11 @@ module.exports = function(grunt) {
                 files: {
                     'release/views/css/login.min.css' : [
                         'bower_components/bootstrap/dist/css/bootstrap.css',
-                        'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
                         'views/css/login*.css',
                     ],
                     'release/views/css/style.min.css' : [
                         'bower_components/bootstrap/dist/css/bootstrap.css',
+                        'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
                         'views/css/style*.css',
                     ],
                     'release/views/css/term.min.css' : [

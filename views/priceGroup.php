@@ -68,13 +68,13 @@ function getMenuLevel($menu, $id)
                     </div>
                 </form>
 
+                <textarea rows='3' cols='80' class='commentItem' placeholder='Комментарий'>{$item['comment']}</textarea>
+                <br>
                 <span class='color btn btn-danger'><input type='radio' $checkedDanger name='color$id$i' value='danger' ></span>
                 <span class='color btn btn-success'><input type='radio' $checkedSuccess name='color$id$i' value='success' ></span>
                 <span class='color btn btn-warning'><input type='radio' $checkedWarning name='color$id$i' value='warning' ></span>
                 <span class='color btn btn-primary'><input type='radio' $checkedPrimary name='color$id$i' value='primary' ></span>
-                <input type='text' value='{$item['clients_desc']}' class='clientsDesc' size='50' placeholder='Название для терминала' title='Название для терминала' />
-                <br>
-                <textarea rows='3' cols='80' class='commentItem' placeholder='Комментарий'>{$item['comment']}</textarea>";
+                <input type='text' value='{$item['clients_desc']}' class='clientsDesc' size='50' placeholder='Название для терминала' title='Название для терминала' />";
 
             if (empty($menu[$item['id']])) {
                 $html .= "<input type='text' value='{$item['price']}' class='price' size='8' placeholder='Цена услуги' title='Цена услуги' />
