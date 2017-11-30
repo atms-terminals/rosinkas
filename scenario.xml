@@ -36,6 +36,7 @@
             <top>4</top>
             <elements>5</elements>
             <bottom>6</bottom>
+            <rest>7</rest>
         </print>
         <timer>
             <screen>1</screen>

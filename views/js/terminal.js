@@ -1,5 +1,5 @@
 /*jshint unused:false*/
-/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck*/
+/* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck, frPrintTicket*/
 /* global getCard*/
 
 var currScreen, currAction,
@@ -99,13 +99,30 @@ function doAction(activity, nextScreen, values){
 
             // если есть печатная форма - печатаем
             if (response.printForm !== undefined && response.printForm !== '') {
-                var elements = response.printForm.elements || ';;',
-                    tax = response.printForm.tax || '0000',
-                    top = response.printForm.top || '',
-                    bottom = response.printForm.bottom || '',
-                    amount = response.printForm.amount || 0;
+                var i;
+                if (response.printForm.fr !== undefined) {
+                    for (i in response.printForm.fr) {
+                        if (response.printForm.fr.hasOwnProperty(i)) {
+                            var elements = response.printForm.fr[i].elements || ';;',
+                                tax = response.printForm.fr[i].tax || '0000',
+                                top = response.printForm.fr[i].top || '',
+                                bottom = response.printForm.fr[i].bottom || '',
+                                amount = response.printForm.fr[i].amount || 0;
 
-                frPrintCheck(elements, amount, top, bottom, tax, '');
+                            frPrintCheck(elements, amount, top, bottom, tax, '');
+                        }
+                    }
+                }
+                if (response.printForm.nofr !== undefined) {
+                    for (i in response.printForm.nofr) {
+                        if (response.printForm.nofr.hasOwnProperty(i)) {
+                            var line = response.printForm.nofr[i].line || '';
+
+                            frPrintTicket(line);
+                        }
+                    }
+                }
+
             }
 
             // если есть таймер и нет аудио для автоматического перехода

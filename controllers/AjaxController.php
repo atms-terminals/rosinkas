@@ -98,43 +98,39 @@ class AjaxController
 
         $replArray['patterns'][] = '{NDS}';
         $replArray['values'][] = $servParam['nds'];
-        // if ($servParam['nds'] == 1 && $servParam['price'] <= $amount) {
-        //     $nds = number_format($servParam['price'] / 118 * 18, 2, '.', ' ');
-        //     $replArray['values'][] = "В том числе НДС 18% $nds";
-        // } elseif ($servParam['nds'] == 0) {
-        //     $replArray['values'][] = 'Без НДС';
-        // } else {
-        //     $replArray['values'][] = '';
-        // }
+
 
         if ($servParam['price'] > $amount) {
             // если денег меньше чем цена
-            $replArray['patterns'][] = '{SERVICE}';
-            $replArray['values'][] = 'Нет';
-
-            $replArray['patterns'][] = '{PRICE}';
-            $replArray['values'][] = '0';
-
             $rest = $amount;
-            $replArray['patterns'][] = '{REST}';
-            $replArray['values'][] = number_format($rest, 2, '.', '');
+            $replArray['nofr'][0]['patterns'][] = '{REST}';
+            $replArray['nofr'][0]['values'][] = number_format($rest, 2, '.', '');
+        } elseif ($servParam['price'] == $amount) {
+            // если денег ровно по цене
+            $replArray['fr'][0]['amount'] = $servParam['price'];
+
+            $replArray['fr'][0]['patterns'][] = '{SERVICE}';
+            $replArray['fr'][0]['values'][] = $servParam['name'];
+
+            $replArray['fr'][0]['patterns'][] = '{PRICE}';
+            $replArray['fr'][0]['values'][] = number_format($servParam['price'], 2, '.', '');
         } else {
             // если есть сдача
-            $replArray['patterns'][] = '{SERVICE}';
-            $replArray['values'][] = $servParam['name'];
+            $replArray['fr'][0]['amount'] = $servParam['price'];
 
-            $replArray['patterns'][] = '{PRICE}';
-            $replArray['values'][] = number_format($servParam['price'], 2, '.', '');
+            $replArray['fr'][0]['patterns'][] = '{SERVICE}';
+            $replArray['fr'][0]['values'][] = $servParam['name'];
+
+            $replArray['fr'][0]['patterns'][] = '{PRICE}';
+            $replArray['fr'][0]['values'][] = number_format($servParam['price'], 2, '.', '');
 
             $rest = $amount - $servParam['price'];
             $rest = $rest < 0 ? 0 : $rest;
-            $replArray['patterns'][] = '{REST}';
-            $replArray['values'][] = number_format($rest, 2, '.', '');
+            $replArray['nofr'][0]['patterns'][] = '{REST}';
+            $replArray['nofr'][0]['values'][] = number_format($rest, 2, '.', '');
         }
 
         $response = $this->getScreen($nextScreen, $replArray);
-
-        $response['printForm']['amount'] = $amount;
         
         $response['message'] = '';
         $response['code'] = 0;
@@ -463,6 +459,7 @@ class AjaxController
         }
 
         // печатная форма
+        $top = '';
         if (!empty($xml->$idScreen->print->top)) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
                 "SELECT s.html from screens s where s.id = '{$xml->$idScreen->print->top}'";
@@ -471,8 +468,9 @@ class AjaxController
             $printForm = stripslashes($row['html']);
             $printForm = str_replace($replArray['patterns'], $replArray['values'], $printForm);
             $printForm = preg_replace('/({.*?})/ui', '', $printForm);
-            $response['printForm']['top'] = $printForm;
+            $top = $printForm;
         }
+        $bottom = '';
         if (!empty($xml->$idScreen->print->bottom)) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
                 "SELECT s.html from screens s where s.id = '{$xml->$idScreen->print->bottom}'";
@@ -481,17 +479,46 @@ class AjaxController
             $printForm = stripslashes($row['html']);
             $printForm = str_replace($replArray['patterns'], $replArray['values'], $printForm);
             $printForm = preg_replace('/({.*?})/ui', '', $printForm);
-            $response['printForm']['bottom'] = $printForm;
+            $bottom = $printForm;
         }
-        if (!empty($xml->$idScreen->print->elements)) {
+
+        if (!empty($xml->$idScreen->print->rest) && !empty($replArray['nofr'])) {
+            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                "SELECT s.html from screens s where s.id = '{$xml->$idScreen->print->rest}'";
+            $row = dbHelper\DbHelper::selectRow($query);
+
+            $printForm = stripslashes($row['html']);
+
+            foreach ($replArray['nofr'] as $oneticket) {
+                $pp = array_merge($replArray['patterns'], $oneticket['patterns']);
+                $pv = array_merge($replArray['values'], $oneticket['values']);
+                $pf = str_replace($pp, $pv, $printForm);
+                $pf = preg_replace('/({.*?})/ui', '', $pf);
+                $response['printForm']['nofr'][] = array(
+                    'line' => $pf
+                );
+            }
+        }
+
+        if (!empty($xml->$idScreen->print->elements) && !empty($replArray['fr'])) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
                 "SELECT s.html from screens s where s.id = '{$xml->$idScreen->print->elements}'";
             $row = dbHelper\DbHelper::selectRow($query);
 
             $printForm = stripslashes($row['html']);
-            $printForm = str_replace($replArray['patterns'], $replArray['values'], $printForm);
-            $printForm = preg_replace('/({.*?})/ui', '', $printForm);
-            $response['printForm']['elements'] = $printForm;
+
+            foreach ($replArray['fr'] as $oneticket) {
+                $pp = array_merge($replArray['patterns'], $oneticket['patterns']);
+                $pv = array_merge($replArray['values'], $oneticket['values']);
+                $pf = str_replace($pp, $pv, $printForm);
+                $pf = preg_replace('/({.*?})/ui', '', $pf);
+                $response['printForm']['fr'][] = array(
+                    'amount' => $oneticket['amount'],
+                    'top' => $top,
+                    'bottom' => $bottom,
+                    'elements' => $pf,
+                );
+            }
         }
 
         date_default_timezone_set('Asia/Omsk');
