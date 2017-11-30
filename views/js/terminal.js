@@ -2,11 +2,11 @@
 /* global setCashmachineEnabled, ws, DispatcherWebSocket, frGetState, frPrintCheck*/
 /* global getCard*/
 
-var currScreen, currAction;
-var timer;
-var flash = 1;
-var currDate = new Date();
-var stopAjax = 0;
+var currScreen, currAction,
+    timer, timerNoMoney,
+    flash = 1,
+    currDate = new Date(),
+    stopAjax = 0;
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Добавление лидирующего нуля
@@ -46,6 +46,7 @@ function doAction(activity, nextScreen, values){
     // останавливаем таймеры
     if (nextScreen) {
         clearTimeout(timer);
+        clearTimeout(timerNoMoney);
     }
 
     values = values || {};
@@ -110,6 +111,9 @@ function doAction(activity, nextScreen, values){
             // если есть таймер и нет аудио для автоматического перехода
             if (response.tScreen !== undefined && response.tScreen !== '') {
                 timer = setTimeout(function() {doAction(response.tAction, response.tScreen);} , response.tTimeout * 1000);
+                if (response.tTimeoutNoMoney) {
+                    timerNoMoney = setTimeout(function() {doAction(response.tAction, response.tScreen);} , response.tTimeoutNoMoney * 1000);
+                }
             }
         }
     }, 'json')
