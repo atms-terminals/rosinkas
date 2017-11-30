@@ -40,12 +40,33 @@ function getMenuLevel($menu, $id)
                 $daySchedule .= "<label><input class='dayStatus' type='checkbox' $checked value='$dayId'> {$days[$dayId]}</label>  ";
             }
 
+            $timeStart = $item['time_start'];
+            $timeFinish = $item['time_finish'];
+
             $html .= "<br><li>$dropDown<input class='serviceItem id' type='checkbox' id='{$item['id']}' $status title='запретить/разрешить'>
                 {$item['desc']} (id={$item['id']}) 
 
-
                 <button class='confirmDelete price'><span class='glyphicon glyphicon-remove' title='Удалить' data-toggle='modal' data-target='#confirmDeleteDialog'></span></button><br>
-                $daySchedule<br>
+
+                <form class='form-inline'>
+                    $daySchedule
+                    <div class='form-group times'>
+                        <label>Время работы: с </label>
+                        <div class='input-group time'>
+                            <input type='text' class='form-control timeStart' maxlength='5' size='5' value='$timeStart'/>
+                            <span class='input-group-addon'>
+                                <span class='glyphicon glyphicon-time'></span>
+                            </span>
+                        </div>
+                        <label> по </label>
+                        <div class='input-group time'>
+                            <input type='text' class='form-control timeFinish' maxlength='5' size='5' value='$timeFinish'/>
+                            <span class='input-group-addon'>
+                                <span class='glyphicon glyphicon-time'></span>
+                            </span>
+                        </div>
+                    </div>
+                </form>
 
                 <span class='color btn btn-danger'><input type='radio' $checkedDanger name='color$id$i' value='danger' ></span>
                 <span class='color btn btn-success'><input type='radio' $checkedSuccess name='color$id$i' value='success' ></span>

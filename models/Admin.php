@@ -37,7 +37,7 @@ class Admin
                 join v_payments p on p.id_collection = c.id
                 join users u on c.id_user = u.id
             group by u.address, p.id_collection, date_format(c.dt, '%d.%m.%Y %H:%i')
-            order by u.address";
+            order by u.address, c.dt desc";
         $collections = dbHelper\DbHelper::selectSet($query);
 
         // наличка
@@ -65,9 +65,12 @@ class Admin
     {
         $sql = $status ? 'p.status = 1' : '1';
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color, p.price, p.nds, o.id_day
+            "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color, p.price, p.nds, o.id_day, 
+                date_format(t.`start`, '%H:%i') time_start, 
+                date_format(t.`finish`, '%H:%i') time_finish
             from v_custom_pricelist p
                 left join custom_price_redstar_dayoff o on p.id = o.id_item
+                left join custom_price_redstar_time t on p.id = t.id_item
             where $sql
                 and p.day_type = '$type'
             order by p.id_parent, p.`desc`";

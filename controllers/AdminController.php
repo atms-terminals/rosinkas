@@ -302,6 +302,22 @@ class AdminController
         return true;
     }
 
+    public function actionSetWorkTime()
+    {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+        $timeStart = empty($_POST['timeStart']) ? 'null' : "str_to_date('01.01.2001 ".dbHelper\DbHelper::mysqlStr($_POST['timeStart'])."', '%d.%m.%Y %H:%i')";
+        $timeFinish = empty($_POST['timeFinish']) ? 'null' : "str_to_date('01.01.2001 ".dbHelper\DbHelper::mysqlStr($_POST['timeFinish'])."', '%d.%m.%Y %H:%i')";
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_price_set_time($uid, 'redstar', '$id', $timeStart, $timeFinish)";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
     public function actionSetColor()
     {
         $uid = user\User::getId();

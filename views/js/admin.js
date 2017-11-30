@@ -8,7 +8,33 @@ function get(action, $area, values) {
     var sid = $('#sid').val();
     $.get(sid + '/admin/' + action, values, function(data) {
         $area.find('.resultArea').html(data);
+
+        if (action === 'getPriceGroup') {
+            $area.find('.time').datetimepicker({
+                format: 'LT',
+                locale: 'ru',
+            });
+            // редактирование времени
+            $('.time').on('dp.change', function() {
+                var sid = $('#sid').val(),
+                    $checkbox = $(this).closest('li').find('.serviceItem'),
+                    $form = $(this).closest('.times'),
+                    req = {
+                        id: $checkbox.attr('id'), 
+                        timeStart: $form.find('.timeStart').val(),
+                        timeFinish: $form.find('.timeFinish').val()
+                    };
+
+                $.post(sid + '/admin/setWorkTime', req, function() {
+
+                }, 'json')
+                    .fail(function(){
+                        get('getPriceGroup', $('#priceGroup'));
+                    });
+            });
+        }
     });
+
 }
 
 $(document).ready(function() {
