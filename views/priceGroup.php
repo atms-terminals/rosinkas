@@ -46,7 +46,7 @@ function getMenuLevel($menu, $id)
             $commentItem = empty($menu[$item['id']]) ? '' : "<textarea rows='3' cols='80' class='commentItem' placeholder='Комментарий'>{$item['comment']}</textarea><br>";
 
             $html .= "<br><li>$dropDown<input class='serviceItem id' type='checkbox' id='{$item['id']}' $status title='запретить/разрешить'>
-                {$item['desc']} (id={$item['id']}) 
+                <span class='lead'>{$item['desc']} (id={$item['id']}) </span>
 
                 <button class='confirmDelete price'><span class='glyphicon glyphicon-remove' title='Удалить' data-toggle='modal' data-target='#confirmDeleteDialog'></span></button><br>
 
