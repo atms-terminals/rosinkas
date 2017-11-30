@@ -181,6 +181,20 @@ class AjaxController
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
+     * Проверка, есть ли у пункта меню потомки
+     */
+    private function hasChildren($id)
+    {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT count(*) cnt
+            from custom_price_redstar r
+            where r.id_parent = '$id'";
+        $row = dbHelper\DbHelper::selectRow($query);
+        return $row['cnt'] > 0 ? true : false;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
      * Обработка команды получения новых услуг
      */
     public function actionGetServiceList()
@@ -254,7 +268,7 @@ class AjaxController
 
         for ($i = $start; $i < $start + BUTTON_PER_SCREEN && $i < count($rows); $i++) {
             $cost = $rows[$i]['price'] && $rows[$i]['price'] != '0.00' ? "<hr>{$rows[$i]['price']} руб." : '';
-            if ($cost) {
+            if (!$this->hasChildren($rows[$i]['id'])) {
                 $cost = empty($rows[$i]['price']) || $rows[$i]['price'] == -1 ? '' : $cost;
                 $buttons .= "<span>
                         <input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
