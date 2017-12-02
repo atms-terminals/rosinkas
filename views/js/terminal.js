@@ -8,6 +8,14 @@ var currScreen, currAction,
     currDate = new Date(),
     stopAjax = 0;
 
+function sleep(milliseconds) {
+    'use strict';
+    var start = new Date().getTime();
+    while (new Date().getTime() < start + milliseconds) {
+
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////
 // Добавление лидирующего нуля
 function addZero(i) {
@@ -63,9 +71,14 @@ function doAction(activity, nextScreen, values){
     };
 
     // $('#loadingMessage').show();
+    if (activity === 'pay') {
+        $('.btn.action.pay').addClass('hidden');
+    }
+
     $.post(sid + '/ajax/' + activity, req, function (response) {
         stopAjax = 0;
         if (response.code === 0 && nextScreen) {
+
             if (response.check.hw && response.check.hw === '1') {
                 // проверка установленного соединения
                 if (ws.readyState !== ws.OPEN) {
@@ -100,6 +113,7 @@ function doAction(activity, nextScreen, values){
             // если есть печатная форма - печатаем
             if (response.printForm !== undefined && response.printForm !== '') {
                 var i;
+
                 if (response.printForm.fr !== undefined) {
                     for (i in response.printForm.fr) {
                         if (response.printForm.fr.hasOwnProperty(i)) {
@@ -110,6 +124,7 @@ function doAction(activity, nextScreen, values){
                                 amount = response.printForm.fr[i].amount || 0;
 
                             frPrintCheck(elements, amount, top, bottom, tax, '');
+                            sleep(10000);
                         }
                     }
                 }
