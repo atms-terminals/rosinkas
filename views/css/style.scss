@@ -124,7 +124,7 @@ body {
     width: 350px;
     border: 3px solid $secondFirmBack; 
     border-radius: 5px;
-    margin: 40px auto;
+    margin: 15px auto;
     /*padding-bottom: 10px;*/
     color: $secondFirmBack;
 }
@@ -184,9 +184,11 @@ body {
 }
 
 #main a.btn.pay {
-    height: 110px;
-    width: 50%;
-    line-height: 100px;
+    height: 90px;
+    width: 45%;
+    line-height: 80px;
+    font-size: 50px;
+    margin-top: 0px;
 }
 
 #main a.btn.small {
