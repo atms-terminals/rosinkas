@@ -67,6 +67,7 @@ function handleCashmachineEvent(eventType, eventValue) {
         if (currAmount) {
             clearTimeout(timerNoMoney);
             $('.btn.action.pay').removeClass('hidden');
+            $('.btn.action.cancel').addClass('hidden');
         }
 
         // Проверяем минимальную сумму платежа, если достигнута, то оплачиваем автоматом

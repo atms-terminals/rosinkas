@@ -191,6 +191,19 @@ body {
     margin-top: 0px;
 }
 
+#main a.btn.cancel{
+height: 80px;
+    width: 80px;
+    line-height: 80px;
+    font-size: 50px;
+    /* margin-left: -31px; */
+    float: left;
+    position: absolute;
+    top: -506px;
+    right: -10px;
+    color: red;
+}
+
 #main a.btn.small {
     width: 120px;
     height: 50px;
