@@ -78,4 +78,14 @@
         </timer>
     </s12>
 
+    <s13>
+        <desc>Терминал. Ввод количества услуг</desc>
+        <screen>13</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>300</timeout>
+            <action>getServiceList</action>
+        </timer>
+    </s13>
+
 </states>

@@ -8,6 +8,8 @@ define('FIRST_SCREEN', 1);
 define('FIRST_ACTION', 'getServiceList');
 define('GET_MONEY_SCREEN', 2);
 define('GET_MONEY_ACTION', 'getMoneyScreen');
+define('GET_QTY_SCREEN', 13);
+define('GET_QTY_ACTION', 'move');
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
 define('NO_CARD_SCREEN', 13);
@@ -66,17 +68,36 @@ class AjaxController
         );
     }
 
+    private function addToBasket($uid, $idBasket, $idService, $qty)
+    {
+        if (!$idBasket) {
+            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                "SELECT baskets_add($uid) id";
+            $bas = dbHelper\DbHelper::selectRow($query);
+            $idBasket = $bas['id'];
+        }
+
+        for ($i = 0; $i < $qty; $i++) {
+            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                "SELECT baskets_items_add($uid, '$idBasket', '$idService')";
+            $bas = dbHelper\DbHelper::selectRow($query);
+        }
+
+        return $idBasket;
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Обработка команды оплаты
      */
     public function actionPay()
     {
+        $uid = user\User::getId();
+
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
         $amount = (empty($_POST['values']['amount'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['amount']);
-
-        $uid = user\User::getId();
+        $qty = (empty($_POST['values']['qty'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['qty']);
+        $idBasket = (empty($_POST['values']['idBasket'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idBasket']);
 
         if (!$amount) {
             // уходим на первый экран
@@ -86,48 +107,55 @@ class AjaxController
         }
 
         $replArray = $this->makeReplaceArray($nextScreen);
-       
-        // подтверждаем оплату
-        $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-            "SELECT payments_add($uid, '$idService', '$amount') id";
-        $pay = dbHelper\DbHelper::selectRow($query);
-        $replArray['patterns'][] = '{TRN}';
-        $replArray['values'][] = $pay['id'];
 
-        $servParam = $this->getServiceName($idService);
+        // добавляем последнее в корзину
+        $idBasket = $this->addToBasket($uid, $idBasket, $idService, $qty);
 
-        $replArray['patterns'][] = '{NDS}';
-        $replArray['values'][] = $servParam['nds'];
+        // получаем корзину       
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT i.id_service, p.price, p.nds
+            from baskets b
+                join baskets_items i on b.id = i.id_basket
+                join custom_price_redstar p on i.id_service = p.id
+            where b.id = $idBasket";
+        $services = dbHelper\DbHelper::selectSet($query);
 
+        $i = 0;
+        foreach ($services as $item) {
+            // если денег не хватает, то остаток - сдача
+            if ($item['price'] > $amount) {
+                break;
+            }
 
-        if ($servParam['price'] > $amount) {
-            // если денег меньше чем цена
-            $rest = $amount;
+            // подтверждаем оплату
+            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                "SELECT payments_add($uid, '{$item['id_service']}', '{$item['price']}') id";
+            $pay = dbHelper\DbHelper::selectRow($query);
+
+            $amount -= $item['price'];
+
+            $replArray['patterns'][] = '{TRN}';
+            $replArray['values'][] = $pay['id'];
+
+            $servParam = $this->getServiceName($item['id_service']);
+            $replArray['patterns'][] = '{NDS}';
+            $replArray['values'][] = $servParam['nds'];
+
+            // формируем чек
+            $replArray['fr'][$i]['amount'] = $servParam['price'];
+
+            $replArray['fr'][$i]['patterns'][] = '{SERVICE}';
+            $replArray['fr'][$i]['values'][] = $servParam['name'];
+
+            $replArray['fr'][$i]['patterns'][] = '{PRICE}';
+            $replArray['fr'][$i]['values'][] = number_format($servParam['price'], 2, '.', '');
+            $i++;
+        }
+
+        // если осталась сдача
+        if ($amount) {
             $replArray['nofr'][0]['patterns'][] = '{REST}';
-            $replArray['nofr'][0]['values'][] = number_format($rest, 2, '.', '');
-        } elseif ($servParam['price'] == $amount) {
-            // если денег ровно по цене
-            $replArray['fr'][0]['amount'] = $servParam['price'];
-
-            $replArray['fr'][0]['patterns'][] = '{SERVICE}';
-            $replArray['fr'][0]['values'][] = $servParam['name'];
-
-            $replArray['fr'][0]['patterns'][] = '{PRICE}';
-            $replArray['fr'][0]['values'][] = number_format($servParam['price'], 2, '.', '');
-        } else {
-            // если есть сдача
-            $replArray['fr'][0]['amount'] = $servParam['price'];
-
-            $replArray['fr'][0]['patterns'][] = '{SERVICE}';
-            $replArray['fr'][0]['values'][] = $servParam['name'];
-
-            $replArray['fr'][0]['patterns'][] = '{PRICE}';
-            $replArray['fr'][0]['values'][] = number_format($servParam['price'], 2, '.', '');
-
-            $rest = $amount - $servParam['price'];
-            $rest = $rest < 0 ? 0 : $rest;
-            $replArray['nofr'][0]['patterns'][] = '{REST}';
-            $replArray['nofr'][0]['values'][] = number_format($rest, 2, '.', '');
+            $replArray['nofr'][0]['values'][] = number_format($amount, 2, '.', '');
         }
 
         $response = $this->getScreen($nextScreen, $replArray);
@@ -148,6 +176,7 @@ class AjaxController
     {
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
+        $qty = (empty($_POST['values']['qty'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['qty']);
 
         if (!$idService) {
             // уходим на первый экран
@@ -164,6 +193,8 @@ class AjaxController
         $replArray['values'][] = $servParam['name'];
         $replArray['patterns'][] = '{PRICE}';
         $replArray['values'][] = $servParam['price'];
+        $replArray['patterns'][] = '{MINAMOUNT}';
+        $replArray['values'][] = $servParam['price'] * $qty;
 
         $response = $this->getScreen($nextScreen, $replArray);
 
@@ -267,8 +298,8 @@ class AjaxController
             if (!$this->hasChildren($rows[$i]['id'])) {
                 $cost = empty($rows[$i]['price']) || $rows[$i]['price'] == -1 ? '' : $cost;
                 $buttons .= "<span>
-                        <input class='nextScreen' type='hidden' value='".GET_MONEY_SCREEN."' />
-                        <input class='activity' type='hidden' value='".GET_MONEY_ACTION."' />
+                        <input class='nextScreen' type='hidden' value='".GET_QTY_SCREEN."' />
+                        <input class='activity' type='hidden' value='".GET_QTY_ACTION."' />
                         <input class='value price' type='hidden' value='{$rows[$i]['price']}' />
                         <input class='value idService' type='hidden' value='{$rows[$i]['id']}' />
                         <input class='value serviceName' type='hidden' value='{$rows[$i]['desc']}' />
@@ -327,9 +358,17 @@ class AjaxController
         }
 
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
+        $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
 
         $replArray = $this->makeReplaceArray($nextScreen);
         $this->putPostIntoReplaceArray($replArray);
+
+        $servParam = $this->getServiceName($idService);
+        $replArray['patterns'][] = '{SERVICE}';
+        $replArray['values'][] = $servParam['name'];
+        $replArray['patterns'][] = '{PRICE}';
+        $replArray['values'][] = $servParam['price'];
+
         $response = $this->getScreen($nextScreen, $replArray);
 
         $response['message'] = $message;

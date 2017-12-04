@@ -58,4 +58,20 @@ $(document).ready(function() {
             $customerInput.val(getMaskedString(customerText, mask, char));
         }
     });
+
+    $(document).on('click', '.btn.qtyAction', function(event) {
+        event.preventDefault();
+        var $qty = $('input.value.qty'),
+            qty = +$qty.val();
+        if ($(this).hasClass('plus')) {
+            qty++;
+        } else {
+            if (qty > 1) {
+                qty--;
+            }
+        }
+        $qty.val(qty);
+        $('.qtyScreen').text(qty);
+    });
+
 });

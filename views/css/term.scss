@@ -15,3 +15,91 @@ body {
     margin-top: -10px;	
     max-height: 40px;
 }
+
+.accept {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 120px;
+    font-weight: 900;
+    width: 350px;
+    border: 3px solid $secondFirmBack; 
+    border-radius: 5px;
+    margin: 15px auto;
+    /*padding-bottom: 10px;*/
+    color: $secondFirmBack;
+}
+
+.accept h3{
+    font-size: 40px;
+    padding: 0;
+    margin: 5px;    
+}
+
+.quantity {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 120px;
+    font-weight: 900;
+    width: 350px;
+    border: 3px solid $secondFirmBack; 
+    border-radius: 5px;
+    margin: 60px auto;
+    /*padding-bottom: 10px;*/
+    color: $secondFirmBack;
+}
+
+.quantity h3{
+    font-size: 40px;
+    padding: 0;
+    margin: 5px;    
+}
+
+.qtyAction {
+	width: 200px;
+    height: 230px;
+    margin-top: 60px;
+    text-align: center;
+    background-color: $buttonColor;
+    color: $firstFirmBack;
+}
+
+.qtyAction span {
+    font-size: 70px;
+	position: absolute;
+    top: 138px;
+}
+
+.qtyAction.left span {
+    left: 125px;
+}
+
+.qtyAction.right span {
+    left: 130px;
+}
+
+#main .controlAreaQty {
+    overflow: auto;
+    text-align: center;
+    height: 123px;
+    margin-top: 40px;
+    /* line-height: 9; */
+}
+
+.controlArea .controlDiv {
+    width: 30%;
+    margin: 0 10px;
+    display: inline-block;
+}
+
+#main .controlAreaQty button {
+    height: 120px;
+}
+
+#main h4 {
+    color: $secondFirmBack;
+    text-transform: uppercase;
+    text-align: center;
+	font-size: 40px;
+	font-weight: 600;
+}
+

@@ -68,6 +68,7 @@ module.exports = function(grunt) {
                         'bower_components/bootstrap/dist/js/bootstrap.js',
                         'views/js/terminal.js', 
                         'views/js/cashcode.js', 
+                        'views/kbd/kbd.js', 
                         ],
                     'tmp/admin.js': [
                         'bower_components/jquery/dist/jquery.js',
