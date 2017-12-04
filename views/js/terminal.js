@@ -112,7 +112,7 @@ function doAction(activity, nextScreen, values){
 
             // если есть печатная форма - печатаем
             if (response.printForm !== undefined && response.printForm !== '') {
-                var i;
+                var i, needDelay = false;
 
                 if (response.printForm.fr !== undefined) {
                     for (i in response.printForm.fr) {
@@ -124,11 +124,14 @@ function doAction(activity, nextScreen, values){
                                 amount = response.printForm.fr[i].amount || 0;
 
                             frPrintCheck(elements, amount, top, bottom, tax, '');
-                            sleep(10000);
+                            needDelay = true;
                         }
                     }
                 }
                 if (response.printForm.nofr !== undefined) {
+                    if (needDelay) {
+                        sleep(10000);
+                    }
                     for (i in response.printForm.nofr) {
                         if (response.printForm.nofr.hasOwnProperty(i)) {
                             var line = response.printForm.nofr[i].line || '';
