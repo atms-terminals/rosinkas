@@ -118,7 +118,7 @@ function doAction(activity, nextScreen, values){
                     for (i in response.printForm.fr) {
                         if (response.printForm.fr.hasOwnProperty(i)) {
                             if (needDelay) {
-                                sleep(10000);
+                                sleep(9000);
                             }
                             var elements = response.printForm.fr[i].elements || ';;',
                                 tax = response.printForm.fr[i].tax || '0000',
@@ -133,7 +133,7 @@ function doAction(activity, nextScreen, values){
                 }
                 if (response.printForm.nofr !== undefined) {
                     if (needDelay) {
-                        sleep(10000);
+                        sleep(9000);
                     }
                     for (i in response.printForm.nofr) {
                         if (response.printForm.nofr.hasOwnProperty(i)) {

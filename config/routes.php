@@ -9,6 +9,7 @@ return array(
     '.*?/ajax/writeLog' => 'ajax/writeLog',
     '.*?/ajax/collection' => 'ajax/collection',
     '.*?/ajax/getServiceList' => 'ajax/getServiceList',
+    '.*?/ajax/addToBasket' => 'ajax/addToBasket',
 
     '.*?/admin/getHwsState' => 'admin/getHwsState',
     '.*?/admin/getCollections' => 'admin/getCollections',

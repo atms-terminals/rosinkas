@@ -61,8 +61,8 @@ $(document).ready(function() {
 
     $(document).on('click', '.btn.qtyAction', function(event) {
         event.preventDefault();
-        var $qty = $('input.value.qty'),
-            qty = +$qty.val();
+        var $qty = $('.qtyScreen'),
+            qty = +$qty.text();
         if ($(this).hasClass('plus')) {
             qty++;
         } else {
@@ -72,6 +72,7 @@ $(document).ready(function() {
         }
         $qty.val(qty);
         $('.qtyScreen').text(qty);
+        $('input.value.qty').val(qty);
     });
 
 });

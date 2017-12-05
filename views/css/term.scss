@@ -12,7 +12,7 @@ body {
     text-align: center;
     font-size: 30px;
     margin-bottom: 20px;
-    margin-top: -10px;	
+    margin-top: -10px;  
     max-height: 40px;
 }
 
@@ -55,7 +55,7 @@ body {
 }
 
 .qtyAction {
-	width: 200px;
+    width: 230px;
     height: 230px;
     margin-top: 60px;
     text-align: center;
@@ -65,12 +65,12 @@ body {
 
 .qtyAction span {
     font-size: 70px;
-	position: absolute;
+    position: absolute;
     top: 138px;
 }
 
 .qtyAction.left span {
-    left: 125px;
+    left: 121px;
 }
 
 .qtyAction.right span {
@@ -80,9 +80,14 @@ body {
 #main .controlAreaQty {
     overflow: auto;
     text-align: center;
-    height: 123px;
+    height: 170px;
     margin-top: 40px;
     /* line-height: 9; */
+}
+
+.acceptArea {
+    margin-top: 85px;
+    margin-left: -40px;
 }
 
 .controlArea .controlDiv {
@@ -92,14 +97,86 @@ body {
 }
 
 #main .controlAreaQty button {
-    height: 120px;
+    height: 160px;
 }
 
 #main h4 {
     color: $secondFirmBack;
     text-transform: uppercase;
     text-align: center;
-	font-size: 40px;
-	font-weight: 600;
+    font-size: 40px;
+    font-weight: 600;
 }
 
+#basket {
+    position: absolute;
+    top: 7px;
+    left: -48px;
+    border: 2px solid #a0a0a0;
+    padding: 7px;
+    background-color: #F9F9F9;
+    font-size: 20px;
+    width: 100%;
+    border-radius: 9px;
+}
+
+#basket ul {
+    list-style: none;
+    margin-left: -40px;
+}
+
+#basket hr {
+    color: black;
+}
+
+#basket ul li .price {
+    text-align: right;
+}
+
+#basket ul li .total{
+    text-align: right;
+    font-weight: 900;
+}
+
+#basket ul li .service{
+    font-weight: 900;
+}
+
+#basket ul li .service {
+    margin-bottom: 0;
+}
+
+#main a.btn.cancel{
+    height: 80px;
+    width: 80px;
+    line-height: 80px;
+    font-size: 50px;
+    /* margin-left: -31px; */
+    float: left;
+    position: absolute;
+    top: -568px;
+    right: -97px;
+    color: red;
+}
+
+#main .qtyArea {
+    margin-top: 50px;
+}
+
+#main .qtyCancel a.btn.cancel {
+    top: -690px;
+    right: 28px;
+}
+
+.basketState {
+    position: absolute;
+    right: 76px;
+    bottom: 16px;
+    text-align: center;
+    font-size: 35px;
+    background: #F9F9F9;
+    border: 1px solid black;
+    /* width: 200px; */
+    padding: 12px 6px 5px 14px;
+    border-radius: 8px;
+}

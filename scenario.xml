@@ -23,8 +23,8 @@
         <cash>1</cash>
         <timer>
             <screen>1</screen>
-            <timeoutNoMoney>30</timeoutNoMoney>
-            <timeout>300</timeout>
+            <timeoutNoMoney>100</timeoutNoMoney>
+            <timeout>400</timeout>
             <action>pay</action>
         </timer>
     </s2>
@@ -83,7 +83,7 @@
         <screen>13</screen>
         <timer>
             <screen>1</screen>
-            <timeout>300</timeout>
+            <timeout>100</timeout>
             <action>getServiceList</action>
         </timer>
     </s13>

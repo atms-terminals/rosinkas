@@ -85,6 +85,36 @@ class AjaxController
 
         return $idBasket;
     }
+
+    private function getBasket($idBasket)
+    {
+        $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+            "SELECT p.id, p.`desc`, p.price, count(*) qty
+            from baskets_items i
+                join custom_price_redstar p on i.id_service = p.id
+            where i.id_basket = '$idBasket'
+            group by p.id";
+        $items = dbHelper\DbHelper::selectSet($query);
+        $summ = 0;
+        $list = '<ul>';
+        foreach ($items as $item) {
+            $subsumm = $item['price'] * $item['qty'];
+            $summ += $subsumm;
+            $list .=
+                "<li class='item'><p class='service'>{$item['desc']}</p>
+                    <p class='price'>{$item['price']} руб. * {$item['qty']} = $subsumm руб.</p>
+                </li>";
+        }
+        $s = number_format($summ, 2, '.', ' ');
+        $list .= '<hr>';
+        $list .= "<li><p class='total'>Итого: $s руб.</p></li>";
+        $list .= '</ul>';
+
+        return array(
+            'list' => $list,
+            'summ' => $summ
+        );
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Обработка команды оплаты
@@ -99,7 +129,7 @@ class AjaxController
         $qty = (empty($_POST['values']['qty'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['qty']);
         $idBasket = (empty($_POST['values']['idBasket'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idBasket']);
 
-        if (!$amount) {
+        if (!$amount || !$idBasket) {
             // уходим на первый экран
             $_POST['nextScreen'] = user\User::getFirstScreen();
             $this->actionGetServiceList();
@@ -108,10 +138,7 @@ class AjaxController
 
         $replArray = $this->makeReplaceArray($nextScreen);
 
-        // добавляем последнее в корзину
-        $idBasket = $this->addToBasket($uid, $idBasket, $idService, $qty);
-
-        // получаем корзину       
+        // получаем корзину
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT i.id_service, p.price, p.nds
             from baskets b
@@ -125,6 +152,10 @@ class AjaxController
             // если денег не хватает, то остаток - сдача
             if ($item['price'] > $amount) {
                 break;
+            }
+
+            if ($item['price'] == 0) {
+                $item['price'] = $amount;
             }
 
             // подтверждаем оплату
@@ -174,27 +205,32 @@ class AjaxController
      */
     public function actionGetMoneyScreen()
     {
+        $uid = user\User::getId();
+
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
         $qty = (empty($_POST['values']['qty'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['qty']);
+        $idBasket = (empty($_POST['values']['idBasket'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idBasket']);
+        if (isset($_POST['values']['idBasket'])) {
+            unset($_POST['values']['idBasket']);
+        }
 
-        if (!$idService) {
-            // уходим на первый экран
-            $_POST['nextScreen'] = user\User::getFirstScreen();
-            $this->actionMove($e->getMessage());
-            exit();
+        // добавляем последнее в корзину
+        if ($qty) {
+            $idBasket = $this->addToBasket($uid, $idBasket, $idService, $qty);
         }
 
         $replArray = $this->makeReplaceArray($nextScreen);
         $this->putPostIntoReplaceArray($replArray);
 
-        $servParam = $this->getServiceName($idService);
-        $replArray['patterns'][] = '{SERVICE}';
-        $replArray['values'][] = $servParam['name'];
-        $replArray['patterns'][] = '{PRICE}';
-        $replArray['values'][] = $servParam['price'];
+        $basket = $this->getBasket($idBasket);
+        $replArray['patterns'][] = '{IDBASKET}';
+        $replArray['values'][] = $idBasket;
+        $replArray['patterns'][] = '{BASKET}';
+        $replArray['values'][] = $basket['list'];
         $replArray['patterns'][] = '{MINAMOUNT}';
-        $replArray['values'][] = $servParam['price'] * $qty;
+        $replArray['values'][] = $basket['summ'];
+
 
         $response = $this->getScreen($nextScreen, $replArray);
 
@@ -222,6 +258,22 @@ class AjaxController
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
+     * Обработка команды формирования корзины
+     */
+    public function actionAddToBasket()
+    {
+        $uid = user\User::getId();
+        $qty = (empty($_POST['values']['qty'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['qty']);
+        $idBasket = (empty($_POST['values']['idBasket'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idBasket']);
+        $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
+
+        // добавляем последнее в корзину
+        $idBasket = $this->addToBasket($uid, $idBasket, $idService, $qty);
+        $_POST['values']['idBasket'] = $idBasket;
+        $this->actionGetServiceList();
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
      * Обработка команды получения новых услуг
      */
     public function actionGetServiceList()
@@ -235,6 +287,7 @@ class AjaxController
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
         $id = (empty($_POST['values']['id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['id']);
         $start = (empty($_POST['values']['start'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['start']);
+        $idBasket = (empty($_POST['values']['idBasket'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idBasket']);
 
         $replArray = $this->makeReplaceArray($nextScreen);
         $this->putPostIntoReplaceArray($replArray);
@@ -302,12 +355,14 @@ class AjaxController
                         <input class='activity' type='hidden' value='".GET_QTY_ACTION."' />
                         <input class='value price' type='hidden' value='{$rows[$i]['price']}' />
                         <input class='value idService' type='hidden' value='{$rows[$i]['id']}' />
+                        <input class='value idBasket' type='hidden' value='$idBasket' />
                         <input class='value serviceName' type='hidden' value='{$rows[$i]['desc']}' />
                         <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>
                     </span>";
             } else {
                 $buttons .= "<span>
                         <input class='activity' type='hidden' value='getServiceList' />
+                        <input class='value idBasket' type='hidden' value='$idBasket' />
                         <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                         <input class='value id' type='hidden' value='{$rows[$i]['id']}' />
                         <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>   
@@ -333,6 +388,13 @@ class AjaxController
 
         $replArray['patterns'][] = '{CONTROLS_LIST}';
         $replArray['values'][] = $controls;
+
+        $sumBasket = ($idBasket) ? $this->getBasket($idBasket)['summ']: 0;
+        $replArray['patterns'][] = '{BASKET_STATE}';
+        $replArray['values'][] = $sumBasket;
+
+        $replArray['patterns'][] = '{BASKET_VISIBILITY}';
+        $replArray['values'][] = $idBasket ? '' : 'hidden';
 
         $replArray['patterns'][] = '{SERVICES_LIST}';
         $replArray['values'][] = $buttons;
