@@ -91,7 +91,7 @@ class AjaxController
         $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
             "SELECT p.id, p.`desc`, p.price, count(*) qty
             from baskets_items i
-                join custom_price_redstar p on i.id_service = p.id
+                join v_custom_pricelist p on i.id_service = p.id
             where i.id_basket = '$idBasket'
             group by p.id";
         $items = dbHelper\DbHelper::selectSet($query);
@@ -170,21 +170,32 @@ class AjaxController
 
             $servParam = $this->getServiceName($item['id_service']);
             $replArray['patterns'][] = '{NDS}';
-            $replArray['values'][] = $servParam['nds'];
+            $replArray['values'][] = $item['nds'];
 
             // формируем чек
-            $replArray['fr'][$i]['amount'] = $servParam['price'];
+            $replArray['fr'][$i]['amount'] = $item['price'];
 
             $replArray['fr'][$i]['patterns'][] = '{SERVICE}';
             $replArray['fr'][$i]['values'][] = $servParam['name'];
 
             $replArray['fr'][$i]['patterns'][] = '{PRICE}';
-            $replArray['fr'][$i]['values'][] = number_format($servParam['price'], 2, '.', '');
+            $replArray['fr'][$i]['values'][] = number_format($item['price'], 2, '.', '');
             $i++;
         }
 
         // если осталась сдача
         if ($amount) {
+            if (empty($pay)) {
+                // если платежа вообще не было
+                $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                    "SELECT payments_add($uid, '{$item['id_service']}', 0) id";
+                $pay = dbHelper\DbHelper::selectRow($query);
+            }
+
+            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                "SELECT payments_add_rest($uid, '{$pay['id']}', '$amount') id";
+            $pay = dbHelper\DbHelper::selectRow($query);
+    
             $replArray['nofr'][0]['patterns'][] = '{REST}';
             $replArray['nofr'][0]['values'][] = number_format($amount, 2, '.', '');
         }
