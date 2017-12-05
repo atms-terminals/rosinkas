@@ -37,7 +37,8 @@
                     <td class='' align='center'>{$collection['amount']}</td>
                     <td class='' align='center'>
                         <button class='getCollectionDetails btn btn-default'>Детализация</button>
-                        <input type='hidden' class='id' value='{$collection['id_collection']}'>
+                        <input type='hidden' class='dt' value='{$collection['dt']}'>
+                        <input type='hidden' class='id' value='{$collection['id']}'>
                     </td>
                 </tr>";
         }

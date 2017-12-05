@@ -63,20 +63,21 @@ class AdminController
 
     public function actionGetCollectionDetails()
     {
-        $idCollection = empty($_POST['idCollection']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['idCollection']);
+        $dt = empty($_POST['dt']) ? 'now()' : "str_to_date('".dbHelper\DbHelper::mysqlStr($_POST['dt'])."', '%d.%m.%Y')";
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
         
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT date_format(co.dt, '%d.%m.%Y %H:%i') dt_collection, u.address
-            from collections co
-                join users u on u.id = co.id_user
-            where co.id = '$idCollection'";
+            "SELECT u.address, '{$_POST['dt']}' dt
+            from users u
+            where u.id = '$id'";
         $collectionParams = dbHelper\DbHelper::selectSet($query);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT date_format(p.dt_insert, '%d.%m.%Y %H:%i') dt_oper, c.`desc` service, p.amount, c.price, c.nds, p.id_service
             from v_payments p
                 left join custom_price_redstar c on p.id_service = c.id
-            where p.id_collection = '$idCollection'
+            where p.id_user = '$id'
+               and date(p.dt_insert) = date($dt)
             order by p.dt_insert";
         $opers = dbHelper\DbHelper::selectSet($query);
         for ($i = 0; $i < count($opers); $i++) {

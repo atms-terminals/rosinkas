@@ -18,7 +18,7 @@ $xls->getProperties()->setCreator("")
 $xls->setActiveSheetIndex(0)
     ->setCellValue('a1', 'Детализация инкассации')
     ->setCellValue('a2', "Дата формирования отчета ".date('d.m.Y H:i'))
-    ->setCellValue('a3', "Дата инкассации {$collectionParams[0]['dt_collection']}")
+    ->setCellValue('a3', "Дата инкассации {$collectionParams[0]['dt']}")
     ->setCellValue('a4', "Адрес инкассации {$collectionParams[0]['address']}");
 
 $col = "a";

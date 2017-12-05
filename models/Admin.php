@@ -25,19 +25,11 @@ class Admin
     public static function getCollections()
     {
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id_collection, u.address, date_format(c.dt, '%d.%m.%Y %H:%i') dt, sum(p.amount) amount
-            from collections c
-                join (
-                    select c.dt, c.id_user
-                    from collections c 
-                    order by c.dt desc
-                    limit 5
-                ) t on c.dt = t.dt 
-                    and c.id_user = t.id_user
-                join v_payments p on p.id_collection = c.id
-                join users u on c.id_user = u.id
-            group by u.address, p.id_collection, date_format(c.dt, '%d.%m.%Y %H:%i')
-            order by u.address, c.dt desc";
+            "SELECT date_format(p.dt_insert, '%d.%m.%Y') dt, u.address, sum(p.amount) amount, u.id
+            from v_payments p
+                join users u on p.id_user = u.id
+            group by u.address, date_format(p.dt_insert, '%d.%m.%Y'), u.id
+            order by u.address, min(p.dt_insert) desc";
         $collections = dbHelper\DbHelper::selectSet($query);
 
         // наличка

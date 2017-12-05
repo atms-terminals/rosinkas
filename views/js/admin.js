@@ -143,9 +143,11 @@ $(document).ready(function() {
     // детализация инкассации
     $(document).on('click', 'button.getCollectionDetails', function() {
         var sid = $('#sid').val(),
-            idCollection = $(this).siblings('.id').val(),
+            dt = $(this).siblings('.dt').val(),
+            id = $(this).siblings('.id').val(),
             req = {
-                idCollection: idCollection
+                dt: dt,
+                id: id
             };
 
         $.post(sid + '/admin/getCollectionDetails', req, function(response) {
