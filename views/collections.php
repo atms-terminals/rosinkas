@@ -18,7 +18,7 @@
     </tbody>
 </table>
 
-<h1>Инкассации</h1>
+<h1>Статистика по дням</h1>
 <table class='table table-striped'>
     <thead>
         <tr>
@@ -37,6 +37,7 @@
                     <td class='' align='center'>{$collection['amount']}</td>
                     <td class='' align='center'>
                         <button class='getCollectionDetails btn btn-default'>Детализация</button>
+                        <button class='getCollectionSummary btn btn-default'>Итоги</button>
                         <input type='hidden' class='dt' value='{$collection['dt']}'>
                         <input type='hidden' class='id' value='{$collection['id']}'>
                     </td>

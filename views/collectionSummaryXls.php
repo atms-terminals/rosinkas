@@ -11,27 +11,26 @@ $xls = new PHPExcel();
 $xls->getProperties()->setCreator("")
     ->setLastModifiedBy("")
     ->setTitle(__FILE__)
-    ->setSubject('Детализация инкассации')
-    ->setDescription('Подробная информация по операциям в инкассации');
+    ->setSubject('Итоги дня')
+    ->setDescription('');
 
 // Add some data
 $xls->setActiveSheetIndex(0)
-    ->setCellValue('a1', 'Детализация инкассации')
+    ->setCellValue('a1', 'Итоги дня')
     ->setCellValue('a2', "Дата формирования отчета ".date('d.m.Y H:i'))
-    ->setCellValue('a3', "Дата инкассации {$collectionParams[0]['dt']}")
-    ->setCellValue('a4', "Адрес инкассации {$collectionParams[0]['address']}");
+    ->setCellValue('a3', "Адрес инкассации {$collectionParams[0]['address']}");
 
 $col = "a";
 $row = 6;
 
-if ($opers) {
+if ($res) {
     $xls->setActiveSheetIndex(0)
         ->setCellValue($col++.$row, '№ п/п')
         ->setCellValue($col++.$row, 'Дата')
         ->setCellValue($col++.$row, 'Услуга')
-        ->setCellValue($col++.$row, 'Внесено')
+        ->setCellValue($col++.$row, 'Кол-во')
         ->setCellValue($col++.$row, 'Цена по прайсу')
-        ->setCellValue($col++.$row, 'Сдача')
+        ->setCellValue($col++.$row, 'Сумма')
         ->setCellValue($col++.$row++, 'НДС');
 
     $xls->getActiveSheet()->getStyle("A1:X1")->getFont()->setBold(true);
@@ -47,7 +46,7 @@ if ($opers) {
     $xls->getActiveSheet()->getColumnDimension("h")->setAutoSize(true);
 
     $i = 1;
-    foreach ($opers as $item) {
+    foreach ($res as $item) {
         $col = 'A';
 
         switch ($item['nds']) {
@@ -62,19 +61,13 @@ if ($opers) {
                 break;
         }
 
-        if ($item['price'] <= $item['amount']) {
-            $rest = $item['amount'] - $item['price'];
-        } else {
-            $rest = $item['amount'];
-        }
-
         $xls->setActiveSheetIndex(0)
             ->setCellValue($col++.$row, $i++)
             ->setCellValue($col++.$row, $item['dt_oper'])
             ->setCellValue($col++.$row, $item['fullService']['name'])
-            ->setCellValue($col++.$row, number_format($item['amount'], 2, '.', ''))
-            ->setCellValue($col++.$row, number_format($item['price'], 2, '.', ''))
-            ->setCellValue($col++.$row, number_format($rest, 2, '.', ''))
+            ->setCellValue($col++.$row, $item['qty'])
+            ->setCellValue($col++.$row, $item['price'])
+            ->setCellValue($col++.$row, number_format($item['summ'], 2, '.', ''))
             ->setCellValue($col++.$row, $nds);
         $row++;
     }

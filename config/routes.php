@@ -14,6 +14,7 @@ return array(
     '.*?/admin/getHwsState' => 'admin/getHwsState',
     '.*?/admin/getCollections' => 'admin/getCollections',
     '.*?/admin/getCollectionDetails' => 'admin/getCollectionDetails',
+    '.*?/admin/getCollectionSummary' => 'admin/getCollectionSummary',
 
     '.*?/admin/addDate' => 'admin/addDate',
     '.*?/admin/delDate' => 'admin/delDate',

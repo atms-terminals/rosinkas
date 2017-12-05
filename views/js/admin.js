@@ -141,6 +141,29 @@ $(document).ready(function() {
     });
 
     // детализация инкассации
+    $(document).on('click', 'button.getCollectionSummary', function() {
+        var sid = $('#sid').val(),
+            dt = $(this).siblings('.dt').val(),
+            id = $(this).siblings('.id').val(),
+            req = {
+                dt: dt,
+                id: id
+            };
+
+        $.post(sid + '/admin/getCollectionSummary', req, function(response) {
+            var $a = $('<a>');
+            $a.attr('href', response.file);
+            $('body').append($a);
+            $a.attr('download', 'collectionSummary.xls');
+            $a[0].click();
+            $a.remove();
+
+        }, 'json')
+            .fail(function(){
+            });
+    });
+
+    // детализация инкассации
     $(document).on('click', 'button.getCollectionDetails', function() {
         var sid = $('#sid').val(),
             dt = $(this).siblings('.dt').val(),
