@@ -113,10 +113,9 @@ class AdminController
         for ($i = 0; $i < count($opers); $i++) {
             $opers[$i]['fullService'] = $this->getServiceName($opers[$i]['id_service']);
             if ($opers[$i]['price'] == 0) {
-                $opers[$i]['price'] = $opers[$i]['amount'];
-            }
-
-            if ($opers[$i]['amount'] >= $opers[$i]['price']) {
+                $opers[$i]['paid'] = $opers[$i]['amount'];
+                $opers[$i]['rest'] = 0;
+            } elseif ($opers[$i]['amount'] >= $opers[$i]['price']) {
                 $opers[$i]['rest'] = $opers[$i]['amount'] - $opers[$i]['price'];
                 $opers[$i]['paid'] = $opers[$i]['price'];
             } else {
@@ -135,20 +134,23 @@ class AdminController
             if ($opers[$i]['paid']) {
                 if (empty($res[$ind])) {
                     $res[$ind] = $opers[$i];
+                    $res[$ind]['summ'] = $opers[$i]['paid'];
                 } else {
                     $res[$ind]['qty']++;
                     $res[$ind]['paid'] += $opers[$i]['paid'];
+                    $res[$ind]['summ'] += $opers[$i]['paid'];
                 }
-                $res[$ind]['summ'] = $res[$ind]['price'] * $res[$ind]['qty'];
             }
         }
 
-        $res['Сдача']['dt_oper'] = $_POST['dt'];
-        $res['Сдача']['fullService']['name'] = 'Сдача';
-        $res['Сдача']['qty'] = '';
-        $res['Сдача']['price'] = '';
-        $res['Сдача']['summ'] = $rest;
-        $res['Сдача']['nds'] = '0000';
+        if ($rest) {
+            $res['Сдача']['dt_oper'] = $_POST['dt'];
+            $res['Сдача']['fullService']['name'] = 'Сдача';
+            $res['Сдача']['qty'] = '';
+            $res['Сдача']['price'] = '';
+            $res['Сдача']['summ'] = $rest;
+            $res['Сдача']['nds'] = '0000';
+        }
 
         require_once(ROOT.'/views/collectionSummaryXls.php');
         return true;
