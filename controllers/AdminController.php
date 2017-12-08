@@ -73,7 +73,7 @@ class AdminController
         $collectionParams = dbHelper\DbHelper::selectSet($query);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT date_format(p.dt_insert, '%d.%m.%Y %H:%i') dt_oper, c.`desc` service, p.amount, c.price, c.nds, p.id_service
+            "SELECT date_format(p.dt_insert, '%d.%m.%Y %H:%i') dt_oper, p.`desc` service, p.amount, c.price, c.nds, p.id_service
             from v_payments p
                 left join custom_price_redstar c on p.id_service = c.id
             where p.id_user = '$id'
@@ -103,7 +103,7 @@ class AdminController
         $collectionParams = dbHelper\DbHelper::selectSet($query);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT date_format(p.dt_insert, '%d.%m.%Y') dt_oper, c.`desc` service, p.amount, c.price, c.nds, p.id_service, 1 qty
+            "SELECT date_format(p.dt_insert, '%d.%m.%Y') dt_oper, p.`desc` service, p.amount, c.price, c.nds, p.id_service, 1 qty
             from v_payments p
                 left join custom_price_redstar c on p.id_service = c.id
             where p.id_user = '$id'
