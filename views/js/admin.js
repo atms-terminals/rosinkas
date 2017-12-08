@@ -21,6 +21,7 @@ function get(action, $area, values) {
                     $form = $(this).closest('.times'),
                     req = {
                         id: $checkbox.attr('id'), 
+                        idDay: $form.find('.dayStatus').val(),
                         timeStart: $form.find('.timeStart').val(),
                         timeFinish: $form.find('.timeFinish').val()
                     };

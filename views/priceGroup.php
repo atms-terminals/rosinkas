@@ -36,12 +36,29 @@ function getMenuLevel($menu, $id)
 
             $daySchedule = '';
             foreach ($item['schedule'] as $dayId => $dayStatus) {
-                $checked = $dayStatus == 0 ? '' : 'checked';
-                $daySchedule .= "<label><input class='dayStatus' type='checkbox' $checked value='$dayId'> {$days[$dayId]}</label>  ";
+                $timeStart = $dayStatus['start'];
+                $timeFinish = $dayStatus['finish'];
+                $checked = $dayStatus['en'] == 0 ? '' : 'checked';
+                $daySchedule .= "
+                    <div class='form-group times col-md-6'>
+                        <label><input class='dayStatus' type='checkbox' $checked value='$dayId'> {$days[$dayId]}</label>
+                        <label>Время работы: с </label>
+                        <div class='input-group time'>
+                            <input type='text' class='form-control timeStart' maxlength='5' size='5' value='$timeStart' placeholder=''/>
+                            <span class='input-group-addon'>
+                                <span class='glyphicon glyphicon-time'></span>
+                            </span>
+                        </div>
+                        <label> по </label>
+                        <div class='input-group time'>
+                            <input type='text' class='form-control timeFinish' maxlength='5' size='5' value='$timeFinish' placeholder=''/>
+                            <span class='input-group-addon'>
+                                <span class='glyphicon glyphicon-time'></span>
+                            </span>
+                        </div>
+                    </div>
+                    ";
             }
-
-            $timeStart = $item['time_start'];
-            $timeFinish = $item['time_finish'];
 
             $commentItem = empty($menu[$item['id']]) ? '' : "<textarea rows='3' cols='80' class='commentItem' placeholder='Комментарий'>{$item['comment']}</textarea><br>";
 
@@ -52,22 +69,6 @@ function getMenuLevel($menu, $id)
 
                 <form class='form-inline'>
                     $daySchedule
-                    <div class='form-group times'>
-                        <label>Время работы: с </label>
-                        <div class='input-group time'>
-                            <input type='text' class='form-control timeStart' maxlength='5' size='5' value='$timeStart' placeholder='Нет'/>
-                            <span class='input-group-addon'>
-                                <span class='glyphicon glyphicon-time'></span>
-                            </span>
-                        </div>
-                        <label> по </label>
-                        <div class='input-group time'>
-                            <input type='text' class='form-control timeFinish' maxlength='5' size='5' value='$timeFinish' placeholder='Нет'/>
-                            <span class='input-group-addon'>
-                                <span class='glyphicon glyphicon-time'></span>
-                            </span>
-                        </div>
-                    </div>
                 </form>
                 $commentItem
                 

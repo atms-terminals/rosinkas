@@ -58,8 +58,8 @@ class Admin
         $sql = $status ? 'p.status = 1' : '1';
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color, p.price, p.nds, o.id_day, 
-                date_format(t.`start`, '%H:%i') time_start, 
-                date_format(t.`finish`, '%H:%i') time_finish, p.comment
+                date_format(t.`start`, '%H:%i') time_start, date_format(t.`finish`, '%H:%i') time_finish, t.id_day time_day, 
+                p.comment
             from v_custom_pricelist p
                 left join custom_price_redstar_dayoff o on p.id = o.id_item
                 left join custom_price_redstar_time t on p.id = t.id_item
@@ -73,17 +73,23 @@ class Admin
             if (empty($tlist[$row['id_parent']][$row['id']])) {
                 $tlist[$row['id_parent']][$row['id']] = $row;
                 $tlist[$row['id_parent']][$row['id']]['schedule'] = array(
-                    '0' => 1,
-                    '1' => 1,
-                    '2' => 1,
-                    '3' => 1,
-                    '4' => 1,
-                    '5' => 1,
-                    '6' => 1,
+                    '0' => array('en' => 1, 'start' => '', 'finish' => ''),
+                    '1' => array('en' => 1, 'start' => '', 'finish' => ''),
+                    '2' => array('en' => 1, 'start' => '', 'finish' => ''),
+                    '3' => array('en' => 1, 'start' => '', 'finish' => ''),
+                    '4' => array('en' => 1, 'start' => '', 'finish' => ''),
+                    '5' => array('en' => 1, 'start' => '', 'finish' => ''),
+                    '6' => array('en' => 1, 'start' => '', 'finish' => ''),
                 );
             }
             if ($row['id_day'] != '') {
-                $tlist[$row['id_parent']][$row['id']]['schedule'][$row['id_day']] = 0;
+                $tlist[$row['id_parent']][$row['id']]['schedule'][$row['id_day']]['en'] = 0;
+            }
+            if ($row['time_start'] != '') {
+                $tlist[$row['id_parent']][$row['id']]['schedule'][$row['time_day']]['start'] = $row['time_start'];
+            }
+            if ($row['time_finish'] != '') {
+                $tlist[$row['id_parent']][$row['id']]['schedule'][$row['time_day']]['finish'] = $row['time_finish'];
             }
         }
         return $tlist;
