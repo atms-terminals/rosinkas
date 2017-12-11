@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
-    <title>Красная звезда. Панель администратора</title>
+    <title>Росинкас. Панель администратора</title>
 
     <!-- env:prod --#>
         <link rel="stylesheet" href="views/css/style.min.css?<?= filemtime("views/css/login.min.css")?>">

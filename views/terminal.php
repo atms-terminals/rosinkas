@@ -4,8 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Красная звезда</title>
+    <title>Росинкас</title>
 
     <!-- env:prod --#>
         <link rel="stylesheet" href="views/css/term.min.css?<?= filemtime("views/css/term.min.css")?>">
@@ -15,6 +16,7 @@
         <link href='../bower_components/bootstrap/dist/css/bootstrap.css' rel="stylesheet">
         <link href='views/css/style-sass.css?<?= filemtime(ROOT.'/views/css/style-sass.css')?>' rel="stylesheet">
         <link href='views/css/term-sass.css?<?= filemtime(ROOT.'/views/css/term-sass.css')?>' rel="stylesheet">
+        <link href='views/css/flex-sass.css?<?= filemtime(ROOT.'/views/css/flex-sass.css')?>' rel="stylesheet">
     <!-- env:dev:end -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -30,14 +32,11 @@
     <input type="hidden" id="sid" value="<?= $sid;?>">
     <div class="container-fluid">
         <div class="header">
+            
             <div class="logos">
-                <!-- <div class="lines line1">Бюджетное учреждение города Омска</div> -->
-                <div class="lines line2">БУ города Омска Спортивный комплекс</div>
-                <div class="row">
-                    <div class="col-md-3 logo1 text-center"><img src='views/img/logo.png' alt=""></div>
-                    <div class="col-md-6 title-logo text-center"><img src='views/img/title.png' alt=""></div>
-                    <div class="col-md-3 logo2 text-center"><img src='views/img/logo2.png' alt=""></div>
-                </div>
+                <!-- <div class="lines line1">Российское объединение инкассации</div> -->
+                <!-- <div class="lines line2">Центрального банка Российской Федерации</div> -->
+                <div class="logo2"><img src='views/img/logo2.png' alt=""></div>
             </div>
 
             <div class="row time">

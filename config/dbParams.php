@@ -1,12 +1,13 @@
 <?php
 return array(
     'host' => 'localhost',
-    'dbname' => 'q_redstar',
-    'user' => 'q_redstar',
-    'password' => 'x9tMG3vp8iHchWSvVYiPGpYzcpi3G7v8zqjKc'
+    'dbname' => 'q_rosinkas',
+    'user' => 'q_rosinkas',
+    'password' => 'AgQf5jSfcoGuj7pv6v6Zt55zZd9LzTKy'
     );
 
-// CREATE USER 'q_redstar'@'localhost' IDENTIFIED BY 'x9tMG3vp8iHchWSvVYiPGpYzcpi3G7v8zqjKc'
-// GRANT ALL PRIVILEGES ON q_redstar.* TO 'q_redstar'@'localhost' WITH GRANT OPTION;
+// CREATE USER 'q_rosinkas'@'localhost' IDENTIFIED BY 'AgQf5jSfcoGuj7pv6v6Zt55zZd9LzTKy'
+// GRANT ALL PRIVILEGES ON q_rosinkas.* TO 'q_rosinkas'@'localhost' WITH GRANT OPTION;
 
-// GRANT ALL PRIVILEGES ON q_redstar.* TO comparator@localhost IDENTIFIED BY 'x9tMG3vp8iHchWSvVYiPGpYzcpi3G7v8zqjKc' WITH GRANT OPTION;F
+// GRANT ALL PRIVILEGES ON q_rosinkas.* TO comparator@localhost IDENTIFIED BY 'AgQf5jSfcoGuj7pv6v6Zt55zZd9LzTKy' WITH GRANT OPTION;
+// GRANT ALL PRIVILEGES ON q_rosinkas.* TO q_rosinkas@localhost IDENTIFIED BY 'AgQf5jSfcoGuj7pv6v6Zt55zZd9LzTKy' WITH GRANT OPTION;

@@ -8,8 +8,8 @@ define('FIRST_SCREEN', 1);
 define('FIRST_ACTION', 'getServiceList');
 define('GET_MONEY_SCREEN', 2);
 define('GET_MONEY_ACTION', 'getMoneyScreen');
-define('GET_QTY_SCREEN', 13);
-define('GET_QTY_ACTION', 'move');
+define('GET_CARD_SCREEN', 13);
+define('GET_CARD_ACTION', 'move');
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
 define('NO_CARD_SCREEN', 13);
@@ -362,18 +362,14 @@ class AjaxController
             if (!$this->hasChildren($rows[$i]['id'])) {
                 $cost = empty($rows[$i]['price']) || $rows[$i]['price'] == -1 ? '' : $cost;
                 $buttons .= "<span>
-                        <input class='nextScreen' type='hidden' value='".GET_QTY_SCREEN."' />
-                        <input class='activity' type='hidden' value='".GET_QTY_ACTION."' />
-                        <input class='value price' type='hidden' value='{$rows[$i]['price']}' />
+                        <input class='nextScreen' type='hidden' value='".GET_CARD_SCREEN."' />
+                        <input class='activity' type='hidden' value='".GET_CARD_ACTION."' />
                         <input class='value idService' type='hidden' value='{$rows[$i]['id']}' />
-                        <input class='value idBasket' type='hidden' value='$idBasket' />
-                        <input class='value serviceName' type='hidden' value='{$rows[$i]['desc']}' />
                         <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>
                     </span>";
             } else {
                 $buttons .= "<span>
                         <input class='activity' type='hidden' value='getServiceList' />
-                        <input class='value idBasket' type='hidden' value='$idBasket' />
                         <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                         <input class='value id' type='hidden' value='{$rows[$i]['id']}' />
                         <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>   
@@ -388,9 +384,6 @@ class AjaxController
                     <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
                     <input class='value id' type='hidden' value='$id' />
                     <input class='value start' type='hidden' value='$start' />
-                    <input class='value prepayment' type='hidden' value='$prepayment' />
-                    <input class='value card' type='hidden' value='$card' />
-                    <input class='value customer' type='hidden' value='$customer' />
                     <button class='btn btn-primary action service control'>Следующий</button>";
         } else {
             $controls .= "&nbsp;";
@@ -525,6 +518,18 @@ class AjaxController
         }
 
         $idScreen = "s$idScreen";
+
+        include_once ROOT.'/views/kbd/kbdRus.php';
+        include_once ROOT.'/views/kbd/kbdNum.php';
+        include_once ROOT.'/views/kbd/kbdRusNum.php';
+
+        // добавляем клавиатуры
+        $replArray['patterns'][] = '{KBD_A}';
+        $replArray['values'][] = getKbdA();
+        $replArray['patterns'][] = '{KBD_N}';
+        $replArray['values'][] = getKbdN();
+        $replArray['patterns'][] = '{KBD_AN}';
+        $replArray['values'][] = getKbdAN();
 
         // загружаем параметры
         $query = '/*'.__FILE__.':'.__LINE__.'*/ '.

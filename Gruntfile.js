@@ -115,6 +115,7 @@ module.exports = function(grunt) {
                     'views/css/style-sass.css': 'views/css/style.scss',
                     'views/css/login-sass.css': 'views/css/login.scss',
                     'views/css/term-sass.css': 'views/css/term.scss',
+                    'views/css/flex-sass.css': 'views/css/flex.scss',
                 }
             }
         },

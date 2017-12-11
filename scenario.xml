@@ -9,7 +9,7 @@
         </check>
         <timer>
             <screen>1</screen>
-            <timeout>30</timeout>
+            <timeout>300</timeout>
             <action>getServiceList</action>
         </timer>
     </s1>
@@ -79,11 +79,11 @@
     </s12>
 
     <s13>
-        <desc>Терминал. Ввод количества услуг</desc>
+        <desc>Терминал. Ввод явочной карточки</desc>
         <screen>13</screen>
         <timer>
             <screen>1</screen>
-            <timeout>100</timeout>
+            <timeout>300</timeout>
             <action>getServiceList</action>
         </timer>
     </s13>

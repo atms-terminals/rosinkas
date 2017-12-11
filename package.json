@@ -1,7 +1,7 @@
 {
-  "name": "redstar",
+  "name": "rosinkass",
   "version": "1.0.0",
-  "description": "Платежные терминалы для стадиона 'Красная звезда'",
+  "description": "Платежные терминалы для 'Росинкас'",
   "main": "Gruntfile.js",
   "devDependencies": {
     "grunt": "^1.0.1",

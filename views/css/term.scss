@@ -147,25 +147,18 @@ body {
 }
 
 #main a.btn.cancel{
-    height: 80px;
-    width: 80px;
-    line-height: 80px;
+    height: 100px;
+    width: 360px;
+    line-height: 87px;
     font-size: 50px;
-    /* margin-left: -31px; */
-    float: left;
-    position: absolute;
-    top: -568px;
-    right: -97px;
-    color: red;
+}
+
+#main a.btn.cancel .glyphicon {
+    top: 8px;
 }
 
 #main .qtyArea {
     margin-top: 50px;
-}
-
-#main .qtyCancel a.btn.cancel {
-    top: -690px;
-    right: 28px;
 }
 
 .basketState {
