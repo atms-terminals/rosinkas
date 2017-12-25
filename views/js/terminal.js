@@ -114,6 +114,22 @@ function doAction(activity, nextScreen, values){
             if (response.printForm !== undefined && response.printForm !== '') {
                 var i, needDelay = false;
 
+                if (response.printForm.full !== undefined && response.printForm.full !== '') {
+                    var htmlText = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />' +
+                        '</head><body>' + response.printForm.full + '</body></html>';
+
+                    // $('div.print').html(htmlText);
+                    // window.print(); 
+                    // $('div.print').html('');
+                    var detailWindow = window.open('', '_blank', 'left=10000, top=20000, height=1, width=1, menubar=no, toolbar=no, location=no, directories=no, status=no, resizable=no, scrollbars=no, visible=no');
+                    detailWindow.resizeTo(0, 0);
+                    detailWindow.blur();
+                    detailWindow.document.write(htmlText);
+                    detailWindow.document.close();
+                    detailWindow.print();
+                    detailWindow.close();
+                }
+
                 if (response.printForm.fr !== undefined) {
                     for (i in response.printForm.fr) {
                         if (response.printForm.fr.hasOwnProperty(i)) {
