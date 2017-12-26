@@ -10,6 +10,7 @@ return array(
     '.*?/ajax/collection' => 'ajax/collection',
     '.*?/ajax/getServiceList' => 'ajax/getServiceList',
     '.*?/ajax/addToBasket' => 'ajax/addToBasket',
+    '.*?/ajax/confirm' => 'ajax/confirm',
 
     '.*?/admin/getHwsState' => 'admin/getHwsState',
     '.*?/admin/getCollections' => 'admin/getCollections',

@@ -150,25 +150,25 @@ body {
 }
 
 #main a.btn {
-    width: 62%;
+    width: 85%;
     height: 160px;
     line-height: 160px;
     text-align: center;
     display: block;
     margin: 20px auto;
-    background-color: $buttonColor;
-    border: 1 solid $firstFirmBack;
-    color: $firstFirmBack;
+    background-color: $secondFirmBack;
+    border: 1 solid $secondFirmBack;
+    color: $firmFrontColor;
     font-size: 60px;
     text-transform: uppercase;
 }
 
 #main a.btn.pay {
-    height: 90px;
-    width: 45%;
-    line-height: 80px;
+    height: 110px;
+    width: 360px;
+    line-height: 100px;
     font-size: 50px;
-    margin-top: 0px;
+    margin-top: 108px;
 }
 
 #main a.btn.small {

@@ -9,8 +9,8 @@
         </check>
         <timer>
             <screen>1</screen>
-            <timeout>300</timeout>
-            <action>getServiceList</action>
+            <timeout>30</timeout>
+            <action>move</action>
         </timer>
     </s1>
 
@@ -33,15 +33,12 @@
         <desc>Терминал. Платеж</desc>
         <screen>3</screen>
         <print>
-            <top>4</top>
-            <elements>5</elements>
-            <bottom>6</bottom>
-            <rest>7</rest>
+            <full>4</full>
         </print>
         <timer>
             <screen>1</screen>
             <timeout>5</timeout>
-            <action>getServiceList</action>
+            <action>move</action>
         </timer>
     </s3>
 
@@ -56,7 +53,7 @@
         <timer>
             <screen>1</screen>
             <timeout>10</timeout>
-            <action>getServiceList</action>
+            <action>move</action>
         </timer>
     </s8>
 
@@ -74,7 +71,7 @@
         <timer>
             <screen>1</screen>
             <timeout>10</timeout>
-            <action>getServiceList</action>
+            <action>move</action>
         </timer>
     </s12>
 
@@ -84,8 +81,18 @@
         <timer>
             <screen>1</screen>
             <timeout>300</timeout>
-            <action>getServiceList</action>
+            <action>move</action>
         </timer>
     </s13>
+
+    <s14>
+        <desc>Терминал. Подтверждение явочной карточки</desc>
+        <screen>14</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>300</timeout>
+            <action>move</action>
+        </timer>
+    </s14>
 
 </states>

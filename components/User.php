@@ -22,7 +22,7 @@ class User
     private static $sid = null;
     private static $startUrl = 'index.php';
     private static $firstScreen = 1;
-    private static $firstAction = 'getServiceList';
+    private static $firstAction = 'move';
     private static $status = 0;
 
     /**

@@ -5,7 +5,7 @@ use components\DbHelper as dbHelper;
 use components\User as user;
 
 define('FIRST_SCREEN', 1);
-define('FIRST_ACTION', 'getServiceList');
+define('FIRST_ACTION', 'move');
 define('GET_MONEY_SCREEN', 2);
 define('GET_MONEY_ACTION', 'getMoneyScreen');
 define('GET_CARD_SCREEN', 13);
@@ -13,7 +13,7 @@ define('GET_CARD_ACTION', 'move');
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
 define('NO_CARD_SCREEN', 13);
-define('NO_SERVICES_SCREEN', 14);
+// define('NO_SERVICES_SCREEN', 14);
 define('SERVICE_LIST_SCREEN', 1);
 
 /**
@@ -37,84 +37,6 @@ class AjaxController
         }
     }
 
-    private function getServiceNamePart($idService, $i = 2)
-    {
-        $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT r.id_parent, r.`desc`
-            from v_clients_custom_pricelist r
-            where r.id = '$idService'";
-        $row = dbHelper\DbHelper::selectRow($query);
-
-        if ($row['id_parent'] > 0 && $i > 0) {
-            $k = $i - 1;
-            return "{$this->getServiceNamePart($row['id_parent'], $k)}. {$row['desc']}";
-        } else {
-            return $row['desc'];
-        }
-    }
-
-    private function getServiceName($idService)
-    {
-        $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT r.price, r.nds
-            from custom_price_redstar r
-            where r.id = '$idService'";
-        $row = dbHelper\DbHelper::selectRow($query);
-
-        return array(
-            'price' => $row['price'],
-            'nds' => $row['nds'],
-            'name' => $this->getServiceNamePart($idService)
-        );
-    }
-
-    private function addToBasket($uid, $idBasket, $idService, $qty)
-    {
-        if (!$idBasket) {
-            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                "SELECT baskets_add($uid) id";
-            $bas = dbHelper\DbHelper::selectRow($query);
-            $idBasket = $bas['id'];
-        }
-
-        for ($i = 0; $i < $qty; $i++) {
-            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                "SELECT baskets_items_add($uid, '$idBasket', '$idService')";
-            $bas = dbHelper\DbHelper::selectRow($query);
-        }
-
-        return $idBasket;
-    }
-
-    private function getBasket($idBasket)
-    {
-        $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-            "SELECT p.id, p.`desc`, p.price, count(*) qty
-            from baskets_items i
-                join v_custom_pricelist p on i.id_service = p.id
-            where i.id_basket = '$idBasket'
-            group by p.id";
-        $items = dbHelper\DbHelper::selectSet($query);
-        $summ = 0;
-        $list = '<ul>';
-        foreach ($items as $item) {
-            $subsumm = $item['price'] * $item['qty'];
-            $summ += $subsumm;
-            $list .=
-                "<li class='item'><p class='service'>{$item['desc']}</p>
-                    <p class='price'>{$item['price']} руб. * {$item['qty']} = $subsumm руб.</p>
-                </li>";
-        }
-        $s = number_format($summ, 2, '.', ' ');
-        $list .= '<hr>';
-        $list .= "<li><p class='total'>Итого: $s руб.</p></li>";
-        $list .= '</ul>';
-
-        return array(
-            'list' => $list,
-            'summ' => $summ
-        );
-    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Обработка команды оплаты
@@ -124,80 +46,38 @@ class AjaxController
         $uid = user\User::getId();
 
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
-        $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
+        $card_id = (empty($_POST['values']['card_id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card_id']);
         $amount = (empty($_POST['values']['amount'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['amount']);
-        $qty = (empty($_POST['values']['qty'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['qty']);
-        $idBasket = (empty($_POST['values']['idBasket'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idBasket']);
 
-        if (!$amount || !$idBasket) {
+        if (!$amount) {
             // уходим на первый экран
             $_POST['nextScreen'] = user\User::getFirstScreen();
-            $this->actionGetServiceList();
+            $this->actionMove();
             exit();
         }
 
         $replArray = $this->makeReplaceArray($nextScreen);
 
-        // получаем корзину
+        // подтверждаем оплату
+        $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+            "SELECT payments_add($uid, '$card_id', '$amount') id";
+        $pay = dbHelper\DbHelper::selectRow($query);
+
+        $replArray['patterns'][] = '{TRN}';
+        $replArray['values'][] = $pay['id'];
+
+        $replArray['patterns'][] = '{AMOUNT}';
+        $replArray['values'][] = number_format($amount, 2, '.', ' ');
+
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT i.id_service, p.price, p.nds
-            from baskets b
-                join baskets_items i on b.id = i.id_basket
-                join custom_price_redstar p on i.id_service = p.id
-            where b.id = $idBasket";
-        $services = dbHelper\DbHelper::selectSet($query);
-
-        $i = 0;
-        foreach ($services as $item) {
-            // если денег не хватает, то остаток - сдача
-            if ($item['price'] > $amount) {
-                break;
-            }
-
-            if ($item['price'] == 0) {
-                $item['price'] = $amount;
-            }
-
-            // подтверждаем оплату
-            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                "SELECT payments_add($uid, '{$item['id_service']}', '{$item['price']}') id";
-            $pay = dbHelper\DbHelper::selectRow($query);
-
-            $amount -= $item['price'];
-
-            $replArray['patterns'][] = '{TRN}';
-            $replArray['values'][] = $pay['id'];
-
-            $servParam = $this->getServiceName($item['id_service']);
-            $replArray['patterns'][] = '{NDS}';
-            $replArray['values'][] = $item['nds'];
-
-            // формируем чек
-            $replArray['fr'][$i]['amount'] = $item['price'];
-
-            $replArray['fr'][$i]['patterns'][] = '{SERVICE}';
-            $replArray['fr'][$i]['values'][] = $servParam['name'];
-
-            $replArray['fr'][$i]['patterns'][] = '{PRICE}';
-            $replArray['fr'][$i]['values'][] = number_format($item['price'], 2, '.', '');
-            $i++;
-        }
-
-        // если осталась сдача
-        if ($amount) {
-            if (empty($pay)) {
-                // если платежа вообще не было
-                $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                    "SELECT payments_add($uid, '{$item['id_service']}', 0) id";
-                $pay = dbHelper\DbHelper::selectRow($query);
-            }
-
-            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
-                "SELECT payments_add_rest($uid, '{$pay['id']}', '$amount') id";
-            $pay = dbHelper\DbHelper::selectRow($query);
-    
-            $replArray['nofr'][0]['patterns'][] = '{REST}';
-            $replArray['nofr'][0]['values'][] = number_format($amount, 2, '.', '');
+            "SELECT u.id TERM, u.address ADDRESS, p.card CARD, p.org CARD_ORG, p.address CARD_ADDRESS, date_format(p.dt_insert, '%d.%m.%Y %H:%i:%s') DATETIME_TRN 
+            from payments p
+                join users u on p.id_user = u.id
+            where p.id = '{$pay['id']}'";
+        $payParams = dbHelper\DbHelper::selectRow($query);
+        foreach ($payParams as $key => $value) {
+            $replArray['patterns'][] = '{'.$key.'}';
+            $replArray['values'][] = $value;
         }
 
         $response = $this->getScreen($nextScreen, $replArray);
@@ -226,22 +106,8 @@ class AjaxController
             unset($_POST['values']['idBasket']);
         }
 
-        // добавляем последнее в корзину
-        if ($qty) {
-            $idBasket = $this->addToBasket($uid, $idBasket, $idService, $qty);
-        }
-
         $replArray = $this->makeReplaceArray($nextScreen);
         $this->putPostIntoReplaceArray($replArray);
-
-        $basket = $this->getBasket($idBasket);
-        $replArray['patterns'][] = '{IDBASKET}';
-        $replArray['values'][] = $idBasket;
-        $replArray['patterns'][] = '{BASKET}';
-        $replArray['values'][] = $basket['list'];
-        $replArray['patterns'][] = '{MINAMOUNT}';
-        $replArray['values'][] = $basket['summ'];
-
 
         $response = $this->getScreen($nextScreen, $replArray);
 
@@ -255,153 +121,41 @@ class AjaxController
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * Проверка, есть ли у пункта меню потомки
+     * Обработка команды подтверждения явочной карты
      */
-    private function hasChildren($id)
-    {
-        $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT count(*) cnt
-            from custom_price_redstar r
-            where r.id_parent = '$id'";
-        $row = dbHelper\DbHelper::selectRow($query);
-        return $row['cnt'] > 0 ? true : false;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    /**
-     * Обработка команды формирования корзины
-     */
-    public function actionAddToBasket()
+    public function actionConfirm()
     {
         $uid = user\User::getId();
-        $qty = (empty($_POST['values']['qty'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['qty']);
-        $idBasket = (empty($_POST['values']['idBasket'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idBasket']);
-        $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
-
-        // добавляем последнее в корзину
-        $idBasket = $this->addToBasket($uid, $idBasket, $idService, $qty);
-        $_POST['values']['idBasket'] = $idBasket;
-        $this->actionGetServiceList();
-    }
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    /**
-     * Обработка команды получения новых услуг
-     */
-    public function actionGetServiceList()
-    {
-        define('BUTTON_PER_SCREEN', 6);
-
-        if (user\User::getStatus() == 0) {
-            $_POST['nextScreen'] = LOCK_SCREEN;
-        }
-
+        $card = (empty($_POST['values']['card'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card']);
+        $card = str_replace('_', '', $card);
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
-        $id = (empty($_POST['values']['id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['id']);
-        $start = (empty($_POST['values']['start'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['start']);
-        $idBasket = (empty($_POST['values']['idBasket'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idBasket']);
 
         $replArray = $this->makeReplaceArray($nextScreen);
-        $this->putPostIntoReplaceArray($replArray);
+        // $this->putPostIntoReplaceArray($replArray);
 
-        // кнопки возврата назад и на 1 уровень вверх
-        $controls = '';
-        $controls .= "<div class='controlDiv'>";
-        if ($id) {
-            if ($start) {
-                $ns = $start - BUTTON_PER_SCREEN;
-                $controls .= "<input class='activity' type='hidden' value='getServiceList' />
-                        <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
-                        <input class='value id' type='hidden' value='$id' />
-                        <input class='value start' type='hidden' value='$ns' />
-                        <button class='btn btn-primary action service control'>Предыдущий</button>";
-            } else {
-                $query = "/*".__FILE__.':'.__LINE__."*/ ".
-                    "SELECT p.id_parent
-                    from v_clients_custom_pricelist p
-                    where p.id = '$id'";
-                $row = dbHelper\DbHelper::selectRow($query);
-
-                $controls .= "<input class='activity' type='hidden' value='getServiceList' />
-                        <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
-                        <input class='value id' type='hidden' value='{$row['id_parent']}' />
-                        <button class='btn btn-primary action service control'>Предыдущий</button>";
-            }
-        } else {
-            $controls .= "&nbsp;";
-        }
-        $controls .= "</div>";
-
-        if ($id) {
-            $controls .= "<div class='controlDiv'>
-                    <input class='nextScreen' type='hidden' value='".FIRST_SCREEN."' />
-                    <input class='activity' type='hidden' value='".FIRST_ACTION."' />
-                    <button class='btn btn-primary action service control'>Отмена</button>   
-                </div>";
-        }
-
-        // получаем комментарий для экрана
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.comment
-            FROM v_clients_custom_pricelist p
-            WHERE p.id = '$id'";
+            "SELECT c.id, c.org, c.address
+            from custom_cards c 
+            where c.num = '$card'";
         $row = dbHelper\DbHelper::selectRow($query);
-        $replArray['patterns'][] = '{SCREEN_COMMENT}';
-        $replArray['values'][] = $row['comment'];
 
-        // добавляем список сервисов
-        $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id, p.`desc`, round(p.price) price, p.color
-            FROM v_clients_custom_pricelist p
-            WHERE p.id_parent = '$id'
-            ORDER BY p.id_parent, p.order, p.`desc`";
-        $rows = dbHelper\DbHelper::selectSet($query);
-        $buttons = '';
-
-        for ($i = $start; $i < $start + BUTTON_PER_SCREEN && $i < count($rows); $i++) {
-            $cost = $rows[$i]['price'] && $rows[$i]['price'] != '0.00' ? "<hr>{$rows[$i]['price']} руб." : '';
-            if (!$this->hasChildren($rows[$i]['id'])) {
-                $cost = empty($rows[$i]['price']) || $rows[$i]['price'] == -1 ? '' : $cost;
-                $buttons .= "<span>
-                        <input class='nextScreen' type='hidden' value='".GET_CARD_SCREEN."' />
-                        <input class='activity' type='hidden' value='".GET_CARD_ACTION."' />
-                        <input class='value idService' type='hidden' value='{$rows[$i]['id']}' />
-                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>
-                    </span>";
-            } else {
-                $buttons .= "<span>
-                        <input class='activity' type='hidden' value='getServiceList' />
-                        <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
-                        <input class='value id' type='hidden' value='{$rows[$i]['id']}' />
-                        <button class='btn btn-{$rows[$i]['color']} action service'>{$rows[$i]['desc']}$cost</button>   
-                    </span>";
-            }
+        if (empty($row)) {
+            $_POST['nextScreen'] = user\User::getFirstScreen();
+            $this->actionMove();
+            exit;
         }
 
-        $controls .= "<div class='controlDiv'>";
-        if ($start + BUTTON_PER_SCREEN < count($rows)) {
-            $start += BUTTON_PER_SCREEN;
-            $controls .= "<input class='activity' type='hidden' value='getServiceList' />
-                    <input class='nextScreen' type='hidden' value='".SERVICE_LIST_SCREEN."' />
-                    <input class='value id' type='hidden' value='$id' />
-                    <input class='value start' type='hidden' value='$start' />
-                    <button class='btn btn-primary action service control'>Следующий</button>";
-        } else {
-            $controls .= "&nbsp;";
-        }
-        $controls .= "</div>";
+        $replArray['patterns'][] = '{CARD}';
+        $replArray['values'][] = $card;
 
-        $replArray['patterns'][] = '{CONTROLS_LIST}';
-        $replArray['values'][] = $controls;
+        $replArray['patterns'][] = '{CARD_ID}';
+        $replArray['values'][] = $row['id'];
 
-        $sumBasket = ($idBasket) ? $this->getBasket($idBasket)['summ']: 0;
-        $replArray['patterns'][] = '{BASKET_STATE}';
-        $replArray['values'][] = $sumBasket;
+        $replArray['patterns'][] = '{CARD_ORG}';
+        $replArray['values'][] = $row['org'];
 
-        $replArray['patterns'][] = '{BASKET_VISIBILITY}';
-        $replArray['values'][] = $idBasket ? '' : 'hidden';
-
-        $replArray['patterns'][] = '{SERVICES_LIST}';
-        $replArray['values'][] = $buttons;
+        $replArray['patterns'][] = '{CARD_ADDRESS}';
+        $replArray['values'][] = $row['address'];
 
         $response = $this->getScreen($nextScreen, $replArray);
 
@@ -428,12 +182,6 @@ class AjaxController
 
         $replArray = $this->makeReplaceArray($nextScreen);
         $this->putPostIntoReplaceArray($replArray);
-
-        $servParam = $this->getServiceName($idService);
-        $replArray['patterns'][] = '{SERVICE}';
-        $replArray['values'][] = $servParam['name'];
-        $replArray['patterns'][] = '{PRICE}';
-        $replArray['values'][] = $servParam['price'];
 
         $response = $this->getScreen($nextScreen, $replArray);
 
@@ -576,6 +324,17 @@ class AjaxController
         }
 
         // печатная форма
+        if (!empty($xml->$idScreen->print->full)) {
+            $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+                "SELECT s.html from screens s where s.id = '{$xml->$idScreen->print->full}'";
+            $row = dbHelper\DbHelper::selectRow($query);
+
+            $printForm = stripslashes($row['html']);
+            $printForm = str_replace($replArray['patterns'], $replArray['values'], $printForm);
+            $printForm = preg_replace('/({.*?})/ui', '', $printForm);
+            $response['printForm']['full'] = $printForm;
+        }
+
         $top = '';
         if (!empty($xml->$idScreen->print->top)) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
@@ -587,6 +346,7 @@ class AjaxController
             $printForm = preg_replace('/({.*?})/ui', '', $printForm);
             $top = $printForm;
         }
+
         $bottom = '';
         if (!empty($xml->$idScreen->print->bottom)) {
             $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
