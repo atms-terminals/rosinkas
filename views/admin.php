@@ -32,9 +32,9 @@
         <ul class="nav nav-tabs" role="tablist" id='mainTabs'>
             <li role="presentation" class="active"><a href="#hws" aria-controls="hws" role="tab" data-toggle="tab">Оборудование</a></li>
             <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Администрирование</a></li>
-            <li role="presentation"><a href="#schedule" aria-controls="schedule" role="tab" data-toggle="tab">Настройка дней</a></li>
-            <li role="presentation"><a href="#priceGroup" aria-controls="priceGroup" role="tab" data-toggle="tab">Настройка меню</a></li>
-            <li role="presentation"><a href="#collections" aria-controls="collections" role="tab" data-toggle="tab">Инкассации</a></li>
+            <!-- <li role="presentation"><a href="#schedule" aria-controls="schedule" role="tab" data-toggle="tab">Настройка дней</a></li> -->
+            <!-- <li role="presentation"><a href="#priceGroup" aria-controls="priceGroup" role="tab" data-toggle="tab">Настройка меню</a></li> -->
+            <!-- <li role="presentation"><a href="#collections" aria-controls="collections" role="tab" data-toggle="tab">Инкассации</a></li> -->
         </ul>
 
 

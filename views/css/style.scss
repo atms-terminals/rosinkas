@@ -379,3 +379,26 @@ select.year, #priceStatus {
 .lead {
     font-weight: 600;
 }
+
+.resultArea .status {
+    font-size: 25px;
+    vertical-align: middle;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.resultArea .status .red {
+    top: 4px;
+    color: red;
+}
+
+.resultArea .status .green {
+    top: 4px;
+    color: green;
+}
+
+.resultArea .status .blue {
+    top: 4px;
+    color: lightblue;
+}

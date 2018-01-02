@@ -1,5 +1,5 @@
 {
-  "name": "rosinkass",
+  "name": "rosinkas",
   "version": "1.0.0",
   "description": "Платежные терминалы для 'Росинкас'",
   "main": "Gruntfile.js",

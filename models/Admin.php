@@ -13,9 +13,8 @@ class Admin
      * @var array список оборудования
      */
     public static $devices = array(
+        'webSocket' => 'Система',
         'cash' => 'Купюроприемник',
-        'fr' => 'Фискальный регистратор',
-        'webSocket' => 'Ubuntu',
         );
 
     /**
@@ -24,14 +23,20 @@ class Admin
      */
     public static function getCollections()
     {
+        $money['collections'] = array();
+        $money['free'] = array();
+
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT date_format(p.dt_insert, '%d.%m.%Y') dt, u.address, sum(p.amount) amount, u.id
+            "SELECT date_format(c.dt, '%d.%m.%Y %H:%i') dt, u.address, sum(p.amount) amount, u.id
             from v_payments p
                 join users u on p.id_user = u.id
-            group by u.address, date_format(p.dt_insert, '%d.%m.%Y'), u.id
-            order by u.address, min(p.dt_insert) desc";
+                join collections c on p.id_collection = c.id
+            group by u.address, u.id, c.dt
+            order by c.dt";
         $collections = dbHelper\DbHelper::selectSet($query);
-
+        foreach ($collections as $row) {
+            $money['collections'][$row['id']] = $row;
+        }
         // наличка
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT p.id_user, u.address, sum(p.amount) summ
@@ -40,13 +45,11 @@ class Admin
             where p.collected = 0
             group by p.id_user";
         $tmoney = dbHelper\DbHelper::selectSet($query);
-        $money = array();
         foreach ($tmoney as $row) {
-            $money[$row['address']]['summ'] = $row['summ'];
+            $money['free'][$row['id_user']] = $row['summ'];
         }
 
-        return array('collections' => $collections,
-            'money' => $money);
+        return $money;
     }
 
     /**
@@ -104,26 +107,33 @@ class Admin
         // тех. состояние
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT u.id, u.address, h.`type`, h.is_error, date_format(h.dt, '%d.%m.%Y %H:%i') dt, h.message
-            from hws_status h
-                join users u on h.id_user = u.id
+            from users u 
+            left join hws_status h
+               on h.id_user = u.id
+            where u.id_role = 2
+                and u.status = 1
             order by u.address, h.`type`";
         $list = dbHelper\DbHelper::selectSet($query);
 
         // преобразуем
         $result = array();
         foreach ($list as $row) {
-            if (empty($result[$row['address']])) {
+            if (empty($result[$row['id']])) {
+                $result[$row['id']]['address'] = $row['address'];
                 foreach (self::$devices as $key => $nameRus) {
-                    $result[$row['address']][$key] = array (
+                    $result[$row['id']]['status'][$key] = array (
                         'dt' => '',
                         'isError' => -1,
                         'message' => ''
                     );
                 }
             }
-            $result[$row['address']][$row['type']]['dt'] = $row['dt'];
-            $result[$row['address']][$row['type']]['isError'] = $row['is_error'];
-            $result[$row['address']][$row['type']]['message'] = $row['message'];
+
+            if ($row['dt'] != '') {
+                $result[$row['id']]['status'][$row['type']]['dt'] = $row['dt'];
+                $result[$row['id']]['status'][$row['type']]['isError'] = $row['is_error'];
+                $result[$row['id']]['status'][$row['type']]['message'] = $row['message'];
+            }
         }
 
         return $result;

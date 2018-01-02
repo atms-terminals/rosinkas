@@ -13,6 +13,7 @@ class AdminController
 {
     public function actionIndex()
     {
+        $money = admin\Admin::getCollections();
         $statuses = admin\Admin::getHwsState();
         $devices = admin\Admin::$devices;
         $dates = admin\Admin::getDates();
@@ -24,6 +25,7 @@ class AdminController
 
     public function actionGetHwsState()
     {
+        $money = admin\Admin::getCollections();
         $statuses = admin\Admin::getHwsState();
         $devices = admin\Admin::$devices;
 
@@ -453,7 +455,7 @@ class AdminController
         $uid = user\User::getId();
         // если есть ip то роль - терминал, иначе - пользователь
         $ip = empty($_POST['ip']) ? '' : dbHelper\DbHelper::mysqlStr($_POST['ip']);
-        $idRole = $ip ? 2 : 1;
+        $idRole = $ip ? 2 : 3;
         $address = empty($_POST['address']) ? '' : dbHelper\DbHelper::mysqlStr($_POST['address']);
         $login = empty($_POST['login']) ? '' : dbHelper\DbHelper::mysqlStr($_POST['login']);
 
