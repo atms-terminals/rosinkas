@@ -14,7 +14,13 @@ class Url
     public static function extractSid()
     {
         $str = $_SERVER['REQUEST_URI'];
+
         $arr = explode('/', trim($str, '/'));
+        $sid = $arr[0];
+
+        if (!preg_match('~^[0-9a-f-]*$~', $sid)) {
+            return false;
+        }
 
         return empty($arr[0]) ? false : $arr[0];
     }

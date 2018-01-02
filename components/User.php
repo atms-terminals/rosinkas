@@ -33,9 +33,11 @@ class User
         $login = (empty($_POST['login'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['login']);
         $password = (empty($_POST['password'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['password']);
         $ip = url\Url::getIp();
+        $id = empty($_GET['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_GET['id']);
 
-        $query = '/*'.__FILE__.':'.__LINE__.'*/ '."SELECT sessions_add('$login', '$password', '$ip') sid";
+        $query = '/*'.__FILE__.':'.__LINE__.'*/ '."SELECT sessions_add('$login', '$password', '$ip', '$id') sid";
         $row = dbHelper\DbHelper::selectRow($query);
+
         if (empty($row['sid'])) {
             throw new \Exception('Not auth', 404);
         } else {
