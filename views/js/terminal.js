@@ -47,6 +47,36 @@ function getCurrTime(needDot) {
     return ret;
 }
 
+function closePrint() {
+    /*jshint strict: false */
+    // 'use strict';
+    document.body.removeChild(this.__container__);
+}
+
+function setPrint () {
+    /*jshint strict: false */
+    // 'use strict';
+    this.contentWindow.__container__ = this;
+    this.contentWindow.onbeforeunload = closePrint;
+    this.contentWindow.onafterprint = closePrint;
+    this.contentWindow.focus(); // Required for IE
+    this.contentWindow.print();
+}
+
+function printPage (html) {
+    /*jshint strict: false */
+    // 'use strict';
+    var oHiddFrame = document.createElement('iframe');
+    oHiddFrame.onload = setPrint;
+    oHiddFrame.style.visibility = 'hidden';
+    oHiddFrame.style.position = 'fixed';
+    oHiddFrame.style.right = '0';
+    oHiddFrame.style.bottom = '0';
+    oHiddFrame.srcdoc = html;
+    document.body.appendChild(oHiddFrame);
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////
 // получение содержимого экрана с сервера
 function doAction(activity, nextScreen, values){
@@ -115,19 +145,21 @@ function doAction(activity, nextScreen, values){
                 var i, needDelay = false;
 
                 if (response.printForm.full !== undefined && response.printForm.full !== '') {
-                    var htmlText = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />' +
-                        '</head><body>' + response.printForm.full + '</body></html>';
+                    printPage(response.printForm.full);
 
-                    // $('div.print').html(htmlText);
-                    // window.print(); 
-                    // $('div.print').html('');
-                    var detailWindow = window.open('', '_blank', 'left=10000, top=20000, height=1, width=1, menubar=no, toolbar=no, location=no, directories=no, status=no, resizable=no, scrollbars=no, visible=no');
-                    detailWindow.resizeTo(0, 0);
-                    detailWindow.blur();
-                    detailWindow.document.write(htmlText);
-                    detailWindow.document.close();
-                    detailWindow.print();
-                    detailWindow.close();
+                    // var htmlText = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />' +
+                    //     '</head><body>' + response.printForm.full + '</body></html>';
+
+                    // // $('div.print').html(htmlText);
+                    // // window.print(); 
+                    // // $('div.print').html('');
+                    // var detailWindow = window.open('', '_blank', 'left=10000, top=20000, height=1, width=1, menubar=no, toolbar=no, location=no, directories=no, status=no, resizable=no, scrollbars=no, visible=no');
+                    // detailWindow.resizeTo(0, 0);
+                    // detailWindow.blur();
+                    // detailWindow.document.write(htmlText);
+                    // detailWindow.document.close();
+                    // detailWindow.print();
+                    // detailWindow.close();
                 }
 
                 if (response.printForm.fr !== undefined) {
