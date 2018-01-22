@@ -229,10 +229,16 @@ class AjaxController
         $type = (empty($_POST['values']['type'])) ? 'NA' : dbHelper\DbHelper::mysqlStr($_POST['values']['type']);
         $message = (empty($_POST['values']['message'])) ? '' : dbHelper\DbHelper::mysqlStr($_POST['values']['message']);
         $isError = (empty($_POST['values']['isError'])) ? 0 : 1;
+        $value = (empty($_POST['values']['value'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['value']);
         $uid = user\User::getId();
 
         $query = "/*".__FILE__.':'.__LINE__."*/ "."CALL hws_status_write($uid, '$type', $isError, '$message')";
         $row = dbHelper\DbHelper::call($query);
+
+        if ($type == 'cash') {
+            $query = "/*".__FILE__.':'.__LINE__."*/ "."CALL notes_write($uid, '$value')";
+            $row = dbHelper\DbHelper::call($query);
+        }
 
         if ($nextScreen) {
             $replArray = $this->makeReplaceArray($nextScreen);

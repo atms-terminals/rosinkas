@@ -80,6 +80,7 @@ function handleCashmachineEvent(eventType, eventValue) {
         event = {
             type: 'cash',
             isError: 0,
+            value: eventValue,
             message: 'банкнота принята ' + eventValue
         };
         doAction('writeLog', 0, event);
