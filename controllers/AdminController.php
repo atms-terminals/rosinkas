@@ -6,6 +6,8 @@ use models\Admin as admin;
 use components\User as user;
 use components\DbHelper as dbHelper;
 
+define('MAX_CASS_CAPASITY', 1500);
+
 /**
 * productController
 */
@@ -61,6 +63,91 @@ class AdminController
             'nds' => $row['nds'],
             'name' => $this->getServiceNamePart($idService)
         );
+    }
+
+    public function actionGetCollectionDetail()
+    {
+        $id = empty($_GET['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_GET['id']);
+
+        $statuses = admin\Admin::getHwsState($id);
+        $money = admin\Admin::getCollections($id);
+
+        $html = '';
+        $html .= "<div class='h4'>Терминал $id</div>";
+        $html .= empty($statuses[$id]['address']) ? '' : "<div class='h5'><i>{$statuses[$id]['address']}</i></div>";
+
+        $html .= "<table class='table table-striped table-bordered'>";
+        $html .= "<thead><tr><th>Дата</th><th>Сумма</th></tr></thead>";
+        $html .= "<tbody>";
+        if (!empty($money['collections'][$id])) {
+            foreach ($money['collections'][$id] as $row) {
+                $html .= "<tr><td>{$row['dt']}</td><td>{$row['amount']}</td></tr>";
+            }
+        }
+        $html .= "</tbody></table>";
+
+        echo $html;
+        return true;
+
+    }
+
+    public function actionGetTerminalHistory()
+    {
+        $id = empty($_GET['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_GET['id']);
+
+        $history = admin\Admin::getTerminalHistory($id);
+
+        $html = '';
+        $html .= "<div class='h4'>Терминал $id</div>";
+        $html .= empty($statuses[$id]['address']) ? '' : "<div class='h5'><i>{$statuses[$id]['address']}</i></div>";
+        $html .= "<table class='table table-striped table-bordered'>";
+        $html .= "<thead><tr><th>Дата</th><th>Событие</th></tr></thead>";
+        $html .= "<tbody>";
+        if (!empty($history[$id])) {
+            foreach ($history[$id] as $row) {
+                $html .= "<tr><td>{$row['dt']}</td><td>{$row['action']}</td></tr>";
+            }
+        }
+        $html .= "</tbody></table>";
+
+        echo $html;
+        return true;
+
+    }
+
+    public function actionGetCassetState()
+    {
+        $id = empty($_GET['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_GET['id']);
+
+        $money = admin\Admin::getCollections($id);
+        $statuses = admin\Admin::getHwsState($id);
+
+        // echo "<pre>"; print_r($money); echo "</pre>";
+        $qty = empty($money['nominals'][$id]['total']) ? 0 : $money['nominals'][$id]['total'];
+        $summ = empty($money['free'][$id]) ? 0 : $money['free'][$id];
+        
+        $html = '';
+        $html .= "<div class='h4'>Терминал $id</div>";
+        $html .= empty($statuses[$id]['address']) ? '' : "<div class='h5'><i>{$statuses[$id]['address']}</i></div>";
+        $html .= "<p>В терминале находится $qty листов на сумму $summ руб.</p>";
+        $html .= "<table class='table table-striped table-bordered'>";
+        $html .= "<thead><tr><th>Номинал</th><th>Кол-во</th><th>Сумма</th></tr></thead>";
+        $html .= "<tbody>";
+        if (!empty($money['nominals'][$id])) {
+            foreach ($money['nominals'][$id] as $n => $q) {
+                if ($n == 'total') {
+                    continue;
+                }
+
+                $s = $n * $q;
+                $html .= "<tr><td>$n</td><td>$q</td><td>$s</td></tr>";
+            }
+        }
+        $html .= "</tbody></table>";
+
+        echo $html;
+        return true;
+
     }
 
     public function actionGetCollectionDetails()

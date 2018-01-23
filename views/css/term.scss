@@ -2,6 +2,10 @@
 
 body {
     cursor: none !important;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+
 }
 
 .btn {

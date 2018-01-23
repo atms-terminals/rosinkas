@@ -84,10 +84,22 @@
             </div>
 
             <div role="tabpanel" id="hws" class="tab-pane fade in active">
-                <a class="btn btn-primary" id='refreshHwsStatus'>Обновить</a>
-                <div class="resultArea">
-                    <?php require_once(ROOT.'/views/hwsState.php'); ?>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a class="btn btn-primary" id='refreshHwsStatus'>Обновить</a>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <label class="text-right"><input type="checkbox" checked id="problemOnly"> Только проблемные</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="resultArea col-md-12">
+                            <?php require_once(ROOT.'/views/hwsState.php'); ?>
+                        </div>
+                    </div>
                 </div>
+                
             </div>
 
             <div role="tabpanel" id="admin" class="tab-pane fade">
@@ -124,6 +136,9 @@
     include 'include/prepaidDialog.php';
     include 'include/editUserDialog.php';
     include 'include/changePasswordDialog.php';
+    include 'include/notesDetailDialog.php';
+    include 'include/collectionDetailDialog.php';
+    include 'include/historyDialog.php';
     ?>
 
     <!-- env:prod --#>

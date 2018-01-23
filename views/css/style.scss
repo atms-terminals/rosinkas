@@ -3,10 +3,6 @@
 body {
     font-family: arial;
     background-color: $background;
-
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    user-select: none;
 }
 
 .container-fluid {
@@ -401,4 +397,24 @@ select.year, #priceStatus {
 .resultArea .status .blue {
     top: 4px;
     color: lightblue;
+}
+
+.notes-warning {
+    background-color: #FFFF7F;
+}
+
+.notes-danger {
+    background-color: #FF007F;
+    color: white;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.modal.modal-wide .modal-dialog {
+  width: 90%;
+}
+.modal-wide .modal-body {
+  overflow-y: auto;
 }

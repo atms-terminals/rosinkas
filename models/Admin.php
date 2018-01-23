@@ -13,40 +13,67 @@ class Admin
      * @var array список оборудования
      */
     public static $devices = array(
+        'connection' => 'Связь',
         'webSocket' => 'Система',
         'cash' => 'Купюроприемник',
         );
 
     /**
      * получение списка инкассаций
+     * @var int id терминала
+     * 
      * @return array массива состояний
      */
-    public static function getCollections()
+    public static function getCollections($id = false)
     {
         $money['collections'] = array();
         $money['free'] = array();
+        $money['nominals'] = array();
+
+        $sql = ($id) ? " and u.id = '$id'" : '';
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT date_format(c.dt, '%d.%m.%Y %H:%i') dt, u.address, sum(p.amount) amount, u.id
             from v_payments p
                 join users u on p.id_user = u.id
+                    $sql
                 join collections c on p.id_collection = c.id
             group by u.address, u.id, c.dt
-            order by c.dt";
+            order by c.dt desc";
         $collections = dbHelper\DbHelper::selectSet($query);
         foreach ($collections as $row) {
-            $money['collections'][$row['id']] = $row;
+            $money['collections'][$row['id']][] = $row;
         }
         // наличка
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT p.id_user, u.address, sum(p.amount) summ
             from v_payments p
                 join users u on u.id = p.id_user
+                    $sql
             where p.collected = 0
             group by p.id_user";
         $tmoney = dbHelper\DbHelper::selectSet($query);
         foreach ($tmoney as $row) {
             $money['free'][$row['id_user']] = $row['summ'];
+        }
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT n.id_user, n.nominal, count(*) cnt
+            from notes n
+                join users u on u.id = n.id_user
+                    $sql
+            where n.id_collection is null
+            group by n.id_user, n.nominal
+            order by n.nominal";
+        $tmoney = dbHelper\DbHelper::selectSet($query);
+        foreach ($tmoney as $row) {
+            $money['nominals'][$row['id_user']][$row['nominal']] = $row['cnt'];
+
+            if (empty($money['nominals'][$row['id_user']]['total'])) {
+                $money['nominals'][$row['id_user']]['total'] = $row['cnt'];
+            } else {
+                $money['nominals'][$row['id_user']]['total'] += $row['cnt'];
+            }
         }
 
         return $money;
@@ -100,10 +127,14 @@ class Admin
 
     /**
      * получение списка состояний оборудования
+     * @var int id терминала
+     * 
      * @return array массив состояний
      */
-    public static function getHwsState()
+    public static function getHwsState($id = false)
     {
+        $sql = ($id) ? " and u.id = '$id'" : '';
+
         // тех. состояние
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT u.id, u.address, h.`type`, h.is_error, date_format(h.dt, '%d.%m.%Y %H:%i') dt, h.message
@@ -112,6 +143,7 @@ class Admin
                on h.id_user = u.id
             where u.id_role = 2
                 and u.status = 1
+                $sql
             order by u.address, h.`type`";
         $list = dbHelper\DbHelper::selectSet($query);
 
@@ -134,6 +166,46 @@ class Admin
                 $result[$row['id']]['status'][$row['type']]['isError'] = $row['is_error'];
                 $result[$row['id']]['status'][$row['type']]['message'] = $row['message'];
             }
+        }
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT h.id_user id, UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(max(h.dt)) period, date_format(max(h.dt), '%d.%m.%Y %H:%i:%s') dt
+            from hws_status h 
+                join users u on u.id = h.id_user
+                    and u.id_role = 2
+                    and u.status = 1
+                    $sql
+            group by h.id_user";
+        $list = dbHelper\DbHelper::selectSet($query);
+        foreach ($list as $row) {
+            $result[$row['id']]['status']['connection']['isError'] = $row['period'] > 60 * 5 ? 1 : 0;
+            $result[$row['id']]['status']['connection']['message'] = $row['period'] > 60 * 5 ? 'нет связи' : 'ОК';
+            $result[$row['id']]['status']['connection']['dt'] = $row['dt'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * получение списка событий по терминалу
+     * @var int id терминала
+     * 
+     * @return array массив состояний
+     */
+    public static function getTerminalHistory($id = false)
+    {
+        $sql = ($id) ? " and a.id_user = '$id'" : '';
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT date_format(a.dt, '%d.%m.%Y %H:%i:%s') dt, a.`action`, a.id_user
+            from v_term_activity a 
+            where 1
+                $sql
+            order by a.dt desc
+            limit 100";
+        $list = dbHelper\DbHelper::selectSet($query);
+        foreach ($list as $row) {
+            $result[$row['id_user']][] = $row;
         }
 
         return $result;

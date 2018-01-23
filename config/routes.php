@@ -16,6 +16,9 @@ return array(
     '.*?/admin/getCollections' => 'admin/getCollections',
     '.*?/admin/getCollectionDetails' => 'admin/getCollectionDetails',
     '.*?/admin/getCollectionSummary' => 'admin/getCollectionSummary',
+    '.*?/admin/getCassetState' => 'admin/getCassetState',
+    '.*?/admin/getCollectionDetail' => 'admin/getCollectionDetail',
+    '.*?/admin/getTerminalHistory' => 'admin/getTerminalHistory',
 
     '.*?/admin/addDate' => 'admin/addDate',
     '.*?/admin/delDate' => 'admin/delDate',

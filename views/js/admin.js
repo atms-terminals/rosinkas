@@ -41,10 +41,50 @@ function get(action, $area, values) {
 $(document).ready(function() {
     'use strict';
 
+    setInterval(function() {get('getHwsState', $('#hws'), {'problemOnly': $('#problemOnly').prop('checked') ? 1 : 0});}, 45000);
+
+    $('#problemOnly').change(function(event) {
+        event.preventDefault();
+        get('getHwsState', $('#hws'), {'problemOnly': $('#problemOnly').prop('checked') ? 1 : 0});
+    });
+
+    // запрос истории по терминалу
+    $('#historyDialog').on('show.bs.modal', function(event) {
+        $('#historyDialog .casseteState').html();
+
+        var values = {
+                id: $(event.relatedTarget).parent('tr').find('.id').val(),
+            };
+
+        get('getTerminalHistory', $(this), values);
+    });
+
+    // запрос состояния кассеты
+    $('#notesDetailDialog').on('show.bs.modal', function(event) {
+        $('#notesDetailDialog .casseteState').html();
+
+        var values = {
+                id: $(event.relatedTarget).parent('tr').find('.id').val(),
+            };
+
+        get('getCassetState', $(this), values);
+    });
+
+    // запрос истории инкассации
+    $('#collectionDetailDialog').on('show.bs.modal', function(event) {
+        $('#collectionDetailDialog .casseteState').html();
+
+        var values = {
+                id: $(event.relatedTarget).parent('tr').find('.id').val(),
+            };
+
+        get('getCollectionDetail', $(this), values);
+    });
+
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         switch (e.target.hash) {
             case '#hws': 
-                get('getHwsState', $('#hws'));
+                get('getHwsState', $('#hws'), {'problemOnly': $('#problemOnly').prop('checked') ? 1 : 0});
                 break;
             case '#collections': 
                 get('getCollections', $('#collections'));
@@ -355,7 +395,7 @@ $(document).ready(function() {
     // запрос статусов оборудования
     $('#refreshHwsStatus').click(function(event) {
         event.preventDefault();
-        get('getHwsState', $('#hws'));
+        get('getHwsState', $('#hws'), {'problemOnly': $('#problemOnly').prop('checked') ? 1 : 0});
     });
 
     // запрос авансов по карте
