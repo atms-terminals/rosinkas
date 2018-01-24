@@ -6,7 +6,7 @@ use components\Url as url;
 
 // FRONT CONTROLLER
 
-if ($_SERVER['SERVER_ADDR'] == '127.0.0.1') {
+if ($_SERVER['SERVER_ADDR'] == '127.0.0.1' || 1) {
     ini_set('display_errors', '1');
     ini_set('error_reporting', E_ALL | E_STRICT | E_NOTICE);
 } else {

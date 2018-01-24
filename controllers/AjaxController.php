@@ -348,8 +348,47 @@ class AjaxController
 
         $query = "/*".__FILE__.':'.__LINE__."*/ "."SELECT collection($uid) collectionAmount";
         $row = dbHelper\DbHelper::selectRow($query);
+
         $replArray['patterns'][] = '{COLLECTION_AMOUNT}';
         $replArray['values'][] = $row['collectionAmount'];
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT n.nominal, count(*) qty
+            from (
+                select max(c.dt) dt
+                from collections c
+                where c.id_user = $uid) t
+                join collections c1 on c1.dt = t.dt
+                    and c1.id_user = $uid
+                join notes n on n.id_collection = c1.id
+            group by n.nominal";
+        $notes = dbHelper\DbHelper::selectSet($query);
+        $list = "<table style='font-size: 13px; border-collapse: collapse;' >
+            <tr style='border: 1px solid black; text-align: center'>
+                <td style='border: 1px solid black;'>Номинал</td>
+                <td style='border: 1px solid black;'>Кол-во</td>
+                <td style='border: 1px solid black;'>Сумма</td>
+            </tr>";
+        $total = 0;
+        foreach ($notes as $row) {
+            $summ = $row['nominal'] * $row['qty'];
+            $total += $summ;
+            $list .= "<tr style='border: 1px solid black; text-align: center'>
+                <td style='border: 1px solid black;'>{$row['nominal']}</td>
+                <td style='border: 1px solid black;'>{$row['qty']}</td>
+                <td style='border: 1px solid black;'>$summ</td>
+            </tr>";
+        }
+            $list .= "<tr style='border: 1px solid black; text-align: center'>
+                <td style='border: 1px solid black;' colspan='2'>Итого</td>
+                <td style='border: 1px solid black;'>$total</td>
+            </tr>";
+        $list .= '</table>';
+        $replArray['patterns'][] = '{LIST}';
+        $replArray['values'][] = $list;
+
+        $replArray['patterns'][] = '{DATETIME_TRN}';
+        $replArray['values'][] = date('d.m.Y H:i:s');
 
         $response = $this->getScreen($nextScreen, $replArray);
 

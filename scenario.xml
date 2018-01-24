@@ -82,6 +82,9 @@
     <s9>
         <desc>Терминал. Инкассация</desc>
         <screen>9</screen>
+        <print>
+            <full>16</full>
+        </print>
     </s9>
 
     <s10>
@@ -101,7 +104,7 @@
         <desc>Терминал. Дневной отчет</desc>
         <screen>11</screen>
         <print>
-            <full>8</full>
+            <full>15</full>
         </print>
         <timer>
             <screen>1</screen>
@@ -140,5 +143,7 @@
             <action>move</action>
         </timer>
     </s14>
+
+    <s15></s15>
 
 </states>
