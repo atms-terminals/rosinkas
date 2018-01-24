@@ -37,13 +37,23 @@
         </print>
         <timer>
             <screen>1</screen>
-            <timeout>5</timeout>
+            <timeout>15</timeout>
             <action>move</action>
         </timer>
     </s3>
 
     <s4></s4>
-    <s5></s5>
+
+    <s5>
+        <desc>Терминал. Нет явочной карточки</desc>
+        <screen>5</screen>
+        <timer>
+            <screen>1</screen>
+            <timeout>5</timeout>
+            <action>move</action>
+        </timer>
+    </s5>
+
     <s6></s6>
     <s7></s7>
 

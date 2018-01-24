@@ -12,7 +12,8 @@ define('GET_CARD_SCREEN', 13);
 define('GET_CARD_ACTION', 'move');
 define('ERROR_SCREEN', 7);
 define('LOCK_SCREEN', 12);
-define('NO_CARD_SCREEN', 13);
+define('NO_CARD_SCREEN', 5);
+define('NO_CARD_ACTION', 'move');
 // define('NO_SERVICES_SCREEN', 14);
 define('SERVICE_LIST_SCREEN', 1);
 
@@ -140,7 +141,7 @@ class AjaxController
         $row = dbHelper\DbHelper::selectRow($query);
 
         if (empty($row)) {
-            $_POST['nextScreen'] = user\User::getFirstScreen();
+            $_POST['nextScreen'] = NO_CARD_SCREEN;
             $this->actionMove();
             exit;
         }
