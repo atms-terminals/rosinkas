@@ -54,7 +54,19 @@
         </timer>
     </s5>
 
-    <s6></s6>
+    <s6>
+        <desc>Терминал. Закрытие смены</desc>
+        <screen>6</screen>
+        <print>
+            <full>7</full>
+        </print>
+        <timer>
+            <screen>1</screen>
+            <timeout>15</timeout>
+            <action>move</action>
+        </timer>
+    </s6>
+
     <s7></s7>
 
     <s8>
@@ -72,8 +84,32 @@
         <screen>9</screen>
     </s9>
 
-    <s10></s10>
-    <s11></s11>
+    <s10>
+        <desc>Терминал. Автоматическое закрытие смены</desc>
+        <screen>10</screen>
+        <print>
+            <full>4</full>
+        </print>
+        <timer>
+            <screen>6</screen>
+            <timeout>5</timeout>
+            <action>sessionClose</action>
+        </timer>
+    </s10>
+
+    <s11>
+        <desc>Терминал. Дневной отчет</desc>
+        <screen>11</screen>
+        <print>
+            <full>8</full>
+        </print>
+        <timer>
+            <screen>1</screen>
+            <timeout>15</timeout>
+            <action>move</action>
+        </timer>
+    </s11>
+
 
     <s12>
         <desc>Терминал. Временно не работает</desc>

@@ -196,7 +196,8 @@ function doAction(activity, nextScreen, values){
 
             // если есть таймер и нет аудио для автоматического перехода
             if (response.tScreen !== undefined && response.tScreen !== '') {
-                timer = setTimeout(function() {doAction(response.tAction, response.tScreen);} , response.tTimeout * 1000);
+                response.tValues = response.tValues || {};
+                timer = setTimeout(function() {doAction(response.tAction, response.tScreen, response.tValues);} , response.tTimeout * 1000);
                 if (response.tTimeoutNoMoney) {
                     timerNoMoney = setTimeout(function() {doAction(response.tAction, response.tScreen);} , response.tTimeoutNoMoney * 1000);
                 }

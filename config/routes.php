@@ -11,6 +11,8 @@ return array(
     '.*?/ajax/getServiceList' => 'ajax/getServiceList',
     '.*?/ajax/addToBasket' => 'ajax/addToBasket',
     '.*?/ajax/confirm' => 'ajax/confirm',
+    '.*?/ajax/sessionClose' => 'ajax/sessionClose',
+    '.*?/ajax/getDailyReport' => 'ajax/getDailyReport',
 
     '.*?/admin/getHwsState' => 'admin/getHwsState',
     '.*?/admin/getCollections' => 'admin/getCollections',

@@ -66,8 +66,8 @@ function handleCashmachineEvent(eventType, eventValue) {
         // если деньги приняты - то останавливаем таймер, который отслеживает невненсение денег
         if (currAmount) {
             clearTimeout(timerNoMoney);
-            $('.btn.action.pay').removeClass('hidden');
-            $('.btn.action.cancel').addClass('hidden');
+            $('.confirmArea').removeClass('hidden');
+            $('.cancelArea').addClass('hidden');
         }
 
         // Проверяем минимальную сумму платежа, если достигнута, то оплачиваем автоматом

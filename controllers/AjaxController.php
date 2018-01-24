@@ -24,6 +24,26 @@ class AjaxController
 {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     /**
+     * кладем в массивы для замены в шаблонах с параметрами терминала и явочной карточки
+     *
+     * @return array массивы для замены
+     */
+    private function putTermParamsIntoReplaceArray(&$replArray, $uid, $cardId)
+    {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT u.id TERM, u.address ADDRESS, c.num CARD, c.org CARD_ORG, c.address CARD_ADDRESS
+            from custom_cards c, users u
+            where c.id = '$cardId'
+                and u.id = $uid";
+        $payParams = dbHelper\DbHelper::selectRow($query);
+        foreach ($payParams as $key => $value) {
+            $replArray['patterns'][] = '{'.$key.'}';
+            $replArray['values'][] = $value;
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
      * кладем в массивы для замены в шаблонах массив POST.
      *
      * @return array массивы для замены
@@ -36,6 +56,35 @@ class AjaxController
                 $replArray['values'][] = $value;
             }
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * кладем в массивы для замены классы для показа кнопок
+     *
+     * @return array массивы для замены
+     */
+    private function putSpecialClassesIntoReplaceArray(&$replArray, $uid, $cardId)
+    {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT count(*) qty
+            from payments p
+            where p.id_user = $uid
+                and p.confirmed is null
+                and p.id_card = '$cardId'";
+        $res = dbHelper\DbHelper::selectRow($query);
+        $replArray['patterns'][] = '{CLOSE_CLASS}';
+        $replArray['values'][] = $res['qty'] ? '' : 'hidden';
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT count(*) qty
+            from payments p
+            where p.id_user = $uid
+                and p.id_card = '$cardId'
+                and date(p.dt_insert) = date(now())";
+        $res = dbHelper\DbHelper::selectRow($query);
+        $replArray['patterns'][] = '{DAILY_CLASS}';
+        $replArray['values'][] = $res['qty'] ? '' : 'hidden';
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,6 +149,7 @@ class AjaxController
         $uid = user\User::getId();
 
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
+        $cardId = (empty($_POST['values']['card_id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card_id']);
         $idService = (empty($_POST['values']['idService'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idService']);
         $qty = (empty($_POST['values']['qty'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['qty']);
         $idBasket = (empty($_POST['values']['idBasket'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['idBasket']);
@@ -109,6 +159,97 @@ class AjaxController
 
         $replArray = $this->makeReplaceArray($nextScreen);
         $this->putPostIntoReplaceArray($replArray);
+        $this->putSpecialClassesIntoReplaceArray($replArray, $uid, $cardId);
+
+        $response = $this->getScreen($nextScreen, $replArray);
+
+        $response['message'] = '';
+        $response['code'] = 0;
+        
+        //отправляем результат
+        echo json_encode($response);
+        return true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Обработка команды печати дневного отчета
+     */
+    public function actionGetDailyReport()
+    {
+        $uid = user\User::getId();
+
+        $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
+        $cardId = (empty($_POST['values']['card_id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card_id']);
+
+        $replArray = $this->makeReplaceArray($nextScreen);
+        $this->putPostIntoReplaceArray($replArray);
+        $this->putTermParamsIntoReplaceArray($replArray, $uid, $cardId);
+
+        $replArray['patterns'][] = '{DATETIME_TRN}';
+        $replArray['values'][] = date('d.m.Y H:m:i');
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT date_format(p.dt_insert, '%d.%m.%Y %H:%i') dt, p.amount, if(p.confirmed is null, 'Нет', 'Да') confirmed
+            from payments p
+            where p.id_user = $uid
+                and p.id_card = '$cardId'
+                and date(p.dt_insert) = date(now())";
+        $operations = dbHelper\DbHelper::selectSet($query);
+        $list = "<table style='font-size: 13px; border-collapse: collapse;' >
+            <tr style='border: 1px solid black; text-align: center'>
+                <td style='border: 1px solid black;'>Дата</td>
+                <td style='border: 1px solid black;'>Сумма</td>
+                <td style='border: 1px solid black;'>Подтв.</td>
+            </tr>";
+        foreach ($operations as $row) {
+            $list .= "<tr style='border: 1px solid black; text-align: center'>
+                <td style='border: 1px solid black;'>{$row['dt']}</td>
+                <td style='border: 1px solid black;'>{$row['amount']}</td>
+                <td style='border: 1px solid black;'>{$row['confirmed']}</td>
+            </tr>";
+        }
+        $list .= '</table>';
+        $replArray['patterns'][] = '{LIST}';
+        $replArray['values'][] = $list;
+
+        $response = $this->getScreen($nextScreen, $replArray);
+
+        $response['message'] = '';
+        $response['code'] = 0;
+        
+        //отправляем результат
+        echo json_encode($response);
+        return true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Обработка команды закрытия сессии
+     */
+    public function actionSessionClose()
+    {
+        $uid = user\User::getId();
+
+        $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
+        $cardId = (empty($_POST['values']['card_id'])) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['values']['card_id']);
+
+        $replArray = $this->makeReplaceArray($nextScreen);
+        $this->putPostIntoReplaceArray($replArray);
+        $this->putTermParamsIntoReplaceArray($replArray, $uid, $cardId);
+
+        // закрываем смену
+        $query = '/*'.__FILE__.':'.__LINE__.'*/ '.
+            "CALL payments_confirm($uid, '$cardId', @qty, @sum, @dt)";
+        dbHelper\DbHelper::call($query);
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT date_format(@dt, '%d.%m.%Y %H:%i:%s') DATETIME_TRN, @qty QTY, @sum SUM";
+        $payParams = dbHelper\DbHelper::selectRow($query);
+        foreach ($payParams as $key => $value) {
+            $replArray['patterns'][] = '{'.$key.'}';
+            $replArray['values'][] = $value;
+        }
 
         $response = $this->getScreen($nextScreen, $replArray);
 
@@ -132,7 +273,6 @@ class AjaxController
         $nextScreen = (empty($_POST['nextScreen'])) ? user\User::getFirstScreen() : dbHelper\DbHelper::mysqlStr($_POST['nextScreen']);
 
         $replArray = $this->makeReplaceArray($nextScreen);
-        // $this->putPostIntoReplaceArray($replArray);
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT c.id, c.org, c.address
@@ -145,6 +285,7 @@ class AjaxController
             $this->actionMove();
             exit;
         }
+        $this->putSpecialClassesIntoReplaceArray($replArray, $uid, $row['id']);
 
         $replArray['patterns'][] = '{CARD}';
         $replArray['values'][] = $card;
@@ -328,6 +469,9 @@ class AjaxController
             $timer['tTimeout'] = $response['tTimeout'];
             $timer['tTimeoutNoMoney'] = $response['tTimeoutNoMoney'];
             $timer['tAction'] = $response['tAction'];
+            if (!empty($_POST['values'])) {
+                $response['tValues'] = $_POST['values'];
+            }
         }
 
         // печатная форма
