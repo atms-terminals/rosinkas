@@ -8,6 +8,9 @@ components/cards/**
 
 sqlUpdate/**
 
+# файлы выгрузки
+files/**
+
 # релиз файлы
 release/**
 tmp/**
