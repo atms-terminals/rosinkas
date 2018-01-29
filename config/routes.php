@@ -21,6 +21,8 @@ return array(
     '.*?/admin/getCassetState' => 'admin/getCassetState',
     '.*?/admin/getCollectionDetail' => 'admin/getCollectionDetail',
     '.*?/admin/getTerminalHistory' => 'admin/getTerminalHistory',
+    '.*?/admin/getFiles' => 'admin/getFiles',
+    '.*?/admin/makeXml' => 'admin/makeXml',
 
     '.*?/admin/addDate' => 'admin/addDate',
     '.*?/admin/delDate' => 'admin/delDate',

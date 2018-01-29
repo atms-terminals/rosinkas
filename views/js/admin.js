@@ -48,7 +48,7 @@ $(document).ready(function() {
         get('getHwsState', $('#hws'), {'problemOnly': $('#problemOnly').prop('checked') ? 1 : 0});
     });
 
-    // запрос истории по терминалу
+   // запрос истории по терминалу
     $('#historyDialog').on('show.bs.modal', function(event) {
         $('#historyDialog .casseteState').html();
 
@@ -86,6 +86,9 @@ $(document).ready(function() {
             case '#hws': 
                 get('getHwsState', $('#hws'), {'problemOnly': $('#problemOnly').prop('checked') ? 1 : 0});
                 break;
+            case '#files': 
+                get('getFiles', $('#files'));
+                break;
             case '#collections': 
                 get('getCollections', $('#collections'));
                 break;
@@ -117,6 +120,17 @@ $(document).ready(function() {
         $.post(sid + '/admin/delDate', req, function(response) {
             $('#schedule .resultArea .dates').html(response.html);
         }, 'json')
+            .fail(function(){
+            });
+    });
+
+    $(document).on('click', '#makeXml', function() {
+        var sid = $('#sid').val(),
+            req = {};
+
+        $.post(sid + '/admin/makeXml', req, function() {
+            get('getFiles', $('#files'));
+        }, 'text')
             .fail(function(){
             });
     });

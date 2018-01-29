@@ -2,9 +2,13 @@
 namespace controllers\AdminController;
 
 include_once ROOT.'/models/Admin.php';
+include_once ROOT.'/controllers/ExportController.php';
+
+
 use models\Admin as admin;
 use components\User as user;
 use components\DbHelper as dbHelper;
+use controllers\Export as exportController;
 
 define('MAX_CASS_CAPASITY', 1500);
 
@@ -32,6 +36,20 @@ class AdminController
         $devices = admin\Admin::$devices;
 
         require_once(ROOT.'/views/hwsState.php');
+        return true;
+    }
+
+    public function actionGetFiles()
+    {
+        $files = admin\Admin::getFiles();
+
+        require_once(ROOT.'/views/files.php');
+        return true;
+    }
+
+    public function actionMakeXml()
+    {
+        exportController\ExportController::makeXml(date('d.m.Y'));
         return true;
     }
 

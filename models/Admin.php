@@ -19,6 +19,32 @@ class Admin
         );
 
     /**
+     * получение списка файлов
+     * @var int id терминала
+     * 
+     * @return array массива состояний
+     */
+    public static function getFiles()
+    {
+        $files = array();
+        if ($handle = opendir('.'.FILES_PATH)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != "..") {
+                    $dt = filemtime('.'.FILES_PATH.$entry);
+                    $files[$dt.$entry] = array(
+                        'path' => $entry,
+                        'dt' => date("d.m.Y H:i:s", $dt)
+                    );
+                }
+            }
+            closedir($handle);
+        }
+
+        krsort($files);
+        return $files;
+    }
+
+    /**
      * получение списка инкассаций
      * @var int id терминала
      * 

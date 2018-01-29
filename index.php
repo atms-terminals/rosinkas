@@ -16,6 +16,7 @@ if ($_SERVER['SERVER_ADDR'] == '127.0.0.1' || 1) {
 
 // подключение файлов системы
 define('ROOT', __DIR__);
+require_once ROOT.'/config/consts.php';
 require_once ROOT.'/components/Router.php';
 require_once ROOT.'/components/DbHelper.php';
 require_once ROOT.'/components/User.php';
