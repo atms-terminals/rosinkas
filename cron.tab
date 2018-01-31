@@ -1,0 +1,2 @@
+ 15 4 * * * /usr/bin/php /var/www/queue.rosinkas/release/exportCollectionFile.php >> /var/log/rosinkas/export.log
+ 

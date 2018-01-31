@@ -23,6 +23,7 @@ return array(
     '.*?/admin/getTerminalHistory' => 'admin/getTerminalHistory',
     '.*?/admin/getFiles' => 'admin/getFiles',
     '.*?/admin/makeXml' => 'admin/makeXml',
+    '.*?/admin/serviceOrder' => 'admin/serviceOrder',
 
     '.*?/admin/addDate' => 'admin/addDate',
     '.*?/admin/delDate' => 'admin/delDate',

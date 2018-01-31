@@ -157,6 +157,27 @@ $(document).ready(function() {
             });
     });
 
+    $('#serviceOrderDialog').on('show.bs.modal', function(event) {
+        var id = $(event.relatedTarget).closest('tr').find('.id').val();
+        $('#serviceOrderDialog').data('params', {id: id});
+    });
+
+    $('#sendServiceOrder').click(function() {
+        var message = $('#serviceOrderDialog #message').val(),
+            sid = $('#sid').val(),
+            params = $('#serviceOrderDialog').data('params');
+
+        var req = {
+                id: params.id,
+                message: message,
+            };
+
+        $.post(sid + '/admin/serviceOrder', req, function() {
+        }, 'json')
+            .fail(function(){
+            });
+    });
+
     // дата
     $('.dt').datetimepicker({
         format: 'DD.MM.YYYY',

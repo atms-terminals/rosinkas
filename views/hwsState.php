@@ -10,6 +10,7 @@
             ?>
             <th>Заполненность</th>
             <th>Последняя инкассация</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -54,6 +55,9 @@
             $html .= "<td align='center' class='pointer' data-target='#collectionDetailDialog' data-toggle='modal'>$last</td>";
 
             $rowClass = $problemOnly ? ($isProblem ? '' : 'hidden') : '';
+
+            $html .= "<td align='center'><button class='btn btn-default' data-target='#serviceOrderDialog' data-toggle='modal'>Заявка на обслуживание</button></td>";
+
             echo "<tr class='$rowClass'>$html</tr>";
         }
         ?>

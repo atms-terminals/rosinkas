@@ -148,6 +148,7 @@
     include 'include/notesDetailDialog.php';
     include 'include/collectionDetailDialog.php';
     include 'include/historyDialog.php';
+    include 'include/serviceOrderDialog.php';
     ?>
 
     <!-- env:prod --#>

@@ -3,12 +3,13 @@ namespace controllers\AdminController;
 
 include_once ROOT.'/models/Admin.php';
 include_once ROOT.'/controllers/ExportController.php';
-
+include_once ROOT.'/components/Mail.php';
 
 use models\Admin as admin;
 use components\User as user;
 use components\DbHelper as dbHelper;
 use controllers\Export as exportController;
+use components\Mailer as mailer;
 
 define('MAX_CASS_CAPASITY', 1500);
 
@@ -50,6 +51,17 @@ class AdminController
     public function actionMakeXml()
     {
         exportController\ExportController::makeXml(date('d.m.Y'));
+        return true;
+    }
+
+    public function actionServiceOrder()
+    {
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+        $message = empty($_POST['message']) ? '' : dbHelper\DbHelper::mysqlStr($_POST['message']);
+
+        $xml = exportController\ExportController::makeServiceOrder($id, $message);
+
+        echo mailer\Mailer::sendAttachEmail(MY_EMAIL, SUPPORT_EMAIL, CC_EMAIL, 'Заявка на обслуживание '.ORG, '', 'order.xml', $xml);
         return true;
     }
 
