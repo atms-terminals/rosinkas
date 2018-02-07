@@ -15,6 +15,10 @@ files/**
 release/**
 tmp/**
 
+# config
+config/consts.php
+config/dbParams.php
+
 # sass файлы
 .sass-cache/**
 views/css/*.css
