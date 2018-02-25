@@ -15,6 +15,8 @@
     <!-- env:dev -->
         <link href='../bower_components/bootstrap/dist/css/bootstrap.css' rel="stylesheet" />
         <link href="../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+        <link href="../bower_components/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet" />
+        <link href="../bower_components/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet" />
         <link href='views/css/style-sass.css?<?= filemtime(ROOT.'/views/css/style-sass.css')?>' rel="stylesheet" />
     <!-- env:dev:end -->
 
@@ -33,6 +35,7 @@
             <li role="presentation" class="active"><a href="#hws" aria-controls="hws" role="tab" data-toggle="tab">Оборудование</a></li>
             <li role="presentation"><a href="#files" aria-controls="files" role="tab" data-toggle="tab">Файлы</a></li>
             <li role="presentation"><a href="#admin" aria-controls="admin" role="tab" data-toggle="tab">Администрирование</a></li>
+            <li role="presentation"><a href="#cards" aria-controls="admin" role="tab" data-toggle="tab">Явочные карты</a></li>
             <!-- <li role="presentation"><a href="#schedule" aria-controls="schedule" role="tab" data-toggle="tab">Настройка дней</a></li> -->
             <!-- <li role="presentation"><a href="#priceGroup" aria-controls="priceGroup" role="tab" data-toggle="tab">Настройка меню</a></li> -->
             <!-- <li role="presentation"><a href="#collections" aria-controls="collections" role="tab" data-toggle="tab">Инкассации</a></li> -->
@@ -53,7 +56,7 @@
                                         $year++;
                                     }
                                     ?>
-                                </select> 
+                                </select>
                             </div>
                         </div>
                         <div class="row">
@@ -108,7 +111,15 @@
                         </div>
                     </div>
                 </div>
-                
+            </div>
+
+            <div role="tabpanel" id="cards" class="tab-pane fade">
+                <h2>Явочные карты</h2>
+                <div class="form-group">
+                    <button type='button' class='btn btn-primary changeCard add card' data-toggle='modal' data-target='#changeCardDialog'>Добавить</button>
+                    <button type="button" class="btn btn-primary uploadCards" data-toggle="modal" data-target="#fileUploadDialog">Загрузить из файла</button>
+                </div>
+                <div class="resultArea"></div>
             </div>
 
             <div role="tabpanel" id="admin" class="tab-pane fade">
@@ -149,7 +160,9 @@
     include 'include/collectionDetailDialog.php';
     include 'include/historyDialog.php';
     include 'include/serviceOrderDialog.php';
-    ?>
+    include 'include/editCardDialog.php';
+    include 'include/fileUploadDialog.php';
+?>
 
     <!-- env:prod --#>
         <script src='views/js/admin.min.js?<?= filemtime("views/js/admin.min.js")?>'></script>
@@ -161,6 +174,9 @@
         <script src="../bower_components/moment/locale/ru.js"></script>
         <script src='../bower_components/bootstrap/dist/js/bootstrap.js'></script>
         <script src="../bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+        <script src='../bower_components/datatables.net/js/jquery.dataTables.min.js'></script>
+        <script src='../bower_components/bootstrap-fileinput/js/fileinput.min.js'></script>
+        <script src='../bower_components/bootstrap-fileinput/js/locales/ru.js'></script>
 
         <script src='views/js/admin.js?<?= filemtime(ROOT.'/views/js/admin.js')?>'></script>
     <!-- env:dev:end -->

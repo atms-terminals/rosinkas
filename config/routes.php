@@ -54,4 +54,10 @@ return array(
 
     '.*?/admin/getPrepaidStatus' => 'admin/getPrepaidStatus',
     '.*?/admin/changePrepaid' => 'admin/changePrepaid',
+
+    '.*?/admin/getCards' => 'admin/getCards',
+    '.*?/admin/addCard' => 'admin/addCard',
+    '.*?/admin/editCard' => 'admin/editCard',
+    '.*?/admin/deleteCard' => 'admin/deleteCard',
+    '.*?/admin/uploadCards' => 'admin/uploadCards',
 );

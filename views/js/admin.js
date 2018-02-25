@@ -6,7 +6,8 @@ function get(action, $area, values) {
     values = values || false;
 
     var sid = $('#sid').val();
-    $.get(sid + '/admin/' + action, values, function(data) {
+
+    return $.get(sid + '/admin/' + action, values, function(data) {
         $area.find('.resultArea').html(data);
 
         if (action === 'getPriceGroup') {
@@ -20,7 +21,7 @@ function get(action, $area, values) {
                     $checkbox = $(this).closest('li').find('.serviceItem'),
                     $form = $(this).closest('.times'),
                     req = {
-                        id: $checkbox.attr('id'), 
+                        id: $checkbox.attr('id'),
                         idDay: $form.find('.dayStatus').val(),
                         timeStart: $form.find('.timeStart').val(),
                         timeFinish: $form.find('.timeFinish').val()
@@ -35,7 +36,6 @@ function get(action, $area, values) {
             });
         }
     });
-
 }
 
 $(document).ready(function() {
@@ -83,26 +83,31 @@ $(document).ready(function() {
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         switch (e.target.hash) {
-            case '#hws': 
+            case '#hws':
                 get('getHwsState', $('#hws'), {'problemOnly': $('#problemOnly').prop('checked') ? 1 : 0});
                 break;
-            case '#files': 
+            case '#files':
                 get('getFiles', $('#files'));
                 break;
-            case '#collections': 
+            case '#collections':
                 get('getCollections', $('#collections'));
                 break;
-            case '#priceGroup': 
-                get('getPriceGroup', $('#priceGroup'), 
+            case '#priceGroup':
+                get('getPriceGroup', $('#priceGroup'),
                     {
                         type: $('.day-type .active').val(),
                         active: $('#priceStatus').prop('checked') ? 1 : 0
                     }
                 );
                 break;
-            case '#admin': 
+            case '#admin':
                 get('getTerminals', $('#terminals'));
                 get('getUsers', $('#users'));
+                break;
+            case '#cards':
+                $.when(get('getCards', $('#cards'))).then(function() {
+                    setDataTable();
+                });
                 break;
         }
     });
@@ -204,7 +209,7 @@ $(document).ready(function() {
         var sid = $('#sid').val(),
             $checkbox = $(this).siblings('.serviceItem'),
             req = {
-                id: $checkbox.attr('id'), 
+                id: $checkbox.attr('id'),
                 text: $(this).val()
             };
 
@@ -267,7 +272,7 @@ $(document).ready(function() {
         var sid = $('#sid').val(),
             $checkbox = $(this).siblings('.serviceItem'),
             req = {
-                id: $checkbox.attr('id'), 
+                id: $checkbox.attr('id'),
                 text: $(this).val()
             };
 
@@ -284,7 +289,7 @@ $(document).ready(function() {
         var sid = $('#sid').val(),
             $checkbox = $(this).siblings('.serviceItem'),
             req = {
-                id: $checkbox.attr('id'), 
+                id: $checkbox.attr('id'),
                 text: $(this).val()
             };
 
@@ -301,7 +306,7 @@ $(document).ready(function() {
         var sid = $('#sid').val(),
             $checkbox = $(this).siblings('.serviceItem'),
             req = {
-                id: $checkbox.attr('id'), 
+                id: $checkbox.attr('id'),
                 price: $(this).val()
             };
 
@@ -318,7 +323,7 @@ $(document).ready(function() {
         var sid = $('#sid').val(),
             $checkbox = $(this).siblings('.serviceItem'),
             req = {
-                id: $checkbox.attr('id'), 
+                id: $checkbox.attr('id'),
                 nds: $(this).val()
             };
 
@@ -337,7 +342,7 @@ $(document).ready(function() {
             color = $this.find('.color input:checked').val(),
             $checkbox = $this.find('.serviceItem'),
             req = {
-                id: $checkbox.attr('id'), 
+                id: $checkbox.attr('id'),
                 color: color
             };
 
@@ -356,7 +361,7 @@ $(document).ready(function() {
             idDay = $(this).val(),
             $checkbox = $this.find('.serviceItem'),
             req = {
-                id: $checkbox.attr('id'), 
+                id: $checkbox.attr('id'),
                 idDay: idDay,
                 status: $(this).prop('checked') ? 1 : 0
             };
@@ -373,7 +378,7 @@ $(document).ready(function() {
     $(document).on('click', '.serviceItem', function() {
         var sid = $('#sid').val(),
             req = {
-                id: $(this).attr('id'), 
+                id: $(this).attr('id'),
                 status: $(this).prop('checked') ? 1 : 0
             };
 
@@ -444,7 +449,7 @@ $(document).ready(function() {
         event.preventDefault();
         var sid = $('#sid').val(),
             req = {
-                card: $('#changePrepaymentDialog .card').val(), 
+                card: $('#changePrepaymentDialog .card').val(),
                 amount: $('#changePrepaymentDialog .amount').val()
             };
 
@@ -471,7 +476,7 @@ $(document).ready(function() {
             $this = $(this),
             $tr = $this.closest('tr'),
             req = {
-                id: $tr.find('.id').val(), 
+                id: $tr.find('.id').val(),
                 status: $this.hasClass('enable') ? 1 : 0
             };
 
@@ -535,12 +540,12 @@ $(document).ready(function() {
     $('#changeUserDialog .confirm').click(function(event) {
         event.preventDefault();
         var sid = $('#sid').val(),
-            action = $('#changeUserDialog .action').val(), 
+            action = $('#changeUserDialog .action').val(),
             req = {
-                id: $('#changeUserDialog .id').val(), 
-                ip: $('#changeUserDialog .ip').val(), 
-                address: $('#changeUserDialog .address').val(), 
-                login: $('#changeUserDialog .login').val(), 
+                id: $('#changeUserDialog .id').val(),
+                ip: $('#changeUserDialog .ip').val(),
+                address: $('#changeUserDialog .address').val(),
+                login: $('#changeUserDialog .login').val(),
             };
 
         $.post(sid + '/admin/' + action, req, function() {
@@ -572,10 +577,10 @@ $(document).ready(function() {
     $(document).on('click', '#changePassword', function(event) {
         event.preventDefault();
         var sid = $('#sid').val(),
-            action = 'changePassword', 
+            action = 'changePassword',
             req = {
-                id: $('#changePasswordDialog .id').val(), 
-                new: $('#changePasswordDialog .password').val(), 
+                id: $('#changePasswordDialog .id').val(),
+                new: $('#changePasswordDialog .password').val(),
             };
 
         $.post(sid + '/admin/' + action, req, function() {
@@ -601,6 +606,10 @@ $(document).ready(function() {
             $('#confirmDeleteDialog .modal-body span').html('элемент меню');
             $('#confirmDeleteDialog .modal-body .id').val($this.siblings('.serviceItem').attr('id'));
             $('#confirmDeleteDialog .modal-body .action').val('deletePriceItem');
+        } else if($this.hasClass('card')) {
+            $('#confirmDeleteDialog .modal-body span').html('карту');
+            $('#confirmDeleteDialog .modal-body .id').val($this.data('id'));
+            $('#confirmDeleteDialog .modal-body .action').val('deleteCard');
         }
     });
 
@@ -608,9 +617,9 @@ $(document).ready(function() {
     $(document).on('click', '#deleteThis', function(event) {
         event.preventDefault();
         var sid = $('#sid').val(),
-            action = $('#confirmDeleteDialog .action').val(), 
+            action = $('#confirmDeleteDialog .action').val(),
             req = {
-                id: $('#confirmDeleteDialog .id').val(), 
+                id: $('#confirmDeleteDialog .id').val(),
             };
 
         $.post(sid + '/admin/' + action, req, function() {
@@ -619,12 +628,16 @@ $(document).ready(function() {
             } else if (action === 'deleteTerminal') {
                 get('getTerminals', $('#terminals'));
             } else if (action === 'deletePriceItem') {
-                get('getPriceGroup', $('#priceGroup'), 
+                get('getPriceGroup', $('#priceGroup'),
                     {
                         type: $('.day-type .active').val(),
                         active: $('#priceStatus').prop('checked') ? 1 : 0
                     }
                 );
+            } else if (action === 'deleteCard') {
+                $.when(get('getCards', $('#cards'))).then(function() {
+                    setDataTable();
+                });
             }
         }, 'json')
             .fail(function(){
@@ -633,7 +646,7 @@ $(document).ready(function() {
                 } else if (action === 'deleteTerminal') {
                     get('getTerminals', $('#terminals'));
                 } else if (action === 'deletePriceItem') {
-                    get('getPriceGroup', $('#priceGroup'), 
+                    get('getPriceGroup', $('#priceGroup'),
                         {
                             type: $('.day-type .active').val(),
                             active: $('#priceStatus').prop('checked') ? 1 : 0
@@ -643,4 +656,93 @@ $(document).ready(function() {
             });
 
     });
+
+    // окно добавление/редактирования явочной карты
+    $(document).on('click', '.changeCard', function(event) {
+        event.preventDefault();
+        var $this = $(this),
+            action = '';
+        if($this.hasClass('add')) {
+            action = 'addCard';
+            $('#changeCardDialog .add').show();
+            $('#changeCardDialog .edit').hide();
+        } else {
+            action = 'editCard';
+            $('#changeCardDialog .edit').show();
+            $('#changeCardDialog .add').hide();
+            $('#changeCardDialog .num').val($this.closest('tr').find('.num').text());
+            $('#changeCardDialog .org').val($this.closest('tr').find('.org').text());
+            $('#changeCardDialog .address').val($this.closest('tr').find('.address').text());
+        }
+
+        $('#changeCardDialog').data('id', $this.data('id'));
+        $('#changeCardDialog').data('action', action);
+    });
+
+    // сохранение карты
+    $(document).on('click', '.confirm', function(event) {
+        event.preventDefault();
+        var sid = $('#sid').val(),
+            action = $('#changeCardDialog').data('action'),
+            attr = {
+                id: $('#changeCardDialog').data('id'),
+                num: $('#changeCardDialog .num').val(),
+                org: $('#changeCardDialog .org').val(),
+                address: $('#changeCardDialog .address').val()
+            };
+        $.post(sid + '/admin/' + action, attr, function() {
+            $.when(get('getCards', $('#cards'))).then(function() {
+                setDataTable();
+            });
+        }, 'json').fail(function() {
+            $.when(get('getCards', $('#cards'))).then(function() {
+                setDataTable();
+            });
+        });
+    });
+
+    $(document).on('click', '.uploadCards', function(event) {
+        event.preventDefault();
+        $('#fileUploadDialog').data('action', 'uploadCards');
+    });
+
+    $(document).on('submit', '#fileUploadDialog form', function(event) {
+        event.preventDefault();
+        var sid = $('#sid').val(),
+            form_data = new FormData($('#fileUploadDialog form')[0]),
+            action = $('#fileUploadDialog').data('action');
+
+        $.ajax({
+            type: 'POST',
+            url: sid + '/admin/' + action,
+            processData: false,
+            contentType: false,
+            async: false,
+            cache: false,
+            data: form_data,
+            success: function() {
+                $.when(get('getCards', $('#cards'))).then(function() {
+                    setDataTable();
+                    $('#fileUploadDialog').modal('hide');
+                });
+            }
+        });
+    });
+
+    function setDataTable() {
+        $('#cards-table').DataTable({
+            stateSave: true,
+//            autoWidth: true,
+            'language': {
+                info: 'Страница _PAGE_ из _PAGES_',
+                lengthMenu: 'Показать _MENU_ записей',
+                search: 'Найти: ',
+                paginate: {
+                    next: 'Следующая',
+                    previous: 'Предыдущая'
+                }
+            }
+        });
+    }
+
 });

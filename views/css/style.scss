@@ -303,7 +303,7 @@ button.service.control {
     margin-top: 150px;
 }
 .confirmDelete {
-    margin-right: 30px;
+    /*margin-right: 30px;*/
     float: right;}
 
 .color{
@@ -378,8 +378,13 @@ select.year, #priceStatus {
 }
 
 .modal.modal-wide .modal-dialog {
-  width: 90%;
+    width: 90%;
 }
+
 .modal-wide .modal-body {
-  overflow-y: auto;
+    overflow-y: auto;
+}
+
+td.control {
+    width: 180px;
 }

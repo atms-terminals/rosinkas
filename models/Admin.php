@@ -21,7 +21,7 @@ class Admin
     /**
      * получение списка файлов
      * @var int id терминала
-     * 
+     *
      * @return array массива состояний
      */
     public static function getFiles()
@@ -47,7 +47,7 @@ class Admin
     /**
      * получение списка инкассаций
      * @var int id терминала
-     * 
+     *
      * @return array массива состояний
      */
     public static function getCollections($id = false)
@@ -113,8 +113,8 @@ class Admin
     {
         $sql = $status ? 'p.status = 1' : '1';
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
-            "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color, p.price, p.nds, o.id_day, 
-                date_format(t.`start`, '%H:%i') time_start, date_format(t.`finish`, '%H:%i') time_finish, t.id_day time_day, 
+            "SELECT p.id, p.id_parent, p.`desc`, p.clients_desc, p.`status`, p.color, p.price, p.nds, o.id_day,
+                date_format(t.`start`, '%H:%i') time_start, date_format(t.`finish`, '%H:%i') time_finish, t.id_day time_day,
                 p.comment
             from v_custom_pricelist p
                 left join custom_price_redstar_dayoff o on p.id = o.id_item
@@ -154,7 +154,7 @@ class Admin
     /**
      * получение списка состояний оборудования
      * @var int id терминала
-     * 
+     *
      * @return array массив состояний
      */
     public static function getHwsState($id = false)
@@ -164,7 +164,7 @@ class Admin
         // тех. состояние
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT u.id, u.address, h.`type`, h.is_error, date_format(h.dt, '%d.%m.%Y %H:%i') dt, h.message
-            from users u 
+            from users u
             left join hws_status h
                on h.id_user = u.id
             where u.id_role = 2
@@ -196,7 +196,7 @@ class Admin
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT h.id_user id, UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(max(h.dt)) period, date_format(max(h.dt), '%d.%m.%Y %H:%i:%s') dt
-            from hws_status h 
+            from hws_status h
                 join users u on u.id = h.id_user
                     and u.id_role = 2
                     and u.status = 1
@@ -215,7 +215,7 @@ class Admin
     /**
      * получение списка событий по терминалу
      * @var int id терминала
-     * 
+     *
      * @return array массив состояний
      */
     public static function getTerminalHistory($id = false)
@@ -224,7 +224,7 @@ class Admin
 
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT date_format(a.dt, '%d.%m.%Y %H:%i:%s') dt, a.`action`, a.id_user
-            from v_term_activity a 
+            from v_term_activity a
             where 1
                 $sql
             order by a.dt desc
@@ -306,6 +306,20 @@ class Admin
             from v_real_users u
             where u.id_role = 2
             order by u.login";
+        $list = dbHelper\DbHelper::selectSet($query);
+
+        return $list;
+    }
+
+    /**
+     * получение списка карточек
+     * @return array список
+     */
+    public static function getCards() {
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT *
+            from custom_cards c
+            order by c.num";
         $list = dbHelper\DbHelper::selectSet($query);
 
         return $list;

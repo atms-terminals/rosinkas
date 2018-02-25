@@ -155,7 +155,7 @@ class AdminController
         // echo "<pre>"; print_r($money); echo "</pre>";
         $qty = empty($money['nominals'][$id]['total']) ? 0 : $money['nominals'][$id]['total'];
         $summ = empty($money['free'][$id]) ? 0 : $money['free'][$id];
-        
+
         $html = '';
         $html .= "<div class='h4'>Терминал $id</div>";
         $html .= empty($statuses[$id]['address']) ? '' : "<div class='h5'><i>{$statuses[$id]['address']}</i></div>";
@@ -184,7 +184,7 @@ class AdminController
     {
         $dt = empty($_POST['dt']) ? 'now()' : "str_to_date('".dbHelper\DbHelper::mysqlStr($_POST['dt'])."', '%d.%m.%Y')";
         $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
-        
+
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT u.address, '{$_POST['dt']}' dt
             from users u
@@ -214,7 +214,7 @@ class AdminController
     {
         $dt = empty($_POST['dt']) ? 'now()' : "str_to_date('".dbHelper\DbHelper::mysqlStr($_POST['dt'])."', '%d.%m.%Y')";
         $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
-        
+
         $query = "/*".__FILE__.':'.__LINE__."*/ ".
             "SELECT u.address, '{$_POST['dt']}' dt
             from users u
@@ -247,7 +247,7 @@ class AdminController
         $rest = 0;
         for ($i = 0; $i < count($opers); $i++) {
             $ind = $opers[$i]['service'];
-            
+
             $rest += $opers[$i]['rest'];
 
             if ($opers[$i]['paid']) {
@@ -650,4 +650,93 @@ class AdminController
         echo json_encode($response);
         return true;
     }
+
+    public function actionGetCards()
+    {
+        $list = admin\Admin::getCards();
+
+        require_once(ROOT.'/views/cardList.php');
+        return true;
+    }
+
+    public function actionAddCard()
+    {
+        $uid = user\User::getId();
+        $num = $_POST['num'];
+        $org = empty($_POST['org']) ? '' : $_POST['org'];
+        $address = empty($_POST['address']) ? '' : $_POST['address'];
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_cards_add($uid, '$num', '$org', '$address')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
+    public function actionEditCard()
+    {
+        $uid = user\User::getId();
+        $id = $_POST['id'];
+        $num = empty($_POST['num']) ? null : $_POST['num'];
+        $org = empty($_POST['org']) ? '' : $_POST['org'];
+        $address = empty($_POST['address']) ? '' : $_POST['address'];
+
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_cards_edit($uid, $id, '$num', '$org', '$address')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
+    public function actionDeleteCard() {
+        $uid = user\User::getId();
+        $id = empty($_POST['id']) ? 0 : dbHelper\DbHelper::mysqlStr($_POST['id']);
+        $query = "/*".__FILE__.':'.__LINE__."*/ ".
+            "SELECT custom_cards_delete($uid, '$id')";
+        $result = dbHelper\DbHelper::selectRow($query);
+        $response['code'] = 0;
+
+        echo json_encode($response);
+        return true;
+    }
+
+    public function actionUploadCards() {
+        $uid = user\User::getId();
+        $uploadfile = ROOT . '/tmp/' . basename($_FILES['file']['name']);
+
+        if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
+            $data = file_get_contents($uploadfile);
+            $data = explode('***', $data);
+            $data = array_values(array_filter($data, function($el) {
+                    return !empty($el);
+                }));
+
+            $query = "/*" . __FILE__ . ':' . __LINE__ . "*/ " .
+                "TRUNCATE TABLE custom_cards";
+            $result = dbHelper\DbHelper::call($query);
+
+            foreach($data as $item) {
+                $item = preg_replace('/[\']/', '\\\'', $item);
+                $arr = array_values(array_filter(explode("\n", $item), function($el) {
+                        return !empty($el);
+                    }));
+                if(count($arr) == 11) {
+                    $num = $arr[0];
+                    $org = $arr[1] ? $arr[1] : '';
+                    $address = $arr[2] ? $arr[2] : '';
+                    $query = "/*" . __FILE__ . ':' . __LINE__ . "*/ " .
+                        "SELECT custom_cards_add($uid, '$num', '$org', '$address')";
+                    $result = dbHelper\DbHelper::selectRow($query);
+                }
+            }
+        }
+        $response['code'] = 0;
+        echo json_encode($response);
+        return true;
+    }
+
 }
