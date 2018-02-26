@@ -66,15 +66,17 @@ module.exports = function(grunt) {
                     'tmp/terminal.js': [
                         'bower_components/jquery/dist/jquery.js',
                         'bower_components/bootstrap/dist/js/bootstrap.js',
-                        'views/js/terminal.js', 
-                        'views/js/cashcode.js', 
-                        'views/kbd/kbd.js', 
+                        'views/js/terminal.js',
+                        'views/js/cashcode.js',
+                        'views/kbd/kbd.js',
                         ],
                     'tmp/admin.js': [
                         'bower_components/jquery/dist/jquery.js',
                         'bower_components/bootstrap/dist/js/bootstrap.js',
                         'bower_components/moment/min/moment-with-locales.js',
                         'bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js',
+                        'bower_components/bootstrap-fileinput/js/fileinput.js',
+                        'bower_components/datatables.net/js/jquery.dataTables.js',
                         'views/js/admin.js',
                         ],
                 },
@@ -88,7 +90,7 @@ module.exports = function(grunt) {
                 },
 
                 options: {
-                    // see below for options. this is optional. 
+                    // see below for options. this is optional.
                 }
             }
         },
@@ -132,6 +134,8 @@ module.exports = function(grunt) {
                     'release/views/css/style.min.css' : [
                         'bower_components/bootstrap/dist/css/bootstrap.css',
                         'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+                        'bower_components/bootstrap-fileinput/css/fileinput.min.css',
+                        'bower_components/datatables.net-dt/css/jquery.dataTables.min.css',
                         'views/css/style*.css',
                     ],
                     'release/views/css/term.min.css' : [
@@ -139,7 +143,7 @@ module.exports = function(grunt) {
                         'views/css/style*.css',
                         'views/css/term*.css',
                         'views/css/flex*.css',
-                    ]
+                    ],
                 }
             }
         },

@@ -1,44 +1,60 @@
 /**
 * запрос чего-то с сервера
 **/
-function get(action, $area, values) {
-    'use strict';
-    values = values || false;
+    function get(action, $area, values) {
+        'use strict';
+        values = values || false;
 
-    var sid = $('#sid').val();
+        var sid = $('#sid').val();
 
-    return $.get(sid + '/admin/' + action, values, function(data) {
-        $area.find('.resultArea').html(data);
+        return $.get(sid + '/admin/' + action, values, function(data) {
+            $area.find('.resultArea').html(data);
 
-        if (action === 'getPriceGroup') {
-            $area.find('.time').datetimepicker({
-                format: 'LT',
-                locale: 'ru',
-            });
-            // редактирование времени
-            $('.time').on('dp.change', function() {
-                var sid = $('#sid').val(),
-                    $checkbox = $(this).closest('li').find('.serviceItem'),
-                    $form = $(this).closest('.times'),
-                    req = {
-                        id: $checkbox.attr('id'),
-                        idDay: $form.find('.dayStatus').val(),
-                        timeStart: $form.find('.timeStart').val(),
-                        timeFinish: $form.find('.timeFinish').val()
-                    };
+            if (action === 'getPriceGroup') {
+                $area.find('.time').datetimepicker({
+                    format: 'LT',
+                    locale: 'ru',
+                });
+                // редактирование времени
+                $('.time').on('dp.change', function() {
+                    var sid = $('#sid').val(),
+                        $checkbox = $(this).closest('li').find('.serviceItem'),
+                        $form = $(this).closest('.times'),
+                        req = {
+                            id: $checkbox.attr('id'),
+                            idDay: $form.find('.dayStatus').val(),
+                            timeStart: $form.find('.timeStart').val(),
+                            timeFinish: $form.find('.timeFinish').val()
+                        };
 
-                $.post(sid + '/admin/setWorkTime', req, function() {
+                    $.post(sid + '/admin/setWorkTime', req, function() {
 
-                }, 'json')
-                    .fail(function(){
-                        get('getPriceGroup', $('#priceGroup'));
-                    });
-            });
-        }
-    });
-}
+                    }, 'json')
+                        .fail(function(){
+                            get('getPriceGroup', $('#priceGroup'));
+                        });
+                });
+            }
+        });
+    }
 
-$(document).ready(function() {
+    function setDataTable() {
+        'use strict';
+        $('#cards-table').DataTable({
+            stateSave: true,
+            language: {
+                info: 'Страница _PAGE_ из _PAGES_',
+                lengthMenu: 'Показать _MENU_ записей',
+                search: 'Найти: ',
+                paginate: {
+                    next: 'Следующая',
+                    previous: 'Предыдущая'
+                }
+            }
+        });
+    }
+
+    $(document).ready(function() {
     'use strict';
 
     setInterval(function() {get('getHwsState', $('#hws'), {'problemOnly': $('#problemOnly').prop('checked') ? 1 : 0});}, 45000);
@@ -728,21 +744,5 @@ $(document).ready(function() {
             }
         });
     });
-
-    function setDataTable() {
-        $('#cards-table').DataTable({
-            stateSave: true,
-//            autoWidth: true,
-            'language': {
-                info: 'Страница _PAGE_ из _PAGES_',
-                lengthMenu: 'Показать _MENU_ записей',
-                search: 'Найти: ',
-                paginate: {
-                    next: 'Следующая',
-                    previous: 'Предыдущая'
-                }
-            }
-        });
-    }
 
 });

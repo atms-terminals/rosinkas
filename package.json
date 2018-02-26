@@ -29,5 +29,9 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "grunt-cli": "^1.2.0",
+    "local": "^0.3.3",
+    "peer": "^0.2.8"
+  }
 }
